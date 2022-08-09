@@ -5,9 +5,9 @@ using Touch = UnityEngine.InputSystem.EnhancedTouch.Touch;
 
 public class InputManager : MonoBehaviour
 {
-    public event Action<Vector2, Vector2> TouchStarted;
-    public event Action<Vector2, Vector2> TouchMoved;
-    public event Action<Vector2, Vector2> TouchEnded;
+    public static event Action<Vector2, Vector2> TouchStarted;
+    public static event Action<Vector2, Vector2> TouchMoved;
+    public static event Action<Vector2, Vector2> TouchEnded;
 
     private Camera _cameraMain;
 
