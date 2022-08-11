@@ -42,19 +42,16 @@ public class InputManager : MonoBehaviour
     
     private void TouchOnFingerDown(Finger finger)
     {
-        Debug.Log("Finger DOWN: " + finger.currentTouch.screenPosition + "(began=" + finger.currentTouch.began + ")");
         TouchStarted?.Invoke(finger.currentTouch.screenPosition, ScreenToWorldPosition(finger.currentTouch.screenPosition));
     }
     
     private void TouchOnFingerMove(Finger finger)
     {
-        Debug.Log("Finger MOVE: " + finger.currentTouch.screenPosition);
         TouchMoved?.Invoke(finger.currentTouch.screenPosition, ScreenToWorldPosition(finger.currentTouch.screenPosition));
     }
     
     private void TouchOnFingerUp(Finger finger)
     {
-        Debug.Log("Finger UP: " + finger.currentTouch.screenPosition + "(ended=" + finger.currentTouch.ended + ")");
         TouchEnded?.Invoke(finger.currentTouch.screenPosition, ScreenToWorldPosition(finger.currentTouch.screenPosition));
     }
     
