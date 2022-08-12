@@ -20,7 +20,7 @@ namespace WarOfWords
                 }
             }
 
-            return new Map(Truncate(fullMapShape), initWeighted);
+            return new Map(state, Truncate(fullMapShape), initWeighted);
         }
 
         public static Map LoadNewMapFromData(State state)
@@ -59,7 +59,7 @@ namespace WarOfWords
             }
             
             // TODO Store list of map data somewhere official
-            return new Map(allMapsData[0]);
+            return new Map(state, allMapsData[0]);
         }
 
         private static bool[,] Truncate(bool[,] mapShape)

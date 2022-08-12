@@ -1,21 +1,26 @@
 using System;
 using UnityEngine;
 using UnityEngine.InputSystem.EnhancedTouch;
+using WarOfWords;
 using Touch = UnityEngine.InputSystem.EnhancedTouch.Touch;
 
-public class InputManager : MonoBehaviour
+public class InputManager : Singleton<InputManager>
 {
     public static event Action<Vector2, Vector2> TouchStarted;
     public static event Action<Vector2, Vector2> TouchMoved;
     public static event Action<Vector2, Vector2> TouchEnded;
 
-    private Camera _cameraMain;
+    [SerializeField]
+    private Camera _narrowCamera;
+    
+    [SerializeField]
+    private Camera _wideCamera;
 
     #region Lifecycle
 
     private void Awake()
     {
-        _cameraMain = Camera.main;
+        
     }
 
     private void OnEnable()
@@ -61,7 +66,9 @@ public class InputManager : MonoBehaviour
 
     private Vector2 ScreenToWorldPosition(Vector2 screenPosition)
     {
-        return _cameraMain.ScreenToWorldPoint(screenPosition);
+        return _narrowCamera.isActiveAndEnabled ? 
+            _narrowCamera.ScreenToWorldPoint(screenPosition) : 
+            _wideCamera.ScreenToWorldPoint(screenPosition);
     }
 
     #endregion

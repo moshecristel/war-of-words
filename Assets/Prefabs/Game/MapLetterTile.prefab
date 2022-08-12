@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 1120212318857828153}
   - component: {fileID: 4589323068464398941}
   - component: {fileID: 3502943506808455392}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: LetterCanvas
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -171,7 +171,7 @@ GameObject:
   - component: {fileID: 3013607906585144820}
   - component: {fileID: 5885380010089659032}
   - component: {fileID: 6854209640200892928}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Letter
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -306,7 +306,7 @@ GameObject:
   - component: {fileID: 3012589829386592035}
   - component: {fileID: 1893139803667029484}
   - component: {fileID: 6655149065366698431}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: LetterCount
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -441,7 +441,7 @@ GameObject:
   - component: {fileID: 5963629187741786524}
   - component: {fileID: 6132875746738706982}
   - component: {fileID: 5041886291843495228}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: WordCount
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -575,7 +575,7 @@ GameObject:
   m_Component:
   - component: {fileID: 8269308723182243359}
   - component: {fileID: 8269308723182243358}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: TileSprite
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -659,7 +659,7 @@ GameObject:
   m_Component:
   - component: {fileID: 8269308723764505689}
   - component: {fileID: 8269308723764505688}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Collider
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -717,7 +717,7 @@ GameObject:
   m_Component:
   - component: {fileID: 8269308724222804197}
   - component: {fileID: 8269308724222804196}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: MapLetterTile
   m_TagString: Untagged
   m_Icon: {fileID: 0}

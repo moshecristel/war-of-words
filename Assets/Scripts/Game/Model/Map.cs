@@ -6,6 +6,8 @@ namespace WarOfWords
 {
     public class Map
     {
+        public State State { get; set; }
+        
         public int Cols => Letters.GetLength(0);
         public int Rows => Letters.GetLength(1);
         public int TileCount => Cols * Rows;
@@ -19,16 +21,18 @@ namespace WarOfWords
         private DictionaryTrie _dictionary;
         
         // Create map from shape
-        public Map(bool[,] shape, bool initWeighted = true)
+        public Map(State state, bool[,] shape, bool initWeighted = true)
         {
+            State = state;
             _dictionary = new DictionaryTrie();
             GenerateLetters(shape, initWeighted);
             MarkLetterAdjacency();
             RefreshLetterStats();
         }
 
-        public Map(List<string> mapData)
+        public Map(State state, List<string> mapData)
         {
+            State = state;
             _dictionary = new DictionaryTrie();
             GenerateLettersFromData(mapData);
             MarkLetterAdjacency();
