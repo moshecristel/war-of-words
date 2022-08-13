@@ -24,6 +24,8 @@ namespace WarOfWords
         
         public Vector2 CenterPoint { get; set; }
         
+        public MapBoardSelection Selection { get; set; }
+        
         private Game _game;
 
         private void Awake()
@@ -60,7 +62,7 @@ namespace WarOfWords
                     }
                 }
             }
-
+            
             Board = new MapLetterTile[map.Cols, map.Rows];
             
             for (int row = 0; row < map.Rows; row++)
@@ -69,7 +71,7 @@ namespace WarOfWords
                 {
                     if (Map.Letters[col, row] != null)
                     {
-                        Board[col, row] = Instantiate(_mapLetterTilePrefab, new Vector2(col + 0.5f, map.Rows - row - 0.5f),
+                        Board[col, row] = Instantiate(_mapLetterTilePrefab, new Vector2(col + 0.5f, row + 0.5f),
                             Quaternion.identity);
 
                         Board[col, row].MapLetter = Map.Letters[col, row];
@@ -89,17 +91,40 @@ namespace WarOfWords
 
         private void InputManagerOnTouchStarted(Vector2 screenPosition, Vector2 worldPosition)
         {
-            
+            Debug.Log("Touch started");
+            if (_game.GameView == GameView.Tile)
+                AddToSelection(worldPosition);
         }
     
         private void InputManagerOnTouchMoved(Vector2 screenPosition, Vector2 worldPosition)
         {
-            
+            if (_game.GameView == GameView.Tile)
+                AddToSelection(worldPosition);
         }
     
         private void InputManagerOnTouchEnded(Vector2 screenPosition, Vector2 worldPosition)
         {
-               
+            if (_game.GameView == GameView.Tile && Selection != null)
+            {
+                Selection.Clear();
+                Selection = null;
+            }
         }
+        
+        private void AddToSelection(Vector2 worldPosition)
+        {
+            Collider2D circle = Physics2D.OverlapCircle(worldPosition, 0.05f);
+            if (circle != null)
+            {
+                MapLetterTile letterTile = circle.gameObject.GetComponentInParent<MapLetterTile>();
+                if (!letterTile.IsSelected)
+                {
+                    if (Selection == null)
+                        Selection = new MapBoardSelection(letterTile);
+                    else
+                        Selection.AddLetterTile(letterTile);
+                }
+            }
+        } 
     }
 }

@@ -4,6 +4,7 @@ namespace WarOfWords
 {
     public enum GridDirection
     {
+        None = -1,
         N = 0,
         NE = 1,
         E = 2,

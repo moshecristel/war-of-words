@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -18,5 +19,7 @@ namespace WarOfWords
             Character = character;
             Directions = new Dictionary<GridDirection, MapLetter>();
         }
+        
+        
     }
 }

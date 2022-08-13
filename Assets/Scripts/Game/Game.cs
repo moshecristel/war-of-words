@@ -12,6 +12,8 @@ namespace WarOfWords
         [SerializeField] private Button _fullMapButton;
 
         private GameView _gameView;
+        public GameView GameView => _gameView;
+        
         private MapBoard _mapBoard;
 
         private void Awake()
@@ -19,6 +21,8 @@ namespace WarOfWords
             _mapBoard = GetComponent<MapBoard>();
             
             LoadMap(State.Washington);
+            
+            _mapBoard.Map.Print();
             SetGameView(GameView.Map, _mapBoard.CenterPoint);
         }
 

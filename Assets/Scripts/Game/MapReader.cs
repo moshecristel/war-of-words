@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -16,7 +15,7 @@ namespace WarOfWords
                 for (int x = 0; x < mapTexture.width; x++)
                 {
                     Color c = mapTexture.GetPixel(x, y);
-                    fullMapShape[x, mapTexture.height - y - 1] = c.a > 0.5f;
+                    fullMapShape[x, y] = c.a > 0.5f;
                 }
             }
 
@@ -58,7 +57,6 @@ namespace WarOfWords
                 allMapsData.Add(currentMapData);
             }
             
-            // TODO Store list of map data somewhere official
             return new Map(state, allMapsData[0]);
         }
 

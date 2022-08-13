@@ -16,6 +16,10 @@ namespace WarOfWords
         [SerializeField] private Sprite _yellowTileSprite;
         [SerializeField] private Sprite _blueTileSprite;
         [SerializeField] private Sprite _redTileSprite;
+
+        // Correspond to enum values (CW from N): N = 0, NE = 1...
+        [SerializeField] private GameObject[] _highlightLines;
+        [SerializeField] private GameObject _highlightCircle;
         
         private MapLetter _mapLetter;
         public MapLetter MapLetter
@@ -23,7 +27,7 @@ namespace WarOfWords
             get => _mapLetter;
             set {
                 _mapLetter = value;
-                UpdateSprite();
+                UpdateMainTile();
             }
         }
         
@@ -33,22 +37,42 @@ namespace WarOfWords
             get => _party;
             set {
                 _party = value;
-                UpdateSprite();
+                UpdateMainTile();
             }
         }
 
         private bool _isSelected;
-        public bool IsSelected
+        public bool IsSelected => _isSelected;
+
+        private GridDirection _incomingHighlightDirection;
+        public GridDirection IncomingHighlightDirection => _incomingHighlightDirection;
+        
+        private GridDirection _outgoingHighlightDirection;
+        public GridDirection OutgoingHighlightDirection => _outgoingHighlightDirection;
+        
+        public void Select(GridDirection incomingDirection = GridDirection.None)
         {
-            get => _isSelected;
-            set
-            {
-                _isSelected = value;
-                UpdateSprite();
-            }
+            _isSelected = true;
+            _incomingHighlightDirection = incomingDirection;
+            _outgoingHighlightDirection = GridDirection.None;
+            UpdateHighlight();
         }
 
-        private void UpdateSprite()
+        public void SelectOutgoing(GridDirection outgoingDirection)
+        {
+            _isSelected = true;
+            _outgoingHighlightDirection = outgoingDirection;
+            UpdateHighlight();
+        }
+
+        public void Deselect()
+        {
+            _isSelected = false;
+            _incomingHighlightDirection = GridDirection.None;
+            UpdateHighlight();
+        }
+
+        private void UpdateMainTile()
         {
             if (IsSelected)
             {
@@ -79,7 +103,29 @@ namespace WarOfWords
 
             _letterCountText.text = $"{MapLetter.WordStartsTotalLetterCount:n0}";
             _wordCountText.text = $"{MapLetter.WordStarts:n0}";
+        }
+
+        private void UpdateHighlight()
+        {
+            // Unhighlight all
+            _highlightCircle.SetActive(false);
+            foreach (GameObject highlightLine in _highlightLines)
+            {
+                highlightLine.SetActive(false);
+            }
+
+            if (!_isSelected) return;
             
+            _highlightCircle.SetActive(true);
+            if (_incomingHighlightDirection != GridDirection.None)
+            {
+                _highlightLines[(int)_incomingHighlightDirection].SetActive(true);
+            }
+
+            if (_outgoingHighlightDirection != GridDirection.None)
+            {
+                _highlightLines[(int)_outgoingHighlightDirection].SetActive(true);
+            }
         }
     }
 }

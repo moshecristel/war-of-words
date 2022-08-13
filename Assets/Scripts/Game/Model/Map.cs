@@ -17,6 +17,7 @@ namespace WarOfWords
         public float AvgWordsPerTile => (float)TotalWords / TileCount;
         public float AvgWordLettersPerTile => (float)TotalWordLetters / TileCount;
 
+        // Coordinates begin in LOWER LEFT of map
         public MapLetter[,] Letters { get; set; }
         private DictionaryTrie _dictionary;
         
@@ -51,23 +52,26 @@ namespace WarOfWords
                 for (int x = 0; x < cols; x++)
                 {
                     if(char.IsLetter(rowChars[x]))
-                        Letters[x, y] = new MapLetter(rowChars[x].ToString());
+                        Letters[x, rows - 1 - y] = new MapLetter(rowChars[x].ToString());
                     else
-                        Letters[x, y] = null;
+                        Letters[x, rows - 1 - y] = null;
                 }
             }
         }
 
         private void GenerateLetters(bool[,] shape, bool initWeighted)
         {
-            Letters = new MapLetter[shape.GetLength(0), shape.GetLength(1)];
+            int cols = shape.GetLength(0);
+            int rows = shape.GetLength(1);
+            
+            Letters = new MapLetter[cols, rows];
             for (int y = 0; y < shape.GetLength(1); y++)
             {
                 for (int x = 0; x < shape.GetLength(0); x++)
                 {
                     if (shape[x, y])
                     {
-                        Letters[x, y] = new MapLetter(CharacterUtils.GetRandomUppercaseAlphaCharacter(initWeighted));
+                        Letters[x, rows - 1 - y] = new MapLetter(CharacterUtils.GetRandomUppercaseAlphaCharacter(initWeighted));
                     }   
                 }
             }
@@ -86,30 +90,23 @@ namespace WarOfWords
                     
                     mapLetter.Coords = new Vector2Int(x, y);
                     
-                    // Can move W
-                    if (x > 0) mapLetter.Directions[GridDirection.W] = Letters[x - 1, y];
+                    bool canMoveN = y < Letters.GetLength(1) - 1;
+                    bool canMoveS = y > 0;
+                    bool canMoveE = x < Letters.GetLength(0) - 1;
+                    bool canMoveW = x > 0;
+                    bool canMoveNE = canMoveN && canMoveE;
+                    bool canMoveNW = canMoveN && canMoveW;
+                    bool canMoveSE = canMoveS && canMoveE;
+                    bool canMoveSW = canMoveS && canMoveW;
                     
-                    // Can move E
-                    if (x < Letters.GetLength(0) - 1) mapLetter.Directions[GridDirection.E] = Letters[x + 1, y];
-                    
-                    // Can move N
-                    if (y > 0) mapLetter.Directions[GridDirection.N] = Letters[x, y - 1];
-                    
-                    // Can move S
-                    if (y < Letters.GetLength(1) - 1) mapLetter.Directions[GridDirection.S] = Letters[x, y + 1];
-                    
-                    // Can move NW
-                    if (y > 0 && x > 0) mapLetter.Directions[GridDirection.NW] = Letters[x - 1, y - 1];
-                    
-                    // Can move NE
-                    if (y > 0 && x < Letters.GetLength(0) - 1) mapLetter.Directions[GridDirection.NE] = Letters[x + 1, y - 1];
-                    
-                    // Can move SW
-                    if (y < Letters.GetLength(1) - 1 && x > 0) mapLetter.Directions[GridDirection.SW] = Letters[x - 1, y + 1];
-                    
-                    // Can move SE
-                    if (y < Letters.GetLength(1) - 1 && x < Letters.GetLength(0) - 1) mapLetter.Directions[GridDirection.SE] = Letters[x + 1, y + 1];
-
+                    if (canMoveN) mapLetter.Directions[GridDirection.N] = Letters[x, y + 1];
+                    if (canMoveS) mapLetter.Directions[GridDirection.S] = Letters[x, y - 1];
+                    if (canMoveW) mapLetter.Directions[GridDirection.W] = Letters[x - 1, y];
+                    if (canMoveE) mapLetter.Directions[GridDirection.E] = Letters[x + 1, y];
+                    if (canMoveNE) mapLetter.Directions[GridDirection.NE] = Letters[x + 1, y + 1];
+                    if (canMoveNW) mapLetter.Directions[GridDirection.NW] = Letters[x - 1, y + 1];
+                    if (canMoveSE) mapLetter.Directions[GridDirection.NW] = Letters[x + 1, y - 1];
+                    if (canMoveSW) mapLetter.Directions[GridDirection.NW] = Letters[x - 1, y - 1];
                 }
             }
         }
@@ -205,30 +202,24 @@ namespace WarOfWords
         public List<Vector2Int> GetAllAdjacentCoords(Vector2Int coords)
         {
             List<Vector2Int> adjacentCoords = new List<Vector2Int>();
+
+            bool canMoveN = coords.y < Letters.GetLength(1) - 1;
+            bool canMoveS = coords.y > 0;
+            bool canMoveE = coords.x < Letters.GetLength(0) - 1;
+            bool canMoveW = coords.x > 0;
+            bool canMoveNE = canMoveN && canMoveE;
+            bool canMoveNW = canMoveN && canMoveW;
+            bool canMoveSE = canMoveS && canMoveE;
+            bool canMoveSW = canMoveS && canMoveW;
             
-            // W
-            if (coords.x > 0) adjacentCoords.Add(new Vector2Int(coords.x - 1, coords.y));
-                    
-            // E
-            if (coords.x < Letters.GetLength(0) - 1) adjacentCoords.Add(new Vector2Int(coords.x + 1, coords.y));
-                    
-            // Can move N
-            if (coords.y > 0) adjacentCoords.Add(new Vector2Int(coords.x, coords.y - 1));
-                    
-            // Can move S
-            if (coords.y < Letters.GetLength(1) - 1) adjacentCoords.Add(new Vector2Int(coords.x, coords.y + 1));
-                    
-            // Can move NW
-            if (coords.y > 0 && coords.x > 0) adjacentCoords.Add(new Vector2Int(coords.x - 1, coords.y - 1));
-                    
-            // Can move NE
-            if (coords.y > 0 && coords.x < Letters.GetLength(0) - 1) adjacentCoords.Add(new Vector2Int(coords.x + 1, coords.y - 1));
-                    
-            // Can move SW
-            if (coords.y < Letters.GetLength(1) - 1 && coords.x > 0) adjacentCoords.Add(new Vector2Int(coords.x - 1, coords.y + 1));
-                    
-            // Can move SE
-            if (coords.y < Letters.GetLength(1) - 1 && coords.x < Letters.GetLength(0) - 1) adjacentCoords.Add(new Vector2Int(coords.x + 1, coords.y + 1));
+            if(canMoveN) adjacentCoords.Add(new Vector2Int(coords.x, coords.y + 1));
+            if(canMoveS) adjacentCoords.Add(new Vector2Int(coords.x, coords.y - 1));
+            if(canMoveE) adjacentCoords.Add(new Vector2Int(coords.x + 1, coords.y));
+            if(canMoveW) adjacentCoords.Add(new Vector2Int(coords.x - 1, coords.y));
+            if(canMoveNE) adjacentCoords.Add(new Vector2Int(coords.x + 1, coords.y + 1));
+            if(canMoveNW) adjacentCoords.Add(new Vector2Int(coords.x - 1, coords.y + 1));
+            if(canMoveSE) adjacentCoords.Add(new Vector2Int(coords.x + 1, coords.y - 1));
+            if(canMoveSW) adjacentCoords.Add(new Vector2Int(coords.x - 1, coords.y - 1));
 
             return adjacentCoords;
         }
@@ -236,7 +227,7 @@ namespace WarOfWords
         public void Print()
         {
             string mapString = "";
-            for (int y = 0; y < Letters.GetLength(1); y++)
+            for (int y = Letters.GetLength(1) - 1; y >= 0; y--)
             {
                 for (int x = 0; x < Letters.GetLength(0); x++)
                 {
