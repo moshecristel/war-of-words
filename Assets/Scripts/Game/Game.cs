@@ -25,7 +25,10 @@ namespace WarOfWords
             LoadMap(State.Washington);
             
             _mapBoard.Map.Print();
-            SetGameView(GameView.Map, _mapBoard.CenterPoint);
+            SetGameView(GameView.Map, _mapBoard.Bounds.center);
+
+            _tilePanel.MapBoard = _mapBoard;
+            _mapPanel.MapBoard = _mapBoard;
         }
 
         private void OnEnable()
@@ -115,25 +118,7 @@ namespace WarOfWords
 
         public void OnFullMapButtonClicked()
         {
-            SetGameView(GameView.Map, _mapBoard.CenterPoint);
-        }
-
-        public void OnPanClicked(int gridDirectionValue)
-        {
-            Debug.Log("Pan clicked: " + gridDirectionValue);
-            switch ((GridDirection)gridDirectionValue)
-            {
-                case GridDirection.N:
-                    break;
-                case GridDirection.E:
-                    break;
-                case GridDirection.S:
-                    break;
-                case GridDirection.W:
-                    break;
-                default:
-                    throw new ArgumentOutOfRangeException(nameof(gridDirectionValue), gridDirectionValue, null);
-            }
+            SetGameView(GameView.Map, _mapBoard.Bounds.center);
         }
     }
 }

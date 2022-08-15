@@ -1,3 +1,5 @@
+using System;
+using System.Collections.Generic;
 using UnityEngine;
 
 namespace WarOfWords
@@ -20,18 +22,18 @@ namespace WarOfWords
         }
         
         public MapLetterTile[,] Board { get; set; }
+        public Bounds Bounds { get; set; }
         
-        public Vector2 CenterPoint { get; set; }
-        
-        public MapBoardSelection Selection { get; set; }
         private bool _isSelecting;
-        
-        private Game _game;
+        public MapBoardSelection Selection { get; set; }
+
+        #region Lifecycle
 
         private void Awake()
         {
-            _game = GetComponent<Game>();
         }
+
+        #endregion
 
         private void PopulateBoard(Map map)
         {
@@ -66,7 +68,9 @@ namespace WarOfWords
                 }
             }
 
-            CenterPoint = new Vector2(map.Cols / 2.0f, map.Rows / 2.0f);
+            Vector2 center = new Vector2(map.Cols / 2.0f, map.Rows / 2.0f);
+            Vector2 size = new Vector2(map.Cols, map.Rows);
+            Bounds = new Bounds(center, size);
         }
 
         public bool IsTileNear(Vector2 position)
@@ -92,6 +96,8 @@ namespace WarOfWords
         {
             ClearSelection();
         }
+        
+        
 
         #endregion
         
