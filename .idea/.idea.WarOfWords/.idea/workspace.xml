@@ -2,20 +2,15 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="bc16a576-3d17-4771-a401-98bcaae6af5c" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/Assets/Scripts/Game/MapBoardSelection.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Assets/Scripts/Game/MapBoardSelection.cs.meta" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Assets/Scripts/Game/Util/CoordUtils.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Assets/Scripts/Game/Util/CoordUtils.cs.meta" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Assets/Scripts/Game/Panels.meta" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Assets/Scripts/Game/Panels/MapPanel.cs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Assets/Scripts/Game/Panels/MapPanel.cs.meta" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Assets/Scripts/Game/Panels/TilePanel.cs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Assets/Scripts/Game/Panels/TilePanel.cs.meta" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/.idea.WarOfWords/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.WarOfWords/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Assets/Prefabs/Game/MapLetterTile.prefab" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Prefabs/Game/MapLetterTile.prefab" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Assets/Scenes/GameScene.unity" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Scenes/GameScene.unity" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/Scripts/Game/Enums/GridDirection.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Scripts/Game/Enums/GridDirection.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Assets/Scripts/Game/Game.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Scripts/Game/Game.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/Scripts/Game/MapBoard.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Scripts/Game/MapBoard.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/Scripts/Game/MapLetterTile.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Scripts/Game/MapLetterTile.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/Scripts/Game/MapReader.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Scripts/Game/MapReader.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/Scripts/Game/Model/Map.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Scripts/Game/Model/Map.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/Scripts/Game/Model/MapLetter.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Scripts/Game/Model/MapLetter.cs" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -31,10 +26,13 @@
     </file-type-list>
   </component>
   <component name="HighlightingSettingsPerFile">
+    <setting file="mock:///Users/moshecristel/Development/WarOfWords/Assets/Prefabs/Game/MapLetterTile.prefab" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock:///Users/moshecristel/Development/WarOfWords/Assets/Scenes/GameScene.unity" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Assets/Scripts/Game/Prep/MapGenerator.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Assets/Scripts/Game/Model/MapLetter.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Library/PackageCache/com.unity.ugui@1.0.0/Runtime/EventSystem/InputModules/BaseInput.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Assets/Scripts/Game/MapLetterTile.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="mock:///Users/moshecristel/Development/WarOfWords/Assets/Scripts/Game/Game.cs" root0="SKIP_HIGHLIGHTING" />
   </component>
   <component name="MarkdownSettingsMigration">
     <option name="stateVersion" value="1" />
@@ -100,7 +98,8 @@
       <workItem from="1660153853511" duration="9000" />
       <workItem from="1660154319876" duration="2013000" />
       <workItem from="1660156356544" duration="124000" />
-      <workItem from="1660156550691" duration="53646000" />
+      <workItem from="1660156550691" duration="54288000" />
+      <workItem from="1660420987845" duration="2897000" />
     </task>
     <servers />
   </component>

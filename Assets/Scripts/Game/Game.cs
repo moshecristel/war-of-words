@@ -1,16 +1,14 @@
 using System;
-using TMPro;
 using UnityEngine;
-using UnityEngine.UI;
 
 namespace WarOfWords
 {
     [RequireComponent(typeof(MapBoard))]
     public class Game : MonoBehaviour
     {
-        [SerializeField] private TMP_Text _titleText;
-        [SerializeField] private Button _fullMapButton;
-
+        [SerializeField] private MapPanel _mapPanel;
+        [SerializeField] private TilePanel _tilePanel;
+        
         private GameView _gameView;
         public GameView GameView => _gameView;
         
@@ -50,16 +48,18 @@ namespace WarOfWords
             switch (_gameView)
             {
                 case GameView.Map:
-                    _titleText.gameObject.SetActive(true);
-                    _titleText.text = _mapBoard.Map.State.ToString();
-                    _fullMapButton.gameObject.SetActive(false);
+                    _mapBoard.gameObject.SetActive(true);
+                    _mapPanel.SetTitle(_mapBoard.Map.State.ToString());
+                    _tilePanel.gameObject.SetActive(false);
                     CameraManager.Instance.SwitchToWideCamera(cameraPosition);
                     break;
+                
                 case GameView.Tile:
-                    _titleText.gameObject.SetActive(false);
-                    _fullMapButton.gameObject.SetActive(true);
+                    _tilePanel.gameObject.SetActive(true);
+                    _mapBoard.gameObject.SetActive(false);
                     CameraManager.Instance.SwitchToNarrowCamera(cameraPosition);
                     break;
+                
                 default:
                     throw new ArgumentOutOfRangeException();
             }
@@ -68,6 +68,24 @@ namespace WarOfWords
         public void OnFullMapButtonClicked()
         {
             SetGameView(GameView.Map, _mapBoard.CenterPoint);
+        }
+
+        public void OnPanClicked(int gridDirectionValue)
+        {
+            Debug.Log("Pan clicked: " + gridDirectionValue);
+            switch ((GridDirection)gridDirectionValue)
+            {
+                case GridDirection.N:
+                    break;
+                case GridDirection.E:
+                    break;
+                case GridDirection.S:
+                    break;
+                case GridDirection.W:
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException(nameof(gridDirectionValue), gridDirectionValue, null);
+            }
         }
     }
 }
