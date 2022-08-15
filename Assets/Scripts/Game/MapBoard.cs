@@ -1,4 +1,3 @@
-using System;
 using UnityEngine;
 
 namespace WarOfWords
@@ -25,26 +24,13 @@ namespace WarOfWords
         public Vector2 CenterPoint { get; set; }
         
         public MapBoardSelection Selection { get; set; }
+        private bool _isSelecting;
         
         private Game _game;
 
         private void Awake()
         {
             _game = GetComponent<Game>();
-        }
-
-        private void OnEnable()
-        {
-            InputManager.TouchStarted += InputManagerOnTouchStarted;
-            InputManager.TouchMoved += InputManagerOnTouchMoved;
-            InputManager.TouchEnded += InputManagerOnTouchEnded;
-        }
-
-        private void OnDisable()
-        {
-            InputManager.TouchStarted -= InputManagerOnTouchStarted;
-            InputManager.TouchMoved -= InputManagerOnTouchMoved;
-            InputManager.TouchEnded -= InputManagerOnTouchEnded;
         }
 
         private void PopulateBoard(Map map)
@@ -89,27 +75,25 @@ namespace WarOfWords
             return collider != null;
         }
 
-        private void InputManagerOnTouchStarted(Vector2 screenPosition, Vector2 worldPosition)
+        #region Event Handlers
+
+        public void OnTouchStarted(Vector2 screenPosition, Vector2 worldPosition)
         {
-            Debug.Log("Touch started");
-            if (_game.GameView == GameView.Tile)
-                AddToSelection(worldPosition);
+            AddToSelection(worldPosition);
         }
     
-        private void InputManagerOnTouchMoved(Vector2 screenPosition, Vector2 worldPosition)
+        public void OnTouchMoved(Vector2 screenPosition, Vector2 worldPosition)
         {
-            if (_game.GameView == GameView.Tile)
-                AddToSelection(worldPosition);
+         
+            AddToSelection(worldPosition);
         }
     
-        private void InputManagerOnTouchEnded(Vector2 screenPosition, Vector2 worldPosition)
+        public void OnTouchEnded(Vector2 screenPosition, Vector2 worldPosition)
         {
-            if (_game.GameView == GameView.Tile && Selection != null)
-            {
-                Selection.Clear();
-                Selection = null;
-            }
+            ClearSelection();
         }
+
+        #endregion
         
         private void AddToSelection(Vector2 worldPosition)
         {
@@ -125,6 +109,15 @@ namespace WarOfWords
                         Selection.AddLetterTile(letterTile);
                 }
             }
-        } 
+        }
+
+        public void ClearSelection()
+        {
+            if (Selection != null)
+            {
+                Selection.Clear();
+                Selection = null;
+            }
+        }
     }
 }
