@@ -1,16 +1,17 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="bc16a576-3d17-4771-a401-98bcaae6af5c" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/Assets/Scripts/Game/Panels.meta" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Assets/Scripts/Game/Panels/MapPanel.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Assets/Scripts/Game/Panels/MapPanel.cs.meta" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Assets/Scripts/Game/Panels/TilePanel.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Assets/Scripts/Game/Panels/TilePanel.cs.meta" afterDir="false" />
+    <list default="true" id="bc16a576-3d17-4771-a401-98bcaae6af5c" name="Changes" comment="Reorg of map and tile panel code">
+      <change afterPath="$PROJECT_DIR$/Assets/Input.meta" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Assets/Input/TouchControls.cs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Assets/Input/TouchControls.cs.meta" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Assets/Input/TouchControls.inputactions" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Assets/Input/TouchControls.inputactions.meta" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/.idea.WarOfWords/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.WarOfWords/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/Prefabs/Game/MapLetterTile.prefab" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Prefabs/Game/MapLetterTile.prefab" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Fonts/AlteHaas/AlteHaasGroteskBold SDF.asset" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Fonts/AlteHaas/AlteHaasGroteskBold SDF.asset" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Assets/Scenes/GameScene.unity" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Scenes/GameScene.unity" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/Scripts/Game/Game.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Scripts/Game/Game.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Scripts/Input/InputManager.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Scripts/Input/InputManager.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ProjectSettings/ProjectSettings.asset" beforeDir="false" afterPath="$PROJECT_DIR$/ProjectSettings/ProjectSettings.asset" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -28,10 +29,13 @@
   <component name="HighlightingSettingsPerFile">
     <setting file="mock:///Users/moshecristel/Development/WarOfWords/Assets/Prefabs/Game/MapLetterTile.prefab" root0="SKIP_HIGHLIGHTING" />
     <setting file="mock:///Users/moshecristel/Development/WarOfWords/Assets/Scenes/GameScene.unity" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock:///Users/moshecristel/Development/WarOfWords/Assets/Scenes/GameScene.unity" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Assets/Scripts/Game/Prep/MapGenerator.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="mock:///Users/moshecristel/Development/WarOfWords/Assets/Scripts/Game/Game.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Assets/Scripts/Game/Model/MapLetter.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Library/PackageCache/com.unity.ugui@1.0.0/Runtime/EventSystem/InputModules/BaseInput.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Assets/Scripts/Game/MapLetterTile.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="mock:///Users/moshecristel/Development/WarOfWords/Assets/Prefabs/Game/MapLetterTile.prefab" root0="SKIP_HIGHLIGHTING" />
     <setting file="mock:///Users/moshecristel/Development/WarOfWords/Assets/Scripts/Game/Game.cs" root0="SKIP_HIGHLIGHTING" />
   </component>
   <component name="MarkdownSettingsMigration">
@@ -99,8 +103,16 @@
       <workItem from="1660154319876" duration="2013000" />
       <workItem from="1660156356544" duration="124000" />
       <workItem from="1660156550691" duration="54288000" />
-      <workItem from="1660420987845" duration="2897000" />
+      <workItem from="1660420987845" duration="7968000" />
     </task>
+    <task id="LOCAL-00001" summary="Reorg of map and tile panel code">
+      <created>1660522257240</created>
+      <option name="number" value="00001" />
+      <option name="presentableId" value="LOCAL-00001" />
+      <option name="project" value="LOCAL" />
+      <updated>1660522257240</updated>
+    </task>
+    <option name="localTasksCounter" value="2" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -123,5 +135,7 @@
   <component name="VcsManagerConfiguration">
     <option name="ADD_EXTERNAL_FILES_SILENTLY" value="true" />
     <option name="CLEAR_INITIAL_COMMIT_MESSAGE" value="true" />
+    <MESSAGE value="Reorg of map and tile panel code" />
+    <option name="LAST_COMMIT_MESSAGE" value="Reorg of map and tile panel code" />
   </component>
 </project>
