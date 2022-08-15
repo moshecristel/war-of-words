@@ -22,11 +22,14 @@ namespace WarOfWords
             _wideCamera.transform.position = new Vector3(position.x, position.y, -10);
         }
 
-        public void SwitchToNarrowCamera(Vector2 position)
+        public void SwitchToNarrowCamera(Vector2 position, Bounds cameraMovementConstraint)
         {
             _narrowCamera.gameObject.SetActive(true);
             _wideCamera.gameObject.SetActive(false);
 
+            Vector3 cameraTo = new Vector3(position.x, position.y, -10f);
+            FireNarrowCameraTargetChanged(cameraTo, cameraMovementConstraint);
+            
             _narrowCamera.transform.position = new Vector3(position.x, position.y, -10);
         }
 

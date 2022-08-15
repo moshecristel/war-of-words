@@ -1,7 +1,5 @@
-using System;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.UI;
 
 namespace WarOfWords
 {   
@@ -10,13 +8,13 @@ namespace WarOfWords
     /// </summary>
     public class TilePanel : MonoBehaviour
     {
-        [SerializeField] private Button _panNButton;
-        [SerializeField] private Button _panEButton;
-        [SerializeField] private Button _panSButton;
-        [SerializeField] private Button _panWButton;
-        
+        [SerializeField] private PanButton _panNButton;
+        [SerializeField] private PanButton _panEButton;
+        [SerializeField] private PanButton _panSButton;
+        [SerializeField] private PanButton _panWButton;
+
         public MapBoard MapBoard { get; set; }
-        private Bounds _lastContractedBounds; 
+        public Matrix4x4 CanvasMatrix { get; set; }
 
         #region Lifecycle
 
@@ -32,10 +30,15 @@ namespace WarOfWords
 
         private void OnDrawGizmos()
         {
-            if (_lastContractedBounds != default)
+            if (MapBoard != null && MapBoard.CameraConstraintBounds != default)
             {
-                Gizmos.color = Color.red;
-                Gizmos.DrawWireCube(_lastContractedBounds.center, _lastContractedBounds.size);
+                Gizmos.color = Color.magenta;
+                Gizmos.matrix = CanvasMatrix;
+                Vector2 center = new Vector2(MapBoard.CameraConstraintBounds.center.x,
+                    MapBoard.CameraConstraintBounds.center.y);
+                Vector2 size = new Vector2(MapBoard.CameraConstraintBounds.size.x,
+                    MapBoard.CameraConstraintBounds.size.y);
+                Gizmos.DrawWireCube(center, size);
             }
         }
 
@@ -43,16 +46,15 @@ namespace WarOfWords
 
         private void CameraManager_OnNarrowCameraTargetChanged(Vector2 cameraTarget, Dictionary<GridDirection, bool> canCameraMoveInDirection)
         {
-            _panNButton.interactable = canCameraMoveInDirection[GridDirection.N];
-            _panEButton.interactable = canCameraMoveInDirection[GridDirection.E];
-            _panSButton.interactable = canCameraMoveInDirection[GridDirection.S];
-            _panWButton.interactable = canCameraMoveInDirection[GridDirection.W];
+            _panNButton.SetEnabled(canCameraMoveInDirection[GridDirection.N]);
+            _panEButton.SetEnabled(canCameraMoveInDirection[GridDirection.E]);
+            _panSButton.SetEnabled(canCameraMoveInDirection[GridDirection.S]);
+            _panWButton.SetEnabled(canCameraMoveInDirection[GridDirection.W]);
         }
         
         public void OnPanClicked(int gridDirectionValue)
         {
-            _lastContractedBounds = VectorUtils.ContractBounds(MapBoard.Bounds, 10f, 6f);
-            CameraManager.Instance.PanNarrowCamera((GridDirection)gridDirectionValue, _lastContractedBounds);
+            CameraManager.Instance.PanNarrowCamera((GridDirection)gridDirectionValue, MapBoard.CameraConstraintBounds);
         }
     }
 }

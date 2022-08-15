@@ -8,6 +8,7 @@ namespace WarOfWords
     {
         [SerializeField] private MapPanel _mapPanel;
         [SerializeField] private TilePanel _tilePanel;
+        [SerializeField] private Canvas _canvas;
         
         private GameView _gameView;
         public GameView GameView => _gameView;
@@ -28,6 +29,7 @@ namespace WarOfWords
             SetGameView(GameView.Map, _mapBoard.Bounds.center);
 
             _tilePanel.MapBoard = _mapBoard;
+            _tilePanel.CanvasMatrix = _canvas.GetCanvasMatrix();
             _mapPanel.MapBoard = _mapBoard;
         }
 
@@ -108,7 +110,7 @@ namespace WarOfWords
                     
                     _tilePanel.gameObject.SetActive(true);
                     _mapPanel.gameObject.SetActive(false);
-                    CameraManager.Instance.SwitchToNarrowCamera(cameraPosition);
+                    CameraManager.Instance.SwitchToNarrowCamera(cameraPosition, _mapBoard.CameraConstraintBounds);
                     break;
                 
                 default:

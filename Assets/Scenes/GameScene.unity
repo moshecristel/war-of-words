@@ -212,6 +212,7 @@ GameObject:
   - component: {fileID: 147882574}
   - component: {fileID: 147882573}
   - component: {fileID: 147882572}
+  - component: {fileID: 147882576}
   m_Layer: 5
   m_Name: PanNButton_0
   m_TagString: Untagged
@@ -280,7 +281,7 @@ MonoBehaviour:
     m_HighlightedColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 1}
     m_PressedColor: {r: 0.78431374, g: 0.78431374, b: 0.78431374, a: 1}
     m_SelectedColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 1}
-    m_DisabledColor: {r: 0.78431374, g: 0.78431374, b: 0.78431374, a: 0.29411766}
+    m_DisabledColor: {r: 0.78431374, g: 0.78431374, b: 0.78431374, a: 0.19607843}
     m_ColorMultiplier: 1
     m_FadeDuration: 0.1
   m_SpriteState:
@@ -349,6 +350,21 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 147882570}
   m_CullTransparentMesh: 1
+--- !u!114 &147882576
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 147882570}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c467a21a55fb4506bee6393a7406fbd4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _button: {fileID: 147882573}
+  _arrowImage: {fileID: 890974997}
+  _disabledColor: {r: 1, g: 1, b: 1, a: 0.09803922}
 --- !u!1 &492565459
 GameObject:
   m_ObjectHideFlags: 0
@@ -443,10 +459,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 642c7df5bd8f4a19beb877da03d2105f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _panNButton: {fileID: 147882573}
-  _panEButton: {fileID: 1626661017}
-  _panSButton: {fileID: 1870782581}
-  _panWButton: {fileID: 915096868}
+  _panNButton: {fileID: 147882576}
+  _panEButton: {fileID: 1626661020}
+  _panSButton: {fileID: 1870782584}
+  _panWButton: {fileID: 915096871}
 --- !u!1 &519420028
 GameObject:
   m_ObjectHideFlags: 0
@@ -1114,6 +1130,7 @@ GameObject:
   - component: {fileID: 915096869}
   - component: {fileID: 915096868}
   - component: {fileID: 915096867}
+  - component: {fileID: 915096871}
   m_Layer: 5
   m_Name: PanWButton_6
   m_TagString: Untagged
@@ -1182,7 +1199,7 @@ MonoBehaviour:
     m_HighlightedColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 1}
     m_PressedColor: {r: 0.78431374, g: 0.78431374, b: 0.78431374, a: 1}
     m_SelectedColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 1}
-    m_DisabledColor: {r: 0.78431374, g: 0.78431374, b: 0.78431374, a: 0.29411766}
+    m_DisabledColor: {r: 0.78431374, g: 0.78431374, b: 0.78431374, a: 0.19607843}
     m_ColorMultiplier: 1
     m_FadeDuration: 0.1
   m_SpriteState:
@@ -1251,6 +1268,21 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 915096865}
   m_CullTransparentMesh: 1
+--- !u!114 &915096871
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 915096865}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c467a21a55fb4506bee6393a7406fbd4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _button: {fileID: 915096868}
+  _arrowImage: {fileID: 1937906518}
+  _disabledColor: {r: 1, g: 1, b: 1, a: 0.09803922}
 --- !u!1 &1346859256
 GameObject:
   m_ObjectHideFlags: 0
@@ -1378,6 +1410,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _mapPanel: {fileID: 529834326}
   _tilePanel: {fileID: 492565463}
+  _canvas: {fileID: 1595426479}
 --- !u!114 &1461643491
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1611,6 +1644,7 @@ GameObject:
   - component: {fileID: 1626661018}
   - component: {fileID: 1626661017}
   - component: {fileID: 1626661016}
+  - component: {fileID: 1626661020}
   m_Layer: 5
   m_Name: PanEButton_2
   m_TagString: Untagged
@@ -1679,7 +1713,7 @@ MonoBehaviour:
     m_HighlightedColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 1}
     m_PressedColor: {r: 0.78431374, g: 0.78431374, b: 0.78431374, a: 1}
     m_SelectedColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 1}
-    m_DisabledColor: {r: 0.78431374, g: 0.78431374, b: 0.78431374, a: 0.29411766}
+    m_DisabledColor: {r: 0.78431374, g: 0.78431374, b: 0.78431374, a: 0.19607843}
     m_ColorMultiplier: 1
     m_FadeDuration: 0.1
   m_SpriteState:
@@ -1748,6 +1782,21 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1626661014}
   m_CullTransparentMesh: 1
+--- !u!114 &1626661020
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1626661014}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c467a21a55fb4506bee6393a7406fbd4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _button: {fileID: 1626661017}
+  _arrowImage: {fileID: 1508931105}
+  _disabledColor: {r: 1, g: 1, b: 1, a: 0.09803922}
 --- !u!1 &1870782578
 GameObject:
   m_ObjectHideFlags: 0
@@ -1761,6 +1810,7 @@ GameObject:
   - component: {fileID: 1870782582}
   - component: {fileID: 1870782581}
   - component: {fileID: 1870782580}
+  - component: {fileID: 1870782584}
   m_Layer: 5
   m_Name: PanSButton_4
   m_TagString: Untagged
@@ -1829,7 +1879,7 @@ MonoBehaviour:
     m_HighlightedColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 1}
     m_PressedColor: {r: 0.78431374, g: 0.78431374, b: 0.78431374, a: 1}
     m_SelectedColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 1}
-    m_DisabledColor: {r: 0.78431374, g: 0.78431374, b: 0.78431374, a: 0.29411766}
+    m_DisabledColor: {r: 0.78431374, g: 0.78431374, b: 0.78431374, a: 0.19607843}
     m_ColorMultiplier: 1
     m_FadeDuration: 0.1
   m_SpriteState:
@@ -1898,6 +1948,21 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1870782578}
   m_CullTransparentMesh: 1
+--- !u!114 &1870782584
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1870782578}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c467a21a55fb4506bee6393a7406fbd4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _button: {fileID: 1870782581}
+  _arrowImage: {fileID: 63901545}
+  _disabledColor: {r: 1, g: 1, b: 1, a: 0.09803922}
 --- !u!1 &1934821186
 GameObject:
   m_ObjectHideFlags: 0
