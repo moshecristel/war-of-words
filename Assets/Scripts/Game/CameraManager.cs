@@ -10,9 +10,26 @@ namespace WarOfWords
         public static event Action<Vector2, Dictionary<GridDirection, bool>> NarrowCameraTargetChanged;
         
         [SerializeField] private Camera _narrowCamera;
+        [SerializeField] private SpriteRenderer _narrowCameraMinimapAreaGraphic;
+        
         [SerializeField] private Camera _wideCamera;
+        [SerializeField] private Camera _minimapCamera;
 
         private bool _isAnimatingCamera;
+
+        private void Awake()
+        {
+            // Camera Minimap Area (Shape designating the bounds of the narrow camera within the larger map)
+            float xSize = _narrowCamera.aspect * _narrowCamera.orthographicSize * 2f;
+            float ySize = _narrowCamera.orthographicSize * 2f;
+            
+            _narrowCameraMinimapAreaGraphic.size = new Vector2(xSize, ySize);
+        }
+
+        private void Update()
+        {
+            _minimapCamera.transform.position = _wideCamera.transform.position;
+        }
 
         public void SwitchToWideCamera(Vector2 position)
         {
@@ -97,6 +114,19 @@ namespace WarOfWords
             };
             
             NarrowCameraTargetChanged?.Invoke(cameraTo, canCameraMoveInDirection);
+        }
+
+        public bool IsWithinNarrowCameraBounds(Bounds tileBounds)
+        {
+            float narrowCameraHalfWidth = _narrowCamera.aspect * _narrowCamera.orthographicSize;
+            float narrowCameraHalfHeight = _narrowCamera.orthographicSize;
+
+            // Bounds narrowCameraBounds = new Bounds((Vector2)_narrowCamera.transform.position,
+            //     new Vector2(narrowCameraHalfWidth * 2f, narrowCameraHalfHeight * 2f));
+
+            Bounds narrowCameraBounds = _narrowCameraMinimapAreaGraphic.bounds;
+
+            return narrowCameraBounds.Contains(tileBounds.min) && narrowCameraBounds.Contains(tileBounds.max);
         }
     }
 }

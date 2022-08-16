@@ -11,6 +11,9 @@ namespace WarOfWords
         [SerializeField] private TMP_Text _letterText;
         [SerializeField] private TMP_Text _letterCountText;
         [SerializeField] private TMP_Text _wordCountText;
+
+        [SerializeField] private SpriteRenderer _miniMapFocusedTile;
+        [SerializeField] private SpriteRenderer _miniMapUnfocusedTile;
         
         [SerializeField] private Sprite _tanTileSprite;
         [SerializeField] private Sprite _yellowTileSprite;
@@ -49,7 +52,13 @@ namespace WarOfWords
         
         private GridDirection _outgoingHighlightDirection;
         public GridDirection OutgoingHighlightDirection => _outgoingHighlightDirection;
-        
+
+        private void LateUpdate()
+        {
+            // Check "focus" of minimap tile sprite based on whether it is in narrow camera bounds
+            SetMinimapState(CameraManager.Instance.IsWithinNarrowCameraBounds(_miniMapFocusedTile.bounds));
+        }
+
         public void Select(GridDirection incomingDirection = GridDirection.None)
         {
             _isSelected = true;
@@ -126,6 +135,12 @@ namespace WarOfWords
             {
                 _highlightLines[(int)_outgoingHighlightDirection].SetActive(true);
             }
+        }
+
+        private void SetMinimapState(bool isFocused)
+        {
+            _miniMapFocusedTile.gameObject.SetActive(isFocused);
+            _miniMapUnfocusedTile.gameObject.SetActive(!isFocused);
         }
     }
 }

@@ -7,8 +7,7 @@ namespace WarOfWords
     [RequireComponent(typeof(Game))]
     public class MapBoard : MonoBehaviour
     {
-        [SerializeField]
-        private MapLetterTile _mapLetterTilePrefab;
+        [SerializeField] private MapLetterTile _mapLetterTilePrefab;
         
         private Map _map;
         public Map Map

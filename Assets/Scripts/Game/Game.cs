@@ -1,4 +1,5 @@
 using System;
+using Unity.VisualScripting;
 using UnityEngine;
 
 namespace WarOfWords
@@ -9,6 +10,7 @@ namespace WarOfWords
         [SerializeField] private MapPanel _mapPanel;
         [SerializeField] private TilePanel _tilePanel;
         [SerializeField] private Canvas _canvas;
+        [SerializeField] private SpriteRenderer _minimapBG;
         
         private GameView _gameView;
         public GameView GameView => _gameView;
@@ -31,6 +33,9 @@ namespace WarOfWords
             _tilePanel.MapBoard = _mapBoard;
             _tilePanel.CanvasMatrix = _canvas.GetCanvasMatrix();
             _mapPanel.MapBoard = _mapBoard;
+            
+            // White background to avoid outline around edge of render texture drawings
+            _minimapBG.gameObject.SetActive(true);
         }
 
         private void OnEnable()
@@ -85,6 +90,8 @@ namespace WarOfWords
         {
             _mapBoard.Map = MapReader.LoadNewMapFromData(state);
         }
+        
+        
 
         public void SetGameView(GameView gameView, Vector2 cameraPosition)
         {
