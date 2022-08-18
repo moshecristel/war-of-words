@@ -19,13 +19,14 @@ namespace WarOfWords
 
         // Coordinates begin in LOWER LEFT of map
         public MapLetter[,] Letters { get; set; }
-        private DictionaryTrie _dictionary;
-        
+
+        public DictionaryTrie Dictionary { get; }
+
         // Create map from shape
         public Map(State state, bool[,] shape, bool initWeighted = true)
         {
             State = state;
-            _dictionary = new DictionaryTrie();
+            Dictionary = new DictionaryTrie();
             GenerateLetters(shape, initWeighted);
             MarkLetterAdjacency();
             RefreshLetterStats();
@@ -34,7 +35,7 @@ namespace WarOfWords
         public Map(State state, List<string> mapData)
         {
             State = state;
-            _dictionary = new DictionaryTrie();
+            Dictionary = new DictionaryTrie();
             GenerateLettersFromData(mapData);
             MarkLetterAdjacency();
             RefreshLetterStats();
@@ -141,7 +142,7 @@ namespace WarOfWords
         public List<string> GetWordsStartingWithLetter(MapLetter mapLetter)
         {
             string sequenceSoFar = mapLetter.Character;
-            DictionaryNode dictionaryNode = _dictionary.Roots[mapLetter.Character];
+            DictionaryNode dictionaryNode = Dictionary.Roots[mapLetter.Character];
             List<Vector2Int> visited = new List<Vector2Int> { mapLetter.Coords };
             List<Vector2Int> allAdjacentCoords = GetAllAdjacentCoords(mapLetter.Coords);
 

@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 namespace WarOfWords
@@ -7,6 +8,8 @@ namespace WarOfWords
     [RequireComponent(typeof(Game))]
     public class MapBoard : MonoBehaviour
     {
+        public static event Action<List<MapLetterTile>, string, bool> WordAttempted;
+        
         [SerializeField] private MapLetterTile _mapLetterTilePrefab;
         
         private Map _map;
@@ -25,7 +28,9 @@ namespace WarOfWords
         public Bounds CameraConstraintBounds => (Bounds == default) ? default : VectorUtils.ContractBounds(Bounds, 10f, 6f);
         
         private bool _isSelecting;
+        
         public MapBoardSelection Selection { get; set; }
+        public Party CurrentPlayerParty { get; set; }
 
         #region Lifecycle
 
@@ -81,49 +86,72 @@ namespace WarOfWords
 
         #region Event Handlers
 
-        public void OnTouchStarted(Vector2 screenPosition, Vector2 worldPosition)
-        {
-            AddToSelection(worldPosition);
-        }
-    
-        public void OnTouchMoved(Vector2 screenPosition, Vector2 worldPosition)
-        {
-         
-            AddToSelection(worldPosition);
-        }
-    
-        public void OnTouchEnded(Vector2 screenPosition, Vector2 worldPosition)
-        {
-            ClearSelection();
-        }
+            public void OnTouchStarted(Vector2 screenPosition, Vector2 worldPosition)
+            {
+                AddToSelection(worldPosition);
+            }
         
+            public void OnTouchMoved(Vector2 screenPosition, Vector2 worldPosition)
+            {
+             
+                AddToSelection(worldPosition);
+            }
         
+            public void OnTouchEnded(Vector2 screenPosition, Vector2 worldPosition)
+            {
+                if (Selection is { Length: > 0 })
+                {
+                    string sequence = string.Join("", Selection.SelectedLetterTiles.Select(letterTile => letterTile.MapLetter.Character));
+                    bool isWord = Map.Dictionary.IsWord(sequence);
+                    
+                    WordAttempted?.Invoke(Selection.SelectedLetterTiles, sequence, isWord);
+
+                    if (isWord)
+                    {
+                        foreach (MapLetterTile selectedLetterTile in Selection.SelectedLetterTiles)
+                        {
+                            selectedLetterTile.TileOwner = new TileOwner(CurrentPlayerParty);
+                        }
+                    }
+                }
+                
+                ClearSelection();
+            }
 
         #endregion
-        
-        private void AddToSelection(Vector2 worldPosition)
-        {
-            Collider2D circle = Physics2D.OverlapCircle(worldPosition, 0.05f);
-            if (circle != null)
+
+
+        #region Methods
+
+            private void AddToSelection(Vector2 worldPosition)
             {
-                MapLetterTile letterTile = circle.gameObject.GetComponentInParent<MapLetterTile>();
-                if (!letterTile.IsSelected)
+                Collider2D circle = Physics2D.OverlapCircle(worldPosition, 0.1f);
+                if (circle != null)
                 {
-                    if (Selection == null)
-                        Selection = new MapBoardSelection(letterTile);
-                    else
-                        Selection.AddLetterTile(letterTile);
+                    MapLetterTile letterTile = circle.gameObject.GetComponentInParent<MapLetterTile>();
+                    if (!letterTile.IsSelected)
+                    {
+                        if (Selection == null)
+                            Selection = new MapBoardSelection(letterTile);
+                        else
+                            Selection.AddLetterTile(letterTile);
+                    }
                 }
             }
-        }
 
-        public void ClearSelection()
-        {
-            if (Selection != null)
+            public void ClearSelection()
             {
-                Selection.Clear();
-                Selection = null;
+                if (Selection != null)
+                {
+                    Selection.Clear();
+                    Selection = null;
+                }
             }
-        }
+
+            public void Highlight(List<MapLetter> mapLetters, Party tileCategory)
+            {
+                
+            }
+        #endregion
     }
 }

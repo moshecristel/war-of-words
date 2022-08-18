@@ -7,6 +7,8 @@ namespace WarOfWords
     {
         public List<MapLetterTile> SelectedLetterTiles { get; set; }
 
+        public int Length => SelectedLetterTiles.Count;
+
         public MapBoardSelection(MapLetterTile initialTile)
         {
             initialTile.Select();

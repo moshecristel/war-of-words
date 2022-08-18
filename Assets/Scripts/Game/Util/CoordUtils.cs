@@ -15,8 +15,6 @@ namespace WarOfWords
 
         public static GridDirection GetRelativeAdjacentGridDirection(Vector2Int fromCoords, Vector2Int toCoords)
         {
-            Debug.Log("Getting relative adj dir for from=" + fromCoords + ", to=" + toCoords);
-            
             if (!AreAdjacent(fromCoords, toCoords)) return GridDirection.None;
             int relX = toCoords.x - fromCoords.x;
             int relY = toCoords.y - fromCoords.y;

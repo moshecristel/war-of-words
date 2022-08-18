@@ -1,4 +1,6 @@
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using Unity.VisualScripting;
 using UnityEngine;
 
@@ -21,77 +23,87 @@ namespace WarOfWords
 
         #region Lifecycle
 
-        private void Awake()
-        {
-            _mapBoard = GetComponent<MapBoard>();
-            
-            LoadMap(State.Washington);
-            
-            _mapBoard.Map.Print();
-            SetGameView(GameView.Map, _mapBoard.Bounds.center);
+            private void Awake()
+            {
+                _mapBoard = GetComponent<MapBoard>();
+                
+                LoadMap(State.Washington);
+                
+                _mapBoard.Map.Print();
+                SetGameView(GameView.Map, _mapBoard.Bounds.center);
 
-            _tilePanel.MapBoard = _mapBoard;
-            _tilePanel.CanvasMatrix = _canvas.GetCanvasMatrix();
-            _mapPanel.MapBoard = _mapBoard;
-            
-            // White background to avoid outline around edge of render texture drawings
-            _minimapBG.gameObject.SetActive(true);
-        }
+                _tilePanel.MapBoard = _mapBoard;
+                _tilePanel.CanvasMatrix = _canvas.GetCanvasMatrix();
+                _mapPanel.MapBoard = _mapBoard;
+                
+                // White background to avoid outline around edge of render texture drawings
+                _minimapBG.gameObject.SetActive(true);
+                
+                _tilePanel.SetPoints(0);
+                _tilePanel.SetCoins(0);
+                _tilePanel.SetTimeRemaining(60 * 3);
+                _tilePanel.SetWordDisplay(null);
+            }
 
-        private void OnEnable()
-        {
-            InputManager.TouchStarted += InputManagerOnTouchStarted;
-            InputManager.TouchMoved += InputManagerOnTouchMoved;
-            InputManager.TouchEnded += InputManagerOnTouchEnded;
-        }
+            private void OnEnable()
+            {
+                InputManager.TouchStarted += InputManager_OnTouchStarted;
+                InputManager.TouchMoved += InputManager_OnTouchMoved;
+                InputManager.TouchEnded += InputManager_OnTouchEnded;
+                
+                MapBoard.WordAttempted += MapBoard_OnWordAttempted;
+            }
 
-        private void OnDisable()
-        {
-            InputManager.TouchStarted -= InputManagerOnTouchStarted;
-            InputManager.TouchMoved -= InputManagerOnTouchMoved;
-            InputManager.TouchEnded -= InputManagerOnTouchEnded;
-        }
+            private void OnDisable()
+            {
+                InputManager.TouchStarted -= InputManager_OnTouchStarted;
+                InputManager.TouchMoved -= InputManager_OnTouchMoved;
+                InputManager.TouchEnded -= InputManager_OnTouchEnded;
+            }
 
         #endregion
 
         #region Event Handlers
 
-        private void InputManagerOnTouchMoved(Vector2 screenPosition, Vector2 worldPosition)
-        {
-            // If selection hasn't been interrupted by game view change
-            if (_isSelecting && _gameView == GameView.Tile)
+            private void InputManager_OnTouchMoved(Vector2 screenPosition, Vector2 worldPosition)
             {
-                _mapBoard.OnTouchMoved(screenPosition, worldPosition);
+                // If selection hasn't been interrupted by game view change
+                if (_isSelecting && _gameView == GameView.Tile)
+                {
+                    _mapBoard.OnTouchMoved(screenPosition, worldPosition);
+                }
             }
-        }
 
-        private void InputManagerOnTouchStarted(Vector2 screenPosition, Vector2 worldPosition)
-        {
-            _isSelecting = true;
-            if (_gameView == GameView.Map && _mapBoard.IsTileNear(worldPosition))
+            private void InputManager_OnTouchStarted(Vector2 screenPosition, Vector2 worldPosition)
             {
-                SetGameView(GameView.Tile, worldPosition);
-            } else if (_gameView == GameView.Tile)
-            {
-                _mapBoard.OnTouchStarted(screenPosition, worldPosition);
+                _isSelecting = true;
+                if (_gameView == GameView.Map && _mapBoard.IsTileNear(worldPosition))
+                {
+                    SetGameView(GameView.Tile, worldPosition);
+                } else if (_gameView == GameView.Tile)
+                {
+                    _mapBoard.OnTouchStarted(screenPosition, worldPosition);
+                }
             }
-        }
-        
-        private void InputManagerOnTouchEnded(Vector2 screenPosition, Vector2 worldPosition)
-        {
-            if (_isSelecting && _gameView == GameView.Tile)
+            
+            private void InputManager_OnTouchEnded(Vector2 screenPosition, Vector2 worldPosition)
             {
-                _mapBoard.OnTouchEnded(screenPosition, worldPosition);
+                if (_isSelecting && _gameView == GameView.Tile)
+                {
+                    _mapBoard.OnTouchEnded(screenPosition, worldPosition);
+                }
             }
-        }
+            
+            private void MapBoard_OnWordAttempted(List<MapLetterTile> selectedLetterTiles, string sequence, bool isSucceeded)
+            {
+                _tilePanel.SetWordDisplay(isSucceeded ? sequence : null);
+            }
         #endregion
 
         private void LoadMap(State state)
         {
             _mapBoard.Map = MapReader.LoadNewMapFromData(state);
         }
-        
-        
 
         public void SetGameView(GameView gameView, Vector2 cameraPosition)
         {
@@ -101,7 +113,6 @@ namespace WarOfWords
             switch (_gameView)
             {
                 case GameView.Map:
-                    Debug.Log("Changing to map");
                     _mapBoard.ClearSelection();
                     _mapBoard.gameObject.SetActive(true);
                     
@@ -112,7 +123,6 @@ namespace WarOfWords
                     break;
                 
                 case GameView.Tile:
-                    Debug.Log("Changing to tile");
                     _mapBoard.gameObject.SetActive(true);
                     
                     _tilePanel.gameObject.SetActive(true);

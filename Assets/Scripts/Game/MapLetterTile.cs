@@ -21,8 +21,8 @@ namespace WarOfWords
         [SerializeField] private Sprite _redTileSprite;
 
         // Correspond to enum values (CW from N): N = 0, NE = 1...
-        [SerializeField] private GameObject[] _highlightLines;
-        [SerializeField] private GameObject _highlightCircle;
+        [SerializeField] private GameObject[] _selectionLines;
+        [SerializeField] private GameObject _selectionCircle;
         
         private MapLetter _mapLetter;
         public MapLetter MapLetter
@@ -34,19 +34,19 @@ namespace WarOfWords
             }
         }
         
-        private Party _party;
-        public Party Party
+        private TileOwner _tileOwner;
+        public TileOwner TileOwner
         {
-            get => _party;
+            get => _tileOwner;
             set {
-                _party = value;
+                _tileOwner = value;
                 UpdateMainTile();
             }
         }
 
         private bool _isSelected;
         public bool IsSelected => _isSelected;
-
+        
         private GridDirection _incomingHighlightDirection;
         public GridDirection IncomingHighlightDirection => _incomingHighlightDirection;
         
@@ -64,32 +64,41 @@ namespace WarOfWords
             _isSelected = true;
             _incomingHighlightDirection = incomingDirection;
             _outgoingHighlightDirection = GridDirection.None;
-            UpdateHighlight();
+            UpdateSelection();
         }
 
         public void SelectOutgoing(GridDirection outgoingDirection)
         {
             _isSelected = true;
             _outgoingHighlightDirection = outgoingDirection;
-            UpdateHighlight();
+            UpdateSelection();
         }
 
         public void Deselect()
         {
             _isSelected = false;
             _incomingHighlightDirection = GridDirection.None;
-            UpdateHighlight();
+            UpdateSelection();
         }
 
         private void UpdateMainTile()
         {
-            if (IsSelected)
+            if(MapLetter != null)
+                _letterText.text = MapLetter.Character;
+            
+            if (_tileOwner == null)
+            {
+                _spriteRenderer.sprite = _tanTileSprite;
+                return;
+            }
+
+            if (_tileOwner.IsCurrentPlayer)
             {
                 _spriteRenderer.sprite = _yellowTileSprite;
                 return;
             }
             
-            switch (Party)
+            switch (_tileOwner.Party)
             {
                 case Party.None:
                     _spriteRenderer.sprite = _tanTileSprite;
@@ -101,39 +110,30 @@ namespace WarOfWords
                     _spriteRenderer.sprite = _redTileSprite;
                     break;
                 default:
-                    throw new ArgumentOutOfRangeException(nameof(Party), Party, null);
+                    throw new ArgumentOutOfRangeException(nameof(Party), _tileOwner.Party, null);
             }
-
-            if(MapLetter != null)
-                _letterText.text = MapLetter.Character;
-            
-            _letterCountText.gameObject.SetActive(MapLetter.WordStartsTotalLetterCount != 0);
-            _wordCountText.gameObject.SetActive(MapLetter.WordStarts != 0);
-
-            _letterCountText.text = $"{MapLetter.WordStartsTotalLetterCount:n0}";
-            _wordCountText.text = $"{MapLetter.WordStarts:n0}";
         }
 
-        private void UpdateHighlight()
+        private void UpdateSelection()
         {
             // Unhighlight all
-            _highlightCircle.SetActive(false);
-            foreach (GameObject highlightLine in _highlightLines)
+            _selectionCircle.SetActive(false);
+            foreach (GameObject highlightLine in _selectionLines)
             {
                 highlightLine.SetActive(false);
             }
 
             if (!_isSelected) return;
-            
-            _highlightCircle.SetActive(true);
+
+            _selectionCircle.SetActive(true);
             if (_incomingHighlightDirection != GridDirection.None)
             {
-                _highlightLines[(int)_incomingHighlightDirection].SetActive(true);
+                _selectionLines[(int)_incomingHighlightDirection].SetActive(true);
             }
 
             if (_outgoingHighlightDirection != GridDirection.None)
             {
-                _highlightLines[(int)_outgoingHighlightDirection].SetActive(true);
+                _selectionLines[(int)_outgoingHighlightDirection].SetActive(true);
             }
         }
 

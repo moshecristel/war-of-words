@@ -118,14 +118,7 @@ namespace WarOfWords
 
         public bool IsWithinNarrowCameraBounds(Bounds tileBounds)
         {
-            float narrowCameraHalfWidth = _narrowCamera.aspect * _narrowCamera.orthographicSize;
-            float narrowCameraHalfHeight = _narrowCamera.orthographicSize;
-
-            // Bounds narrowCameraBounds = new Bounds((Vector2)_narrowCamera.transform.position,
-            //     new Vector2(narrowCameraHalfWidth * 2f, narrowCameraHalfHeight * 2f));
-
             Bounds narrowCameraBounds = _narrowCameraMinimapAreaGraphic.bounds;
-
             return narrowCameraBounds.Contains(tileBounds.min) && narrowCameraBounds.Contains(tileBounds.max);
         }
     }

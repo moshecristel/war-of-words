@@ -47,53 +47,46 @@ public class InputManager : Singleton<InputManager>
 
     #region Event Handlers
     
-    private void OnTouchStartedReceived(InputAction.CallbackContext context)
-    {
-        StartCoroutine(WaitAndPoll());
-    }
-
-    IEnumerator WaitAndPoll()
-    {
-        yield return new WaitForEndOfFrame();
-
-        // Don't register touch if we're over a UI element
-        if (EventSystem.current.currentSelectedGameObject == null)
+        private void OnTouchStartedReceived(InputAction.CallbackContext context)
         {
+            StartCoroutine(WaitAndPoll());
+        }
+
+        IEnumerator WaitAndPoll()
+        {
+            yield return new WaitForEndOfFrame();
+
+            // Don't register touch if we're over a UI element
+            if (EventSystem.current.currentSelectedGameObject != null) yield break;
             _fingerDown = true;
-            
+                
             Vector2 touchScreenPosition = _touchControls.Touch.TouchPosition.ReadValue<Vector2>();
             TouchStarted?.Invoke(touchScreenPosition, ScreenToWorldPosition(touchScreenPosition));
         }
-    }
-    
-    private void OnTouchMoveReceived(InputAction.CallbackContext context)
-    {
-        if (_fingerDown)
+        
+        private void OnTouchMoveReceived(InputAction.CallbackContext context)
         {
+            if (!_fingerDown) return;
             Vector2 touchScreenPosition = context.ReadValue<Vector2>();
             TouchMoved?.Invoke(touchScreenPosition, ScreenToWorldPosition(touchScreenPosition));
         }
-    }
-    
-    private void OnTouchCanceledReceived(InputAction.CallbackContext context)
-    {
-        _fingerDown = false;
         
-        Vector2 touchScreenPosition = _touchControls.Touch.TouchPosition.ReadValue<Vector2>();
-        TouchEnded?.Invoke(touchScreenPosition, ScreenToWorldPosition(touchScreenPosition));
-    }   
-    
-    
+        private void OnTouchCanceledReceived(InputAction.CallbackContext context)
+        {
+            _fingerDown = false;
+            
+            Vector2 touchScreenPosition = _touchControls.Touch.TouchPosition.ReadValue<Vector2>();
+            TouchEnded?.Invoke(touchScreenPosition, ScreenToWorldPosition(touchScreenPosition));
+        }
     #endregion
 
     #region Methods
 
-    private Vector2 ScreenToWorldPosition(Vector2 screenPosition)
-    {
-        return _narrowCamera.isActiveAndEnabled ? 
-            _narrowCamera.ScreenToWorldPoint(screenPosition) : 
-            _wideCamera.ScreenToWorldPoint(screenPosition);
-    }
-
+        private Vector2 ScreenToWorldPosition(Vector2 screenPosition)
+        {
+            return _narrowCamera.isActiveAndEnabled ? 
+                _narrowCamera.ScreenToWorldPoint(screenPosition) : 
+                _wideCamera.ScreenToWorldPoint(screenPosition);
+        }
     #endregion
 }
