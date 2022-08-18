@@ -30,6 +30,7 @@ namespace WarOfWords
                 LoadMap(State.Washington);
                 
                 _mapBoard.Map.Print();
+                _mapBoard.CurrentPlayerParty = Party.Democrat;
                 SetGameView(GameView.Map, _mapBoard.Bounds.center);
 
                 _tilePanel.MapBoard = _mapBoard;
@@ -43,6 +44,7 @@ namespace WarOfWords
                 _tilePanel.SetCoins(0);
                 _tilePanel.SetTimeRemaining(60 * 3);
                 _tilePanel.SetWordDisplay(null);
+                
             }
 
             private void OnEnable()

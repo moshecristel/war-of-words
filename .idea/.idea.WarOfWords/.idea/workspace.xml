@@ -2,35 +2,13 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="bc16a576-3d17-4771-a401-98bcaae6af5c" name="Changes" comment="Reorg of map and tile panel code">
-      <change afterPath="$PROJECT_DIR$/Assets/Prefabs/Game/UI/LabelWhiteCustom.prefab" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Assets/Prefabs/Game/UI/LabelWhiteCustom.prefab.meta" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Assets/Scripts/Game/Model/TileOwner.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Assets/Scripts/Game/Model/TileOwner.cs.meta" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Assets/Scripts/Game/UI/Panels/TilePanel.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/.idea.WarOfWords/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.WarOfWords/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/Fonts/AlteHaas/AlteHaasGroteskBold SDF.asset" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Fonts/AlteHaas/AlteHaasGroteskBold SDF.asset" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Assets/Prefabs/Game/MapLetterTile.prefab" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Prefabs/Game/MapLetterTile.prefab" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/Scenes/GameScene.unity" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Scenes/GameScene.unity" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/Scripts/Game/CameraManager.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Scripts/Game/CameraManager.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/Scripts/Game/Enums/Party.cs.meta" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Scripts/Game/Enums/Party.cs.meta" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Assets/Scripts/Game/Game.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Scripts/Game/Game.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Assets/Scripts/Game/MapBoard.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Scripts/Game/MapBoard.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/Scripts/Game/MapBoardSelection.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Scripts/Game/MapBoardSelection.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Assets/Scripts/Game/MapLetterTile.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Scripts/Game/MapLetterTile.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/Scripts/Game/Model/Map.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Scripts/Game/Model/Map.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/Scripts/Game/Model/MapLetter.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Scripts/Game/Model/MapLetter.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/Scripts/Game/Panels.meta" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Scripts/Game/UI/Panels.meta" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/Scripts/Game/Panels/MapPanel.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Scripts/Game/UI/Panels/MapPanel.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/Scripts/Game/Panels/MapPanel.cs.meta" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Scripts/Game/UI/Panels/MapPanel.cs.meta" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/Scripts/Game/Panels/TilePanel.cs" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/Scripts/Game/Panels/TilePanel.cs.meta" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Scripts/Game/UI/Panels/TilePanel.cs.meta" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/Scripts/Game/Util/CoordUtils.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Scripts/Game/Util/CoordUtils.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/Scripts/Input/InputManager.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Scripts/Input/InputManager.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/Sprites/UI/MinimapTitleBar.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/Sprites/UI/MinimapTitleBar.png.meta" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/_ThirdParty/GUI PRO Kit - Simple Casual/Prefabs/Prefabs_Component_Frames/_PrefabsPanel_Frames_00_Basic.prefab" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/_ThirdParty/GUI PRO Kit - Simple Casual/Prefabs/Prefabs_Component_Frames/_PrefabsPanel_Frames_00_Basic.prefab" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/_ThirdParty/GUI PRO Kit - Simple Casual/Prefabs/Prefabs_Component_Labels/Label_Tag01-Group.prefab" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/_ThirdParty/GUI PRO Kit - Simple Casual/Prefabs/Prefabs_Component_Labels/Label_Tag01-Group.prefab" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/_ThirdParty/GUI PRO Kit - Simple Casual/Prefabs/Prefabs_Component_Labels/_PrefabsPanel_Label.prefab" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/_ThirdParty/GUI PRO Kit - Simple Casual/Prefabs/Prefabs_Component_Labels/_PrefabsPanel_Label.prefab" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Scripts/Game/Model/TileOwner.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Scripts/Game/Model/TileOwnership.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Scripts/Game/Model/TileOwner.cs.meta" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Scripts/Game/Model/TileOwnership.cs.meta" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -125,7 +103,7 @@
       <workItem from="1660154319876" duration="2013000" />
       <workItem from="1660156356544" duration="124000" />
       <workItem from="1660156550691" duration="54288000" />
-      <workItem from="1660420987845" duration="39759000" />
+      <workItem from="1660420987845" duration="43018000" />
     </task>
     <task id="LOCAL-00001" summary="Reorg of map and tile panel code">
       <created>1660522257240</created>

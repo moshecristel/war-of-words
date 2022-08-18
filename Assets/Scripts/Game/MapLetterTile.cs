@@ -9,6 +9,7 @@ namespace WarOfWords
         [SerializeField] private SpriteRenderer _spriteRenderer;
 
         [SerializeField] private TMP_Text _letterText;
+        [SerializeField] private TMP_Text _claimCountText;
         [SerializeField] private TMP_Text _letterCountText;
         [SerializeField] private TMP_Text _wordCountText;
 
@@ -34,12 +35,12 @@ namespace WarOfWords
             }
         }
         
-        private TileOwner _tileOwner;
-        public TileOwner TileOwner
+        private TileOwnership _tileOwnership;
+        public TileOwnership TileOwnership
         {
-            get => _tileOwner;
+            get => _tileOwnership;
             set {
-                _tileOwner = value;
+                _tileOwnership = value;
                 UpdateMainTile();
             }
         }
@@ -81,24 +82,27 @@ namespace WarOfWords
             UpdateSelection();
         }
 
-        private void UpdateMainTile()
+        public void UpdateMainTile()
         {
             if(MapLetter != null)
                 _letterText.text = MapLetter.Character;
             
-            if (_tileOwner == null)
+            if (_tileOwnership == null)
             {
                 _spriteRenderer.sprite = _tanTileSprite;
                 return;
             }
 
-            if (_tileOwner.IsCurrentPlayer)
+            if (_tileOwnership.IsCurrentPlayer)
             {
                 _spriteRenderer.sprite = _yellowTileSprite;
+
+                _claimCountText.transform.parent.gameObject.SetActive(_tileOwnership.ClaimCount > 1);
+                _claimCountText.text = $"{_tileOwnership.ClaimCount:n0}";
                 return;
             }
             
-            switch (_tileOwner.Party)
+            switch (_tileOwnership.Party)
             {
                 case Party.None:
                     _spriteRenderer.sprite = _tanTileSprite;
@@ -110,7 +114,7 @@ namespace WarOfWords
                     _spriteRenderer.sprite = _redTileSprite;
                     break;
                 default:
-                    throw new ArgumentOutOfRangeException(nameof(Party), _tileOwner.Party, null);
+                    throw new ArgumentOutOfRangeException(nameof(Party), _tileOwnership.Party, null);
             }
         }
 

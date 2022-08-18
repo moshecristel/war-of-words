@@ -110,7 +110,15 @@ namespace WarOfWords
                     {
                         foreach (MapLetterTile selectedLetterTile in Selection.SelectedLetterTiles)
                         {
-                            selectedLetterTile.TileOwner = new TileOwner(CurrentPlayerParty);
+                            if (selectedLetterTile.TileOwnership == null)
+                            {
+                                selectedLetterTile.TileOwnership = new TileOwnership(CurrentPlayerParty);
+                            } else if (selectedLetterTile.TileOwnership.IsCurrentPlayer)
+                            {
+                                selectedLetterTile.TileOwnership.ClaimCount += 1;
+                            }
+                            
+                            selectedLetterTile.UpdateMainTile();
                         }
                     }
                 }
