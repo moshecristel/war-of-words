@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 
@@ -6,24 +7,24 @@ namespace WarOfWords
 {
     public class MapLetterTile : MonoBehaviour
     {
-        [SerializeField] private SpriteRenderer _spriteRenderer;
+        [SerializeField] private SpriteRenderer _baseSpriteRenderer;
+        [SerializeField] private SpriteRenderer _softShadowSpriteRenderer;
+        [SerializeField] private SpriteRenderer _dropShadowSpriteRenderer;
+
+        [SerializeField] private GameObject _selectionParent;
+        [SerializeField] private SpriteRenderer _selectionInnerSpriteRenderer;
+        [SerializeField] private SpriteRenderer _selectionBaseSpriteRenderer;
+        [SerializeField] private SpriteRenderer _selectionDropshadowSpriteRenderer;
+        [SerializeField] private SpriteRenderer _selectionOutlineSpriteRenderer;
 
         [SerializeField] private TMP_Text _letterText;
         [SerializeField] private TMP_Text _claimCountText;
-        [SerializeField] private TMP_Text _letterCountText;
-        [SerializeField] private TMP_Text _wordCountText;
 
         [SerializeField] private SpriteRenderer _miniMapFocusedTile;
         [SerializeField] private SpriteRenderer _miniMapUnfocusedTile;
-        
-        [SerializeField] private Sprite _tanTileSprite;
-        [SerializeField] private Sprite _yellowTileSprite;
-        [SerializeField] private Sprite _blueTileSprite;
-        [SerializeField] private Sprite _redTileSprite;
 
         // Correspond to enum values (CW from N): N = 0, NE = 1...
         [SerializeField] private GameObject[] _selectionLines;
-        [SerializeField] private GameObject _selectionCircle;
         
         private MapLetter _mapLetter;
         public MapLetter MapLetter
@@ -89,52 +90,62 @@ namespace WarOfWords
             
             if (_tileOwnership == null)
             {
-                _spriteRenderer.sprite = _tanTileSprite;
-                return;
-            }
-
-            if (_tileOwnership.IsCurrentPlayer)
-            {
-                _spriteRenderer.sprite = _yellowTileSprite;
-
-                _claimCountText.transform.parent.gameObject.SetActive(_tileOwnership.ClaimCount > 1);
-                _claimCountText.text = $"{_tileOwnership.ClaimCount:n0}";
+                SetColor(TileColor.Standard);
                 return;
             }
             
-            switch (_tileOwnership.Party)
+            if (_tileOwnership.IsCurrentPlayer)
             {
-                case Party.None:
-                    _spriteRenderer.sprite = _tanTileSprite;
-                    break;
-                case Party.Democrat:
-                    _spriteRenderer.sprite = _blueTileSprite;
-                    break;
-                case Party.Republican:
-                    _spriteRenderer.sprite = _redTileSprite;
-                    break;
-                default:
-                    throw new ArgumentOutOfRangeException(nameof(Party), _tileOwnership.Party, null);
+                SetColor(TileColor.Highlighted);
+                _claimCountText.transform.parent.gameObject.SetActive(_tileOwnership.ClaimCount > 1);
+                _claimCountText.text = $"{_tileOwnership.ClaimCount:n0}";
             }
+        }
+
+        private void SetColor(TileColor tileColor)
+        {
+            List<Color> tileColors = TileColorUtils.GetTileColors(tileColor);
+            _baseSpriteRenderer.color = tileColors[0];
+            _softShadowSpriteRenderer.color = tileColors[1];
+            _dropShadowSpriteRenderer.color = tileColors[2];
+        }
+
+        private void SetSelectionType(TileSelectionType tileSelectionType)
+        {
+            _selectionParent.gameObject.SetActive(tileSelectionType != TileSelectionType.None);
+            if (tileSelectionType == TileSelectionType.None) return;
+
+            List<Color> selectionColors = TileColorUtils.GetSelectionTileColors(tileSelectionType);
+            _selectionInnerSpriteRenderer.color = selectionColors[0];
+            _selectionBaseSpriteRenderer.color = selectionColors[1];
+            _selectionDropshadowSpriteRenderer.color = selectionColors[2];
+            _selectionOutlineSpriteRenderer.color = selectionColors[3];
         }
 
         private void UpdateSelection()
         {
             // Unhighlight all
-            _selectionCircle.SetActive(false);
             foreach (GameObject highlightLine in _selectionLines)
             {
                 highlightLine.SetActive(false);
             }
 
-            if (!_isSelected) return;
-
-            _selectionCircle.SetActive(true);
-            if (_incomingHighlightDirection != GridDirection.None)
+            if (!_isSelected)
             {
-                _selectionLines[(int)_incomingHighlightDirection].SetActive(true);
+                SetSelectionType(TileSelectionType.None);
+                return;
             }
 
+            TileSelectionType tileSelectionType = TileSelectionType.WordMiddle;
+            if (_incomingHighlightDirection == GridDirection.None)
+            {
+                tileSelectionType = TileSelectionType.PerimeterEdge;
+            } else if (_outgoingHighlightDirection == GridDirection.None)
+            {
+                tileSelectionType = TileSelectionType.WordEdge;
+            }
+            SetSelectionType(tileSelectionType);
+            
             if (_outgoingHighlightDirection != GridDirection.None)
             {
                 _selectionLines[(int)_outgoingHighlightDirection].SetActive(true);
