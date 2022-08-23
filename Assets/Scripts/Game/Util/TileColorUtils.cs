@@ -22,26 +22,22 @@ namespace WarOfWords
         }
 
         // 0 = Inner, 1 = Base, 2 = Drop Shadow, 3 = Outline
-        public static List<Color> GetSelectionTileColors(TileSelectionType tileSelectionType)
+        public static List<Color> GetSelectionTileColors(TileSelectionType tileSelectionType, bool isVerified)
         {
+            
             switch (tileSelectionType)
             {
                 case TileSelectionType.PerimeterEdge:
-                    // return GetColors("#ffa503", "#e78000", "#e46704", "#666666");           // darker orange
-                    // return GetColors("#E6F4C6", "#CEED97", "#B0CE6E", "#7E9350");
-                    return GetColors("#e3ffd4", "#CEED97", "#B0CE6E", "#7E9350");
+                    // Green or White
+                    return isVerified ? GetColors("#E3FFD4", "#CEED97", "#B0CE6E", "#7E9350") :  
+                                        GetColors("#FFFFFF", "#F2F2F2", "#CCCCCC", "#999999");
                 case TileSelectionType.WordEdge:
-                    
-                    // return GetColors("#a9fd1e", "#8ee610", "#7dd902", "#666666");           // bright green
-                
-                    // return GetColors("#FFE5B8", "#FFD98D", "#E8B86B", "#A88356");
-                    return GetColors("#fff6d9", "#ffdf8c", "#ffbf66", "#ff9d62");   // coin orange
-                    // return GetColors("#fff6a9", "#ffdf8c", "#ff9d62", "#e8815c");   // coin orange
+                    // Always orange (no unverified word edge)
+                    return GetColors("#FFF6D9", "#FFDF8C", "#FFBF66", "#FF9D62");
                 case TileSelectionType.WordMiddle:
-                    // return GetColors("#f7f94a", "#fad029", "#f9ba05", "#666666");           // yellow/orange
-                    // return GetColors("#F2F2F2", "#FFFFFF", "#CCCCCC", "#988C34");   // White
-                    // return GetColors("#FFFBAE", "#FFFF4D", "#E0D548", "#AD9D04");   // Bright Yellow
-                    return GetColors("#fffcd9", "#FFFF4D", "#E0D548", "#AD9D04");   // Bright Yellow
+                    // Yellow or white
+                    return isVerified ? GetColors("#FFFCD9", "#FFFF4D", "#E0D548", "#AD9D04") :
+                                        GetColors("#FFFFFF", "#F2F2F2", "#CCCCCC", "#999999");
                 default:
                     throw new ArgumentOutOfRangeException(nameof(tileSelectionType), tileSelectionType, null);
             }

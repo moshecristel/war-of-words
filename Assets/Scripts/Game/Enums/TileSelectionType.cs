@@ -9,3 +9,4 @@ namespace WarOfWords
         WordMiddle
     }
 }
+

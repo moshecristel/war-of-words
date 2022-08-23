@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
@@ -26,81 +25,56 @@ namespace WarOfWords
         // Correspond to enum values (CW from N): N = 0, NE = 1...
         [SerializeField] private GameObject[] _selectionLines;
         
-        private MapLetter _mapLetter;
-        public MapLetter MapLetter
-        {
-            get => _mapLetter;
-            set {
-                _mapLetter = value;
-                UpdateMainTile();
-            }
-        }
+        public MapLetter MapLetter { get; set; }
+        public TileOwnership TileOwnership { get; set; }
         
-        private TileOwnership _tileOwnership;
-        public TileOwnership TileOwnership
-        {
-            get => _tileOwnership;
-            set {
-                _tileOwnership = value;
-                UpdateMainTile();
-            }
-        }
-
+        
         private bool _isSelected;
-        public bool IsSelected => _isSelected;
-        
-        private GridDirection _incomingHighlightDirection;
-        public GridDirection IncomingHighlightDirection => _incomingHighlightDirection;
-        
-        private GridDirection _outgoingHighlightDirection;
-        public GridDirection OutgoingHighlightDirection => _outgoingHighlightDirection;
-
-        private void LateUpdate()
+        public bool IsSelected
         {
-            // Check "focus" of minimap tile sprite based on whether it is in narrow camera bounds
-            SetMinimapState(CameraManager.Instance.IsWithinNarrowCameraBounds(_miniMapFocusedTile.bounds));
-        }
-
-        public void Select(GridDirection incomingDirection = GridDirection.None)
-        {
-            _isSelected = true;
-            _incomingHighlightDirection = incomingDirection;
-            _outgoingHighlightDirection = GridDirection.None;
-            UpdateSelection();
-        }
-
-        public void SelectOutgoing(GridDirection outgoingDirection)
-        {
-            _isSelected = true;
-            _outgoingHighlightDirection = outgoingDirection;
-            UpdateSelection();
-        }
-
-        public void Deselect()
-        {
-            _isSelected = false;
-            _incomingHighlightDirection = GridDirection.None;
-            UpdateSelection();
-        }
-
-        public void UpdateMainTile()
-        {
-            if(MapLetter != null)
-                _letterText.text = MapLetter.Character;
-            
-            if (_tileOwnership == null)
+            get => _isSelected;
+            set
             {
-                SetColor(TileColor.Standard);
-                return;
-            }
-            
-            if (_tileOwnership.IsCurrentPlayer)
-            {
-                SetColor(TileColor.Highlighted);
-                _claimCountText.transform.parent.gameObject.SetActive(_tileOwnership.ClaimCount > 1);
-                _claimCountText.text = $"{_tileOwnership.ClaimCount:n0}";
-            }
+                _isSelected = value;
+                if (!_isSelected) IsVerifiedSelection = false;
+            } 
         }
+        public bool IsVerifiedSelection { get; set; }
+        public TileSelectionType SelectionType { get; set; } = TileSelectionType.None;
+
+        public GridDirection IncomingConnection { get; set; } = GridDirection.None;
+        public GridDirection OutgoingConnection { get; set; } = GridDirection.None;
+
+        #region Lifecycle
+
+            private void Awake()
+            {
+                UpdateVisuals();
+            }
+
+            private void LateUpdate()
+            {
+                // Check "focus" of minimap tile sprite based on whether it is in narrow camera bounds
+                UpdateMinimapVisuals(CameraManager.Instance.IsWithinNarrowCameraBounds(_miniMapFocusedTile.bounds));
+            }
+
+        #endregion
+
+        #region Selection        
+            public void Select()
+            {
+                _isSelected = true;
+            }
+
+            public void Deselect()
+            {
+                Debug.Log("Deselecting: " + _letterText.text);
+                _isSelected = false;
+                IncomingConnection = OutgoingConnection = GridDirection.None;
+                IsVerifiedSelection = false;
+                SelectionType = TileSelectionType.None;
+            }
+        #endregion
 
         private void SetColor(TileColor tileColor)
         {
@@ -110,52 +84,78 @@ namespace WarOfWords
             _dropShadowSpriteRenderer.color = tileColors[2];
         }
 
-        private void SetSelectionType(TileSelectionType tileSelectionType)
+        private void UpdateSelectionTypeVisuals()
         {
-            _selectionParent.gameObject.SetActive(tileSelectionType != TileSelectionType.None);
-            if (tileSelectionType == TileSelectionType.None) return;
+            _selectionParent.gameObject.SetActive(SelectionType != TileSelectionType.None);
+            if (SelectionType == TileSelectionType.None) return;
 
-            List<Color> selectionColors = TileColorUtils.GetSelectionTileColors(tileSelectionType);
+            List<Color> selectionColors = TileColorUtils.GetSelectionTileColors(SelectionType, IsVerifiedSelection);
             _selectionInnerSpriteRenderer.color = selectionColors[0];
             _selectionBaseSpriteRenderer.color = selectionColors[1];
             _selectionDropshadowSpriteRenderer.color = selectionColors[2];
             _selectionOutlineSpriteRenderer.color = selectionColors[3];
         }
 
-        private void UpdateSelection()
-        {
-            // Unhighlight all
-            foreach (GameObject highlightLine in _selectionLines)
+        #region Update Visuals
+        
+            /// <summary>
+            /// Driven by the LateUpdate cycle of the MapBoard and its perimeter
+            /// </summary>
+            public void UpdateVisuals()
             {
-                highlightLine.SetActive(false);
+                UpdateMainVisuals();
+                UpdateSelectionVisuals();
             }
+        
+            private void UpdateSelectionVisuals()
+            {
+                // Unhighlight all
+                foreach (GameObject highlightLine in _selectionLines)
+                {
+                    highlightLine.SetActive(false);
+                }
 
-            if (!_isSelected)
-            {
-                SetSelectionType(TileSelectionType.None);
-                return;
-            }
+                UpdateSelectionTypeVisuals();
+                if (!_isSelected)
+                {
+                    return;
+                }
 
-            TileSelectionType tileSelectionType = TileSelectionType.WordMiddle;
-            if (_incomingHighlightDirection == GridDirection.None)
-            {
-                tileSelectionType = TileSelectionType.PerimeterEdge;
-            } else if (_outgoingHighlightDirection == GridDirection.None)
-            {
-                tileSelectionType = TileSelectionType.WordEdge;
+                // Each tile is responsible only for its outgoing connection
+                if (OutgoingConnection != GridDirection.None)
+                {
+                    _selectionLines[(int)OutgoingConnection].SetActive(true);
+                }
             }
-            SetSelectionType(tileSelectionType);
             
-            if (_outgoingHighlightDirection != GridDirection.None)
+            private void UpdateMainVisuals()
             {
-                _selectionLines[(int)_outgoingHighlightDirection].SetActive(true);
+                if(MapLetter != null)
+                    _letterText.text = MapLetter.Character;
+                
+                if (TileOwnership == null)
+                {
+                    SetColor(TileColor.Standard);
+                    return;
+                }
+                
+                if (TileOwnership.IsCurrentPlayer)
+                {
+                    SetColor(TileColor.Highlighted);
+                    _claimCountText.transform.parent.gameObject.SetActive(TileOwnership.ClaimCount > 1);
+                    _claimCountText.text = $"{TileOwnership.ClaimCount:n0}";
+                }
             }
-        }
+            
+            /// <summary>
+            /// Driven by LateUpdate cycle (affected by camera position due to masking shortcomings)
+            /// </summary>
+            private void UpdateMinimapVisuals(bool isFocused)
+            {
+                _miniMapFocusedTile.gameObject.SetActive(isFocused);
+                _miniMapUnfocusedTile.gameObject.SetActive(!isFocused);
+            }
 
-        private void SetMinimapState(bool isFocused)
-        {
-            _miniMapFocusedTile.gameObject.SetActive(isFocused);
-            _miniMapUnfocusedTile.gameObject.SetActive(!isFocused);
-        }
+        #endregion
     }
 }

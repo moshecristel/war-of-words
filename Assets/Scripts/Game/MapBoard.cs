@@ -29,14 +29,11 @@ namespace WarOfWords
         
         private bool _isSelecting;
         
+        public MapBoardSelectionPerimeter Perimeter { get; set; }
         public MapBoardSelection Selection { get; set; }
         public Party CurrentPlayerParty { get; set; }
 
         #region Lifecycle
-
-        private void Awake()
-        {
-        }
 
         #endregion
 
@@ -69,6 +66,7 @@ namespace WarOfWords
 
                         Board[col, row].MapLetter = Map.Letters[col, row];
                         Board[col, row].gameObject.transform.parent = transform;
+                        Board[col, row].UpdateVisuals();
                     }
                 }
             }
@@ -88,13 +86,13 @@ namespace WarOfWords
 
             public void OnTouchStarted(Vector2 screenPosition, Vector2 worldPosition)
             {
-                AddToSelection(worldPosition);
+                AttemptAddToSelection(worldPosition);
             }
         
             public void OnTouchMoved(Vector2 screenPosition, Vector2 worldPosition)
             {
              
-                AddToSelection(worldPosition);
+                AttemptAddToSelection(worldPosition);
             }
         
             public void OnTouchEnded(Vector2 screenPosition, Vector2 worldPosition)
@@ -103,27 +101,46 @@ namespace WarOfWords
                 {
                     string sequence = string.Join("", Selection.SelectedLetterTiles.Select(letterTile => letterTile.MapLetter.Character));
                     bool isWord = Map.Dictionary.IsWord(sequence);
-                    
-                    WordAttempted?.Invoke(Selection.SelectedLetterTiles, sequence, isWord);
 
-                    if (isWord)
+                    if (isWord && Perimeter.CanBeExtendedBy(Selection))
                     {
-                        foreach (MapLetterTile selectedLetterTile in Selection.SelectedLetterTiles)
+                        WordAttempted?.Invoke(Selection.SelectedLetterTiles, sequence, isWord);
+                        
+                        Debug.Log($"Adding {sequence} to perimeter");
+                        Selection.IsVerified = true;
+                        Perimeter.AddCompletedSelection(Selection);
+
+                        // Reset selection
+                        Selection = null;
+
+                        // TODO Final tile highlighting
+                        // foreach (MapLetterTile selectedLetterTile in Selection.SelectedLetterTiles)
+                        // {
+                        //     if (selectedLetterTile.TileOwnership == null)
+                        //     {
+                        //         selectedLetterTile.TileOwnership = new TileOwnership(CurrentPlayerParty);
+                        //     } else if (selectedLetterTile.TileOwnership.IsCurrentPlayer)
+                        //     {
+                        //         selectedLetterTile.TileOwnership.ClaimCount += 1;
+                        //     }
+                        //     
+                        //     selectedLetterTile.UpdateMainTile();
+                        // }
+                    }
+                    else
+                    {
+                        if(isWord)
+                            Debug.Log($"{sequence} can't extend perimeter");
+                        else
                         {
-                            if (selectedLetterTile.TileOwnership == null)
-                            {
-                                selectedLetterTile.TileOwnership = new TileOwnership(CurrentPlayerParty);
-                            } else if (selectedLetterTile.TileOwnership.IsCurrentPlayer)
-                            {
-                                selectedLetterTile.TileOwnership.ClaimCount += 1;
-                            }
-                            
-                            selectedLetterTile.UpdateMainTile();
+                            Debug.Log($"{sequence} is not a word.");
                         }
+                        ClearSelection();
                     }
                 }
                 
-                ClearSelection();
+                Selection?.UpdateVisuals();
+                Perimeter?.UpdateVisuals();
             }
 
         #endregion
@@ -131,34 +148,63 @@ namespace WarOfWords
 
         #region Methods
 
-            private void AddToSelection(Vector2 worldPosition)
+            private void AttemptAddToSelection(Vector2 worldPosition)
             {
                 Collider2D circle = Physics2D.OverlapCircle(worldPosition, 0.1f);
                 if (circle != null)
                 {
+                    Perimeter ??= new MapBoardSelectionPerimeter();
                     MapLetterTile letterTile = circle.gameObject.GetComponentInParent<MapLetterTile>();
-                    if (!letterTile.IsSelected)
+                    
+                    // Don't allow selection of existing INTERMEDIATE perimeter tiles
+                    if (Perimeter.IsAnIntermediateLetterTile(letterTile))
+                    {
+                        Debug.Log("Is an intermediate: " + letterTile.MapLetter.Character);
+                        return;
+                    }
+
+                    bool isAlreadyAtTerminalTile = Selection != null && Selection.SelectedLetterTiles.Count > 1 &&
+                                                   Perimeter.SelectionCount > 0 &&
+                                                   Perimeter.TerminalLetterTiles.Contains(
+                                                       Selection.SelectedLetterTiles[^1]);
+
+                    if (!isAlreadyAtTerminalTile)
                     {
                         if (Selection == null)
+                        {
                             Selection = new MapBoardSelection(letterTile);
+                        }
                         else
+                        {
                             Selection.AddLetterTile(letterTile);
+                        }
                     }
+                    else
+                    {
+                        Debug.Log("Selection is already at terminal tile");
+                    }
+                    
+                    Selection?.UpdateVisuals();
                 }
             }
 
             public void ClearSelection()
             {
+                
                 if (Selection != null)
                 {
-                    Selection.Clear();
+                    foreach (MapLetterTile selectedLetterTile in Selection.SelectedLetterTiles)
+                    {
+                        
+                        if (!Perimeter.Contains(selectedLetterTile))
+                        {
+                            selectedLetterTile.Deselect();
+                            selectedLetterTile.UpdateVisuals();
+                        }
+                    }
                     Selection = null;
+                    
                 }
-            }
-
-            public void Highlight(List<MapLetter> mapLetters, Party tileCategory)
-            {
-                
             }
         #endregion
     }
