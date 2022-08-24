@@ -7,9 +7,10 @@ using WarOfWords;
 
 public class InputManager : Singleton<InputManager>
 {
-    public static event Action<Vector2, Vector2> TouchStarted;
-    public static event Action<Vector2, Vector2> TouchMoved;
-    public static event Action<Vector2, Vector2> TouchEnded;
+    // Only send world position
+    public static event Action<Vector2> TouchStarted;
+    public static event Action<Vector2> TouchMoved;
+    public static event Action<Vector2> TouchEnded;
 
     [SerializeField]
     private Camera _narrowCamera;
@@ -61,14 +62,14 @@ public class InputManager : Singleton<InputManager>
             _fingerDown = true;
                 
             Vector2 touchScreenPosition = _touchControls.Touch.TouchPosition.ReadValue<Vector2>();
-            TouchStarted?.Invoke(touchScreenPosition, ScreenToWorldPosition(touchScreenPosition));
+            TouchStarted?.Invoke(ScreenToWorldPosition(touchScreenPosition));
         }
         
         private void OnTouchMoveReceived(InputAction.CallbackContext context)
         {
             if (!_fingerDown) return;
             Vector2 touchScreenPosition = context.ReadValue<Vector2>();
-            TouchMoved?.Invoke(touchScreenPosition, ScreenToWorldPosition(touchScreenPosition));
+            TouchMoved?.Invoke(ScreenToWorldPosition(touchScreenPosition));
         }
         
         private void OnTouchCanceledReceived(InputAction.CallbackContext context)
@@ -76,7 +77,7 @@ public class InputManager : Singleton<InputManager>
             _fingerDown = false;
             
             Vector2 touchScreenPosition = _touchControls.Touch.TouchPosition.ReadValue<Vector2>();
-            TouchEnded?.Invoke(touchScreenPosition, ScreenToWorldPosition(touchScreenPosition));
+            TouchEnded?.Invoke(ScreenToWorldPosition(touchScreenPosition));
         }
     #endregion
 

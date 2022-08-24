@@ -4,9 +4,13 @@ namespace WarOfWords
     public enum TileSelectionType
     {
         None,
-        PerimeterEdge,
-        WordEdge,
-        WordMiddle
+        
+        VerifiedPerimeterEdge,
+        VerifiedWordEdge,
+        VerifiedWordMiddle,
+        
+        UnverifiedEdge,
+        UnverifiedMiddle
     }
 }
 

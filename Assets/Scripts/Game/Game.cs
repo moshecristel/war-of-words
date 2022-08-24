@@ -30,7 +30,6 @@ namespace WarOfWords
                 LoadMap(State.Washington);
                 
                 _mapBoard.Map.Print();
-                _mapBoard.CurrentPlayerParty = Party.Democrat;
                 SetGameView(GameView.Map, _mapBoard.Bounds.center);
 
                 _tilePanel.MapBoard = _mapBoard;
@@ -67,36 +66,36 @@ namespace WarOfWords
 
         #region Event Handlers
 
-            private void InputManager_OnTouchMoved(Vector2 screenPosition, Vector2 worldPosition)
+            private void InputManager_OnTouchMoved(Vector2 worldPosition)
             {
                 // If selection hasn't been interrupted by game view change
                 if (_isSelecting && _gameView == GameView.Tile)
                 {
-                    _mapBoard.OnTouchMoved(screenPosition, worldPosition);
+                    _mapBoard.OnTouchMoved(worldPosition);
                 }
             }
 
-            private void InputManager_OnTouchStarted(Vector2 screenPosition, Vector2 worldPosition)
+            private void InputManager_OnTouchStarted(Vector2 worldPosition)
             {
                 _isSelecting = true;
-                if (_gameView == GameView.Map && _mapBoard.IsTileNear(worldPosition))
+                if (_gameView == GameView.Map && MapBoard.IsTileNear(worldPosition))
                 {
                     SetGameView(GameView.Tile, worldPosition);
                 } else if (_gameView == GameView.Tile)
                 {
-                    _mapBoard.OnTouchStarted(screenPosition, worldPosition);
+                    _mapBoard.OnTouchStarted(worldPosition);
                 }
             }
             
-            private void InputManager_OnTouchEnded(Vector2 screenPosition, Vector2 worldPosition)
+            private void InputManager_OnTouchEnded(Vector2 worldPosition)
             {
                 if (_isSelecting && _gameView == GameView.Tile)
                 {
-                    _mapBoard.OnTouchEnded(screenPosition, worldPosition);
+                    _mapBoard.OnTouchEnded(worldPosition);
                 }
             }
             
-            private void MapBoard_OnWordAttempted(List<MapLetterTile> selectedLetterTiles, string sequence, bool isSucceeded)
+            private void MapBoard_OnWordAttempted(string sequence, bool isSucceeded)
             {
                 _tilePanel.SetWordDisplay(isSucceeded ? sequence : null);
             }
@@ -115,7 +114,7 @@ namespace WarOfWords
             switch (_gameView)
             {
                 case GameView.Map:
-                    _mapBoard.ClearSelection();
+                    // TODO clear selection was here
                     _mapBoard.gameObject.SetActive(true);
                     
                     _mapPanel.gameObject.SetActive(true);

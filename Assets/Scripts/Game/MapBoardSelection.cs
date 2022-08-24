@@ -1,16 +1,21 @@
 using System.Collections.Generic;
+using System.Linq;
 
 namespace WarOfWords
 {
     /// <summary>
-    /// A string of ordered letter tiles that constitute an attempted word.  Initially it is "unverified" (we don't know
-    /// if it represents a word or not) and can be marked as "verified" once it is complete.
+    /// A sequence of ordered MapLetterTiles that have confirmed to be a valid selection but may or may not constitute
+    /// a valid word.  This selection will be in one of two states:
+    ///
+    /// 1. Verified - (IsVerified == true) The selection is "locked in" as a verified word and a valid portion of some perimeter
+    /// 2. Unverified - (IsVerified == false) The selection is still in process and, though it is not yet verified as a
+    ///                 word, it hasn't violated any selection constraints such as including a tile that has already been selected
+    ///                 as part of the active perimeter
     /// </summary>
     public class MapBoardSelection
     {
-        public List<MapLetterTile> SelectedLetterTiles { get; set; }
-
-        public int Length => SelectedLetterTiles.Count;
+        public List<MapLetterTile> LetterTiles { get; } = new();
+        public int LetterTileCount => LetterTiles?.Count ?? 0;
 
         public bool IsVerified
         {
@@ -18,84 +23,103 @@ namespace WarOfWords
             set
             {
                 _isVerified = value;
-                MarkVerifiedVisuals();
-            }
+                MarkTilesVerified();
+            } 
         }
 
         private bool _isVerified;
 
-        public MapLetterTile TerminalTile
-        {
-            get
-            {
-                if (SelectedLetterTiles == null || SelectedLetterTiles.Count == 0) return null;
-                if (SelectedLetterTiles[0].SelectionType == TileSelectionType.PerimeterEdge)
-                    return SelectedLetterTiles[0];
-                if (SelectedLetterTiles[^1].SelectionType == TileSelectionType.PerimeterEdge)
-                    return SelectedLetterTiles[^1];
-
-                return null;
-            }
-        }
-
         public MapBoardSelection(MapLetterTile initialTile)
         {
-            initialTile.Select();
-            SelectedLetterTiles = new List<MapLetterTile> { initialTile };
+            AddTile(initialTile);
         }
 
-        // If you're adding to a selection we can assume that its first and last tile are of selection type PerimeterEdge
-        // Since if it is the first word it is an unverified PerimeterEdge and if it is an extension it is the last verified PerimeterEdge
-        public void AddLetterTile(MapLetterTile letterTileToAdd)
+        public bool Contains(MapLetterTile targetLetterTile)
         {
-            if (SelectedLetterTiles.Contains(letterTileToAdd)) return;
-            
-            MapLetterTile previousLetterTile = SelectedLetterTiles[^1];
-            
-            GridDirection selectionDirection =
-                CoordUtils.GetRelativeAdjacentGridDirection(previousLetterTile.MapLetter.Coords,
-                    letterTileToAdd.MapLetter.Coords);
-
-            if (selectionDirection == GridDirection.None)
-                return;
-
-            GridDirection oppositeOfSelectionDirection = CoordUtils.GetOpposingDirection(selectionDirection);
-                
-            previousLetterTile.SelectionType = SelectedLetterTiles.Count == 1 ? TileSelectionType.PerimeterEdge : TileSelectionType.WordMiddle;
-            previousLetterTile.Select();
-            previousLetterTile.OutgoingConnection = selectionDirection;
-            
-            letterTileToAdd.SelectionType = TileSelectionType.PerimeterEdge;
-            letterTileToAdd.Select();
-            letterTileToAdd.IncomingConnection = oppositeOfSelectionDirection;
-            
-            SelectedLetterTiles.Add(letterTileToAdd);
+            return LetterTiles.Contains(targetLetterTile);
         }
 
-        public bool Contains(MapLetterTile mapLetterTile)
+        /// <summary>
+        /// True if the given tile is:
+        /// 1. NOT already present in the selection
+        /// 2. Is adjacent to the last added letter in the tile
+        /// </summary>
+        public bool CanBeExtendedBy(MapLetterTile letterTile)
         {
-            foreach (MapLetterTile selectedLetterTile in SelectedLetterTiles)
+            if (LetterTileCount == 0) return true;
+            if (LetterTiles.Contains(letterTile)) return false;
+
+            GridDirection relativeAdjacentGridDirection = CoordUtils.GetRelativeAdjacentGridDirection(LetterTiles[^1].MapLetter.Coords, letterTile.MapLetter.Coords);
+            return relativeAdjacentGridDirection != GridDirection.None;
+        }
+
+        public string ToCharacterSequence()
+        {
+            return string.Join("", LetterTiles.Select(letterTile => letterTile.MapLetter.Character).ToList());
+        }
+
+        /// <summary>
+        /// Add a tile to the end of this selection.  Assumes *** UNVERIFIED ***
+        /// NOTE: Connections are managed by the MapBoardSelectionPerimeter
+        /// </summary>
+        public void AddTile(MapLetterTile letterTile)
+        {
+            if (LetterTileCount == 0)
             {
-                if (selectedLetterTile == mapLetterTile) return true;
+                // Don't need to check for adjacency since this is the first one
+                LetterTiles.Add(letterTile);
             }
-
-            return false;
+            else
+            {
+                // Don't add if the tile isn't adjacent to the previous tile
+                MapLetterTile previousLetterTile = LetterTiles[^1];
+                if (!CoordUtils.AreAdjacent(previousLetterTile.MapLetter.Coords, letterTile.MapLetter.Coords))
+                    return;
+                
+                LetterTiles.Add(letterTile);   
+            }
+            
+            // The tile might be a TERMINAL tile in a perimeter that is already selected
+            // If so, just leave it as is
+            if (letterTile.IsSelected) return;
+            
+            letterTile.Select(TileSelectionType.UnverifiedEdge);
+            if (LetterTileCount >= 3)
+            {
+                // Most recently added tile before this is no longer the edge but the middle
+                LetterTiles[^2].SelectionType = TileSelectionType.UnverifiedMiddle;
+            }
         }
 
-        private void MarkVerifiedVisuals()
+        public List<MapLetterTile> GetTiles(bool isReversed = false)
         {
-            foreach (MapLetterTile selectedLetterTile in SelectedLetterTiles)
+            if (!isReversed) return LetterTiles;
+            List<MapLetterTile> clonedLetterTiles = new List<MapLetterTile>(LetterTiles);
+            clonedLetterTiles.Reverse();
+            return clonedLetterTiles;
+        }
+        
+        private void MarkTilesVerified()
+        {
+            foreach (MapLetterTile letterTile in LetterTiles)
             {
-                selectedLetterTile.IsVerifiedSelection = true;
-                selectedLetterTile.UpdateVisuals();
+                letterTile.IsVerifiedSelection = true;
+            }
+        }
+
+        public void Deselect()
+        {
+            foreach (MapLetterTile letterTile in LetterTiles)
+            {
+                if(!letterTile.IsVerifiedSelection) letterTile.Deselect();
             }
         }
 
         public void UpdateVisuals()
         {
-            foreach (MapLetterTile selectedLetterTile in SelectedLetterTiles)
+            foreach (MapLetterTile letterTile in LetterTiles)
             {
-                selectedLetterTile.UpdateVisuals();
+                letterTile.UpdateVisuals();
             }
         }
     }

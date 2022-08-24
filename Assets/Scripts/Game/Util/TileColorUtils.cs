@@ -27,17 +27,17 @@ namespace WarOfWords
             
             switch (tileSelectionType)
             {
-                case TileSelectionType.PerimeterEdge:
-                    // Green or White
-                    return isVerified ? GetColors("#E3FFD4", "#CEED97", "#B0CE6E", "#7E9350") :  
-                                        GetColors("#FFFFFF", "#F2F2F2", "#CCCCCC", "#999999");
-                case TileSelectionType.WordEdge:
-                    // Always orange (no unverified word edge)
-                    return GetColors("#FFF6D9", "#FFDF8C", "#FFBF66", "#FF9D62");
-                case TileSelectionType.WordMiddle:
-                    // Yellow or white
-                    return isVerified ? GetColors("#FFFCD9", "#FFFF4D", "#E0D548", "#AD9D04") :
-                                        GetColors("#FFFFFF", "#F2F2F2", "#CCCCCC", "#999999");
+                case TileSelectionType.VerifiedPerimeterEdge:
+                    return GetColors("#E3FFD4", "#CEED97", "#B0CE6E", "#7E9350");   // Green
+                case TileSelectionType.VerifiedWordEdge:
+                    return GetColors("#FFF6D9", "#FFDF8C", "#FFBF66", "#FF9D62");   // Orange
+                case TileSelectionType.VerifiedWordMiddle:
+                    return GetColors("#FFFCD9", "#FFFF4D", "#E0D548", "#AD9D04");   // Yellow
+                case TileSelectionType.UnverifiedEdge:
+                    return GetColors("#FFFFFF", "#F2F2F2", "#CCCCCC", "#999999");   // White
+                case TileSelectionType.UnverifiedMiddle:
+                    return GetColors("#FFFFFF", "#F2F2F2", "#CCCCCC", "#999999");   // White
+                case TileSelectionType.None:
                 default:
                     throw new ArgumentOutOfRangeException(nameof(tileSelectionType), tileSelectionType, null);
             }

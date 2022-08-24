@@ -42,8 +42,7 @@ namespace WarOfWords
         public bool IsVerifiedSelection { get; set; }
         public TileSelectionType SelectionType { get; set; } = TileSelectionType.None;
 
-        public GridDirection IncomingConnection { get; set; } = GridDirection.None;
-        public GridDirection OutgoingConnection { get; set; } = GridDirection.None;
+        public List<GridDirection> OutgoingConnections { get; set; } = new();
 
         #region Lifecycle
 
@@ -61,18 +60,18 @@ namespace WarOfWords
         #endregion
 
         #region Selection        
-            public void Select()
+            public void Select(TileSelectionType selectionType)
             {
                 _isSelected = true;
+                SelectionType = selectionType;
             }
 
             public void Deselect()
             {
-                Debug.Log("Deselecting: " + _letterText.text);
                 _isSelected = false;
-                IncomingConnection = OutgoingConnection = GridDirection.None;
                 IsVerifiedSelection = false;
                 SelectionType = TileSelectionType.None;
+                OutgoingConnections = new List<GridDirection>();
             }
         #endregion
 
@@ -122,9 +121,14 @@ namespace WarOfWords
                 }
 
                 // Each tile is responsible only for its outgoing connection
-                if (OutgoingConnection != GridDirection.None)
+                foreach (GameObject line in _selectionLines)
                 {
-                    _selectionLines[(int)OutgoingConnection].SetActive(true);
+                    line.SetActive(false);
+                }
+
+                foreach (GridDirection outgoingDirection in OutgoingConnections)
+                {
+                    _selectionLines[(int)outgoingDirection].SetActive(true);
                 }
             }
             
