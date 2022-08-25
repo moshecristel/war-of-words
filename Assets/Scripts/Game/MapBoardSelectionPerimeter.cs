@@ -146,8 +146,8 @@ namespace WarOfWords
                 Debug.Log("MERGED!");
                 // Mark verified
                 CurrentSelection.IsVerified = true;
-                UpdateSelectionTypes();
-                UpdateTerminalTiles();
+                IsComplete = UpdateTerminalTiles();
+                UpdateSelectionTypes(IsComplete);
 
                 CurrentSelection = null;
                 
@@ -177,31 +177,16 @@ namespace WarOfWords
                 current.OutgoingConnections = new List<GridDirection> { outgoingDirection };
             }
 
+            if (orderedVerifiedTiles.Count > 0)
+            {
+                if (orderedVerifiedTiles.Count > 1 && orderedVerifiedTiles[0] != orderedVerifiedTiles[^1])
+                {
+                    // Be sure to reset the very last tile to no connection in case the current selection was recently deselected
+                    orderedVerifiedTiles[^1].OutgoingConnections = new List<GridDirection>();
+                }
+            }
+
             List<MapLetterTile> currentTiles = CurrentSelection != null ? CurrentSelection.GetTiles() : new List<MapLetterTile>();
-            
-            //? T
-            // if (CurrentSelection != null && CurrentSelection.LetterTileCount > 0 && orderedVerifiedTiles.Count > 0)
-            // {    
-            //         
-            //     // If the CurrentSelection is connected to a terminal tile, make sure that the proper connections are made
-            //     if (TerminalVerifiedTiles.Contains(CurrentSelection.LetterTiles[0]) ||
-            //         TerminalVerifiedTiles.Contains(CurrentSelection.LetterTiles[^1]))
-            //     {
-            //         // NOTE: Perimeter is connected in a START --outgoing--> X --outgoing--> END manner
-            //         // So if the current selection is at the beginning, no perimeter connections need modifying
-            //         // But if the current selection is at the end, the TerminalVerifiedEndTile needs an outgoing connection
-            //         
-            //         // Connected to perimeter
-            //         bool currentIsReversed = TerminalVerifiedEndTile == CurrentSelection.LetterTiles[^1] || TerminalVerifiedStartTile == CurrentSelection.LetterTiles[^1];
-            //         currentTiles = CurrentSelection.GetTiles(currentIsReversed);
-            //         
-            //         if(!currentTiles[^1].IsVerifiedSelection)
-            //         {
-            //             currentTiles[^1].OutgoingConnection = CoordUtils.GetRelativeAdjacentGridDirection(currentTiles[^1].MapLetter.Coords,
-            //                 TerminalVerifiedStartTile.MapLetter.Coords);
-            //         }
-            //     }    
-            // }
             
             for (int i = 0; i < currentTiles.Count - 1; i++)
             {
@@ -215,7 +200,7 @@ namespace WarOfWords
             }
         }
 
-        private List<MapLetterTile> GetOrderedVerifiedTiles()
+        public List<MapLetterTile> GetOrderedVerifiedTiles()
         {
             List<MapLetterTile> orderedTiles = new();
             for (int i = 0; i < VerifiedSelections.Count; i++)
@@ -226,12 +211,15 @@ namespace WarOfWords
             return orderedTiles;
         }
 
-        private void UpdateTerminalTiles()
+        /// <summary>
+        ///  Updates the terminal tiles and returns true if the perimeter is "complete"
+        /// </summary>
+        private bool UpdateTerminalTiles()
         {
             if (VerifiedSelections.Count == 0)
             {
                 TerminalVerifiedStartTile = TerminalVerifiedEndTile = null;
-                return;
+                return false;
             }
             
             MapBoardSelection firstSelection = VerifiedSelections[0];
@@ -240,11 +228,11 @@ namespace WarOfWords
             TerminalVerifiedStartTile = !_reversedFlags[0] ? firstSelection.LetterTiles[0] : firstSelection.LetterTiles[^1];
             TerminalVerifiedEndTile =
                 !_reversedFlags[^1] ? lastSelection.LetterTiles[^1] : lastSelection.LetterTiles[0];
-            
-            Debug.Log("Terminal Start: " + TerminalVerifiedStartTile.MapLetter.Character + ", Terminal End: " + TerminalVerifiedEndTile.MapLetter.Character);
+
+            return TerminalVerifiedStartTile == TerminalVerifiedEndTile;
         }
 
-        private void UpdateSelectionTypes()
+        private void UpdateSelectionTypes(bool noPerimeterEdge)
         {
             if (VerifiedSelections.Count == 0) return;
             if (VerifiedSelections.Count == 1)
@@ -277,14 +265,14 @@ namespace WarOfWords
                         // FIRST => WordEdge
                         // LAST => PerimeterEdge
                         selection.LetterTiles[0].SelectionType = TileSelectionType.VerifiedWordEdge;
-                        selection.LetterTiles[^1].SelectionType = TileSelectionType.VerifiedPerimeterEdge;
+                        selection.LetterTiles[^1].SelectionType = !noPerimeterEdge ? TileSelectionType.VerifiedPerimeterEdge : TileSelectionType.VerifiedWordEdge;
                         
                     }
                     else
                     {
                         // FIRST => PerimeterEdge
                         // LAST => WordEdge
-                        selection.LetterTiles[0].SelectionType = TileSelectionType.VerifiedPerimeterEdge;
+                        selection.LetterTiles[0].SelectionType = !noPerimeterEdge ? TileSelectionType.VerifiedPerimeterEdge : TileSelectionType.VerifiedWordEdge;
                         selection.LetterTiles[^1].SelectionType = TileSelectionType.VerifiedWordEdge;
                         
                     }
@@ -295,7 +283,7 @@ namespace WarOfWords
                     {
                         // FIRST => PerimeterEdge
                         // LAST => WordEdge
-                        selection.LetterTiles[0].SelectionType = TileSelectionType.VerifiedPerimeterEdge;
+                        selection.LetterTiles[0].SelectionType = !noPerimeterEdge ? TileSelectionType.VerifiedPerimeterEdge : TileSelectionType.VerifiedWordEdge;
                         selection.LetterTiles[^1].SelectionType = TileSelectionType.VerifiedWordEdge;
                         
                     }
@@ -304,7 +292,7 @@ namespace WarOfWords
                         // FIRST => WordEdge
                         // LAST => PerimeterEdge
                         selection.LetterTiles[0].SelectionType = TileSelectionType.VerifiedWordEdge;
-                        selection.LetterTiles[^1].SelectionType = TileSelectionType.VerifiedPerimeterEdge;
+                        selection.LetterTiles[^1].SelectionType = !noPerimeterEdge ? TileSelectionType.VerifiedPerimeterEdge : TileSelectionType.VerifiedWordEdge;
                         
                     }
                 }
@@ -336,6 +324,16 @@ namespace WarOfWords
             CurrentSelection = null;
             
             UpdateConnections();
+        }
+
+        public void DeselectAll()
+        {
+            DeselectCurrent();
+            List<MapLetterTile> orderedVerifiedTiles = GetOrderedVerifiedTiles();
+            foreach (MapLetterTile tile in orderedVerifiedTiles)
+            {
+                tile.Deselect();
+            }
         }
 
         public void UpdateVisuals()

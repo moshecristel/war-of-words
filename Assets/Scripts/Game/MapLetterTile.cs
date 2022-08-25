@@ -75,7 +75,7 @@ namespace WarOfWords
             }
         #endregion
 
-        private void SetColor(TileColor tileColor)
+        public void SetColor(TileColor tileColor)
         {
             List<Color> tileColors = TileColorUtils.GetTileColors(tileColor);
             _baseSpriteRenderer.color = tileColors[0];
@@ -137,18 +137,18 @@ namespace WarOfWords
                 if(MapLetter != null)
                     _letterText.text = MapLetter.Character;
                 
-                if (TileOwnership == null)
-                {
-                    SetColor(TileColor.Standard);
-                    return;
-                }
-                
-                if (TileOwnership.IsCurrentPlayer)
-                {
-                    SetColor(TileColor.Highlighted);
-                    _claimCountText.transform.parent.gameObject.SetActive(TileOwnership.ClaimCount > 1);
-                    _claimCountText.text = $"{TileOwnership.ClaimCount:n0}";
-                }
+                // if (TileOwnership == null)
+                // {
+                //     SetColor(TileColor.Standard);
+                //     return;
+                // }
+                //
+                // if (TileOwnership.IsCurrentPlayer)
+                // {
+                //     SetColor(TileColor.Highlighted);
+                //     _claimCountText.transform.parent.gameObject.SetActive(TileOwnership.ClaimCount > 1);
+                //     _claimCountText.text = $"{TileOwnership.ClaimCount:n0}";
+                // }
             }
             
             /// <summary>

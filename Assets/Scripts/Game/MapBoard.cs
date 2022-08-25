@@ -1,4 +1,7 @@
 using System;
+using System.Collections;
+using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 namespace WarOfWords
@@ -10,6 +13,7 @@ namespace WarOfWords
         public static event Action<string, bool> WordAttempted;
         
         [SerializeField] private MapLetterTile _mapLetterTilePrefab;
+        [SerializeField] private PolygonCollider2D _tileSelectionCollider;
         
         private Map _map;
         public Map Map
@@ -29,6 +33,16 @@ namespace WarOfWords
         public MapBoardSelectionPerimeter Perimeter { get; set; }
 
         #region Lifecycle
+
+        private void Awake()
+        {
+            TilePanel.ResetPerimeter += TilePanel_OnResetPerimeter;
+        }
+
+        private void OnDestroy()
+        {
+            TilePanel.ResetPerimeter -= TilePanel_OnResetPerimeter;
+        }
 
         #endregion
 
@@ -81,21 +95,21 @@ namespace WarOfWords
 
             public void OnTouchStarted(Vector2 worldPosition)
             {
-                CheckForLetterTile(worldPosition);
+                if (Perimeter is not { IsComplete: true }) CheckForLetterTile(worldPosition);
             }
         
             public void OnTouchMoved(Vector2 worldPosition)
             {
-             
-                CheckForLetterTile(worldPosition);
+                if (Perimeter is not { IsComplete: true }) CheckForLetterTile(worldPosition);
             }
         
             public void OnTouchEnded(Vector2 worldPosition)
             {
+                if (Perimeter != null && Perimeter.IsComplete) return;
                 if (Perimeter.CurrentSelection is not { LetterTileCount: > 0 }) return;
                 
                 string sequence = Perimeter.CurrentSelection.ToCharacterSequence();
-                bool isWord = Map.Dictionary.IsWord(sequence);
+                bool isWord = sequence.Length >= 3 && Map.Dictionary.IsWord(sequence);
                 WordAttempted?.Invoke(sequence, isWord);
 
                 bool deselect = !isWord;
@@ -108,15 +122,45 @@ namespace WarOfWords
                 if(deselect) 
                 {
                     // TODO Visual fail
-                    Debug.Log("Deselecting current");
                     Perimeter.DeselectCurrent();
                 }
                 
                 Perimeter.UpdateVisuals();
-
                 Perimeter.Print();
+
+                if (Perimeter.IsComplete)
+                {
+                    StartCoroutine(PauseThenSelectPerimeter());
+                }
             }
 
+            private IEnumerator PauseThenSelectPerimeter()
+            {
+                yield return new WaitForSeconds(3f);
+                
+                List<Vector2> selectionPath = Perimeter.GetOrderedVerifiedTiles()
+                    .Select(tile => (Vector2)tile.gameObject.transform.position).ToList();
+                _tileSelectionCollider.SetPath(0, selectionPath);
+        
+                ContactFilter2D contactFilter = new ContactFilter2D();
+                contactFilter.SetLayerMask(LayerMask.GetMask("MapLetterTile"));
+                List<Collider2D> results = new();
+                _tileSelectionCollider.OverlapCollider(contactFilter, results);
+        
+                foreach (var tile in results.Select(collider => collider.gameObject.GetComponentInParent<MapLetterTile>()))
+                {
+                    tile.SetColor(TileColor.Highlighted);
+                    tile.UpdateVisuals();
+                }
+                
+                ResetPerimeter();
+            } 
+            
+            private void TilePanel_OnResetPerimeter()
+            {
+                ResetPerimeter();
+            }
+            
         #endregion
 
 
@@ -124,13 +168,13 @@ namespace WarOfWords
 
             private void CheckForLetterTile(Vector2 worldPosition)
             {
-                Collider2D circle = Physics2D.OverlapCircle(worldPosition, 0.1f);
+                Collider2D circle = Physics2D.OverlapCircle(worldPosition, 0.1f, LayerMask.GetMask("MapLetterTile"));
                 if (circle == null) return;
                 
                 MapLetterTile letterTile = circle.gameObject.GetComponentInParent<MapLetterTile>();
                 if (letterTile == null)
                 {
-                    Debug.Log("null letter tile!");
+                    throw new Exception("Letter tile does not exist at world position: " + worldPosition);
                 }
                 
                 Perimeter ??= new MapBoardSelectionPerimeter();
@@ -147,6 +191,13 @@ namespace WarOfWords
                 Debug.Log(letterAdded
                     ? $"ADDED letter tile {letterTile.MapLetter.Character} to current selection: {sequence}"
                     : $"COULD NOT ADD letter tile {letterTile.MapLetter.Character} to current selection: {sequence}");
+            }
+
+            private void ResetPerimeter()
+            {
+                Perimeter.DeselectAll();
+                Perimeter.UpdateVisuals();
+                Perimeter = new MapBoardSelectionPerimeter();
             }
         #endregion
     }

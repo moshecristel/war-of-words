@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Linq;
+using UnityEngine;
 
 namespace WarOfWords
 {
@@ -47,7 +48,11 @@ namespace WarOfWords
         public bool CanBeExtendedBy(MapLetterTile letterTile)
         {
             if (LetterTileCount == 0) return true;
-            if (LetterTiles.Contains(letterTile)) return false;
+            if (LetterTiles.Contains(letterTile))
+            {
+                Debug.Log("Can't be extended by " + letterTile.MapLetter.Character + " because selection " + ToCharacterSequence() + " already contains it");
+                return false;
+            }
 
             GridDirection relativeAdjacentGridDirection = CoordUtils.GetRelativeAdjacentGridDirection(LetterTiles[^1].MapLetter.Coords, letterTile.MapLetter.Coords);
             return relativeAdjacentGridDirection != GridDirection.None;

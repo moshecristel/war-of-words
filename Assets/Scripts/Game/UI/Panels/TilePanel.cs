@@ -10,6 +10,8 @@ namespace WarOfWords
     /// </summary>
     public class TilePanel : MonoBehaviour
     {
+        public static event Action ResetPerimeter; 
+        
         [SerializeField] private PanButton _panNButton;
         [SerializeField] private PanButton _panEButton;
         [SerializeField] private PanButton _panSButton;
@@ -92,6 +94,11 @@ namespace WarOfWords
             public void OnPanClicked(int gridDirectionValue)
             {
                 CameraManager.Instance.PanNarrowCamera((GridDirection)gridDirectionValue, MapBoard.CameraConstraintBounds);
+            }
+
+            public void OnResetPerimeterClicked()
+            {
+                ResetPerimeter?.Invoke();
             }
         #endregion
     }
