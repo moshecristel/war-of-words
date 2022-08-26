@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.InteropServices.ComTypes;
 using UnityEngine;
 
 namespace WarOfWords
@@ -14,7 +15,7 @@ namespace WarOfWords
         
         [SerializeField] private MapLetterTile _mapLetterTilePrefab;
         [SerializeField] private PolygonCollider2D _tileSelectionCollider;
-        
+
         private Map _map;
         public Map Map
         {
@@ -136,7 +137,7 @@ namespace WarOfWords
 
             private IEnumerator PauseThenSelectPerimeter()
             {
-                yield return new WaitForSeconds(3f);
+                yield return new WaitForSeconds(2f);
                 
                 List<Vector2> selectionPath = Perimeter.GetOrderedVerifiedTiles()
                     .Select(tile => (Vector2)tile.gameObject.transform.position).ToList();
@@ -147,12 +148,17 @@ namespace WarOfWords
                 List<Collider2D> results = new();
                 _tileSelectionCollider.OverlapCollider(contactFilter, results);
         
-                foreach (var tile in results.Select(collider => collider.gameObject.GetComponentInParent<MapLetterTile>()))
-                {
-                    tile.SetColor(TileColor.Highlighted);
-                    tile.UpdateVisuals();
-                }
+                float averageVerifiedWordLength = Perimeter.GetAverageVerifiedWordLength();
+                Debug.Log($"averageVerifiedWordLength={averageVerifiedWordLength}");
                 
+                List<MapLetterTile> selectedTiles = results.Select(collider => collider.gameObject.GetComponentInParent<MapLetterTile>()).ToList();
+                foreach (var selectedTile in selectedTiles)
+                {
+                    selectedTile.Points += averageVerifiedWordLength;
+                    selectedTile.SetColor(TileColor.Highlighted);
+                    selectedTile.UpdateVisuals();
+                }
+
                 ResetPerimeter();
             } 
             

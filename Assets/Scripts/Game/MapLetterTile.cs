@@ -17,13 +17,16 @@ namespace WarOfWords
         [SerializeField] private SpriteRenderer _selectionOutlineSpriteRenderer;
 
         [SerializeField] private TMP_Text _letterText;
-        [SerializeField] private TMP_Text _claimCountText;
 
         [SerializeField] private SpriteRenderer _miniMapFocusedTile;
         [SerializeField] private SpriteRenderer _miniMapUnfocusedTile;
 
+        [SerializeField] private TMP_Text pointsText;
+        [SerializeField] private GameObject[] _bonusLabels;
+        
         // Correspond to enum values (CW from N): N = 0, NE = 1...
         [SerializeField] private GameObject[] _selectionLines;
+
         
         public MapLetter MapLetter { get; set; }
         public TileOwnership TileOwnership { get; set; }
@@ -44,6 +47,9 @@ namespace WarOfWords
 
         public List<GridDirection> OutgoingConnections { get; set; } = new();
 
+        public BonusType BonusType { get; set; } = BonusType.None;
+        public float Points { get; set; }
+        
         #region Lifecycle
 
             private void Awake()
@@ -75,25 +81,22 @@ namespace WarOfWords
             }
         #endregion
 
-        public void SetColor(TileColor tileColor)
-        {
-            List<Color> tileColors = TileColorUtils.GetTileColors(tileColor);
-            _baseSpriteRenderer.color = tileColors[0];
-            _softShadowSpriteRenderer.color = tileColors[1];
-            _dropShadowSpriteRenderer.color = tileColors[2];
-        }
+        #region Setters
 
-        private void UpdateSelectionTypeVisuals()
-        {
-            _selectionParent.gameObject.SetActive(SelectionType != TileSelectionType.None);
-            if (SelectionType == TileSelectionType.None) return;
+            public void SetBonus(BonusType bonusType)
+            {
+                BonusType = bonusType;
+            }
 
-            List<Color> selectionColors = TileColorUtils.GetSelectionTileColors(SelectionType, IsVerifiedSelection);
-            _selectionInnerSpriteRenderer.color = selectionColors[0];
-            _selectionBaseSpriteRenderer.color = selectionColors[1];
-            _selectionDropshadowSpriteRenderer.color = selectionColors[2];
-            _selectionOutlineSpriteRenderer.color = selectionColors[3];
-        }
+            public void SetColor(TileColor tileColor)
+            {
+                List<Color> tileColors = TileColorUtils.GetTileColors(tileColor);
+                _baseSpriteRenderer.color = tileColors[0];
+                _softShadowSpriteRenderer.color = tileColors[1];
+                _dropShadowSpriteRenderer.color = tileColors[2];
+            }
+        #endregion
+
 
         #region Update Visuals
         
@@ -106,6 +109,18 @@ namespace WarOfWords
                 UpdateSelectionVisuals();
             }
         
+            private void UpdateSelectionTypeVisuals()
+            {
+                _selectionParent.gameObject.SetActive(SelectionType != TileSelectionType.None);
+                if (SelectionType == TileSelectionType.None) return;
+
+                List<Color> selectionColors = TileColorUtils.GetSelectionTileColors(SelectionType, IsVerifiedSelection);
+                _selectionInnerSpriteRenderer.color = selectionColors[0];
+                _selectionBaseSpriteRenderer.color = selectionColors[1];
+                _selectionDropshadowSpriteRenderer.color = selectionColors[2];
+                _selectionOutlineSpriteRenderer.color = selectionColors[3];
+            }
+            
             private void UpdateSelectionVisuals()
             {
                 // Unhighlight all
@@ -136,6 +151,21 @@ namespace WarOfWords
             {
                 if(MapLetter != null)
                     _letterText.text = MapLetter.Character;
+
+
+                foreach (GameObject bonusLabel in _bonusLabels)
+                {
+                    bonusLabel.SetActive(false);
+                }
+                
+                if (BonusType != BonusType.None)
+                {
+                    _bonusLabels[((int)BonusType)-1].SetActive(true);    
+                }
+                
+                pointsText.transform.parent.gameObject.SetActive(Points != 0);
+                pointsText.gameObject.SetActive(Points != 0);
+                pointsText.text = $"{Points:n1}";
                 
                 // if (TileOwnership == null)
                 // {

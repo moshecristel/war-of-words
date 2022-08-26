@@ -156,6 +156,22 @@ namespace WarOfWords
 
             return isMerged;
         }
+        
+        public List<MapLetterTile> GetOrderedVerifiedTiles()
+        {
+            List<MapLetterTile> orderedTiles = new();
+            for (int i = 0; i < VerifiedSelections.Count; i++)
+            {
+                orderedTiles.AddRange(VerifiedSelections[i].GetTiles(_reversedFlags[i]));
+            }
+
+            return orderedTiles;
+        }
+
+        public float GetAverageVerifiedWordLength()
+        {
+            return (float)GetOrderedVerifiedTiles().Count / (float)VerifiedSelections.Count;
+        }
 
         /// <summary>
         /// Run:
@@ -198,17 +214,6 @@ namespace WarOfWords
                 if(!currentTiles[i].OutgoingConnections.Contains(direction))
                     currentTiles[i].OutgoingConnections.Add(direction);     
             }
-        }
-
-        public List<MapLetterTile> GetOrderedVerifiedTiles()
-        {
-            List<MapLetterTile> orderedTiles = new();
-            for (int i = 0; i < VerifiedSelections.Count; i++)
-            {
-                orderedTiles.AddRange(VerifiedSelections[i].GetTiles(_reversedFlags[i]));
-            }
-
-            return orderedTiles;
         }
 
         /// <summary>
