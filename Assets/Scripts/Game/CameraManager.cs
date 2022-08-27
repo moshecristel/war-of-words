@@ -15,6 +15,9 @@ namespace WarOfWords
         [SerializeField] private Camera _wideCamera;
         [SerializeField] private Camera _minimapCamera;
 
+        public Camera WideCamera => _wideCamera;
+        public Camera NarrowCamera => _narrowCamera;
+
         private bool _isAnimatingCamera;
 
         private void Awake()

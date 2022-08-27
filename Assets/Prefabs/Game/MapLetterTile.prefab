@@ -416,9 +416,9 @@ RectTransform:
   m_LocalScale: {x: 0.005, y: 0.005, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
-  - {fileID: 6010451775567854394}
-  - {fileID: 4988797886759942459}
   - {fileID: 1122803877137388751}
+  - {fileID: 4988797886759942459}
+  - {fileID: 6010451775567854394}
   - {fileID: 717665062812090181}
   m_Father: {fileID: 3371953691479856455}
   m_RootOrder: 1
@@ -747,7 +747,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4319477323866389969}
   m_Layer: 0
-  m_Name: 1Star
+  m_Name: 1Coin
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -767,7 +767,7 @@ RectTransform:
   m_Children:
   - {fileID: 2543287632521442477}
   m_Father: {fileID: 3996234071281469660}
-  m_RootOrder: 2
+  m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
@@ -3081,7 +3081,7 @@ RectTransform:
   - {fileID: 5290637459402960963}
   - {fileID: 1450331303626503158}
   m_Father: {fileID: 717665063343961574}
-  m_RootOrder: 0
+  m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
@@ -3118,9 +3118,9 @@ RectTransform:
   m_LocalScale: {x: 0.005, y: 0.005, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
-  - {fileID: 241619779477898345}
-  - {fileID: 6447426391022330860}
   - {fileID: 4319477323866389969}
+  - {fileID: 6447426391022330860}
+  - {fileID: 241619779477898345}
   - {fileID: 3888876450469038081}
   m_Father: {fileID: 3371953691479856455}
   m_RootOrder: 2
@@ -3706,7 +3706,7 @@ GameObject:
   m_Component:
   - component: {fileID: 6447426391022330860}
   m_Layer: 0
-  m_Name: 2Stars
+  m_Name: 2Coins
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -3851,7 +3851,7 @@ RectTransform:
   - {fileID: 2734840418916684771}
   - {fileID: 353096357585480648}
   m_Father: {fileID: 3996234071281469660}
-  m_RootOrder: 0
+  m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
@@ -5744,7 +5744,7 @@ RectTransform:
   m_Children:
   - {fileID: 1955559670722393711}
   m_Father: {fileID: 717665063343961574}
-  m_RootOrder: 2
+  m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
@@ -6355,7 +6355,13 @@ MonoBehaviour:
   _miniMapFocusedTile: {fileID: 8190790105032027786}
   _miniMapUnfocusedTile: {fileID: 3461916531976216422}
   pointsText: {fileID: 6035441817023562897}
-  _bonusLabels: []
+  _bonusLabels:
+  - {fileID: 7292185549385137808}
+  - {fileID: 2339468488445498769}
+  - {fileID: 3599442165117339744}
+  - {fileID: 1067660546466617085}
+  - {fileID: 4305078893030709756}
+  - {fileID: 4378499767069657244}
   _selectionLines:
   - {fileID: 2471675107383996631}
   - {fileID: 5755487253969548540}

@@ -70,6 +70,8 @@ namespace WarOfWords
             {
                 _isSelected = true;
                 SelectionType = selectionType;
+                
+                
             }
 
             public void Deselect()

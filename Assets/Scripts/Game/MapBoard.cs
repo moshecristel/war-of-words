@@ -2,8 +2,8 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using System.Runtime.InteropServices.ComTypes;
 using UnityEngine;
+using Random = UnityEngine.Random;
 
 namespace WarOfWords
 {
@@ -84,6 +84,8 @@ namespace WarOfWords
             Vector2 center = new Vector2(map.Cols / 2.0f, map.Rows / 2.0f);
             Vector2 size = new Vector2(map.Cols, map.Rows);
             Bounds = new Bounds(center, size);
+            
+            AssignTileBonuses();
         }
 
         public static bool IsTileNear(Vector2 position)
@@ -138,8 +140,9 @@ namespace WarOfWords
             private IEnumerator PauseThenSelectPerimeter()
             {
                 yield return new WaitForSeconds(2f);
-                
-                List<Vector2> selectionPath = Perimeter.GetOrderedVerifiedTiles()
+
+                var orderedVerifiedTiles = Perimeter.GetOrderedVerifiedTiles();
+                List<Vector2> selectionPath = orderedVerifiedTiles
                     .Select(tile => (Vector2)tile.gameObject.transform.position).ToList();
                 _tileSelectionCollider.SetPath(0, selectionPath);
         
@@ -150,7 +153,26 @@ namespace WarOfWords
         
                 float averageVerifiedWordLength = Perimeter.GetAverageVerifiedWordLength();
                 Debug.Log($"averageVerifiedWordLength={averageVerifiedWordLength}");
-                
+
+                // TODO don't recount at beginning
+                Dictionary<BonusType, int> counts = new();
+                foreach (var tile in orderedVerifiedTiles.Where(tile => tile.BonusType != BonusType.None))
+                {
+                    if (counts.ContainsKey(tile.BonusType))
+                    {
+                        counts[tile.BonusType]++;
+                    }
+                    else
+                    {
+                        counts[tile.BonusType] = 1;
+                    }
+                }
+
+                foreach (BonusType bonusType in counts.Keys)
+                {
+                    Debug.Log($"{bonusType}: {counts[bonusType]:n0}");
+                }
+
                 List<MapLetterTile> selectedTiles = results.Select(collider => collider.gameObject.GetComponentInParent<MapLetterTile>()).ToList();
                 foreach (var selectedTile in selectedTiles)
                 {
@@ -158,6 +180,8 @@ namespace WarOfWords
                     selectedTile.SetColor(TileColor.Highlighted);
                     selectedTile.UpdateVisuals();
                 }
+                
+                Debug.Log("Total points this round: " + selectedTiles.Count * averageVerifiedWordLength);
 
                 ResetPerimeter();
             } 
@@ -204,6 +228,47 @@ namespace WarOfWords
                 Perimeter.DeselectAll();
                 Perimeter.UpdateVisuals();
                 Perimeter = new MapBoardSelectionPerimeter();
+            }
+
+            private List<MapLetterTile> GetAllLetterTiles()
+            {
+                return Board.Cast<MapLetterTile>().Where(tile => tile != null).ToList();
+            }
+
+            private void AssignTileBonuses()
+            {
+                Dictionary<BonusType, int> bonusTypeToPer1000 = new Dictionary<BonusType, int>()
+                {
+                    { BonusType.Points1, 20 },
+                    { BonusType.Points2, 7 },
+                    { BonusType.Points3, 2 },
+                    { BonusType.Coins1, 30 },
+                    { BonusType.Coins2, 10 },
+                    { BonusType.Coins3, 5 }
+                };
+
+                List<BonusType> orderedBonusTypes = new List<BonusType>(bonusTypeToPer1000.Keys);
+                List<MapLetterTile> letterTiles = GetAllLetterTiles();
+
+                foreach (MapLetterTile letterTile in letterTiles)
+                {
+
+                    float threshold = 0;
+                    int random = Random.Range(1, 1000);
+                    
+                    foreach (BonusType bonusType in orderedBonusTypes)
+                    {
+                        int per1000 = bonusTypeToPer1000[bonusType];
+                        threshold += per1000;
+
+                        if (random <= threshold)
+                        {
+                            letterTile.SetBonus(bonusType);
+                            letterTile.UpdateVisuals();
+                            break;
+                        }
+                    }
+                }
             }
         #endregion
     }
