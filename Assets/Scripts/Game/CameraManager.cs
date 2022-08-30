@@ -53,9 +53,9 @@ namespace WarOfWords
             _narrowCamera.transform.position = new Vector3(position.x, position.y, -10);
         }
 
-        public void AnimateNarrowCameraToPoint(Vector2 to, float time)
+        public void AnimateNarrowCameraToPoint(Vector2 to, Bounds cameraMovementConstraint, float time)
         {
-            LeanTween.move(_narrowCamera.gameObject, to, time).setEaseInOutSine();
+            MoveNarrowCamera(to, cameraMovementConstraint, time, LeanTweenType.easeInOutSine);
         }
 
         public void PanNarrowCamera(GridDirection panDirection, Bounds cameraMovementConstraint, float panPercentage = 0.5f) 
@@ -94,7 +94,12 @@ namespace WarOfWords
                     throw new ArgumentOutOfRangeException(nameof(panDirection), panDirection, null);
             }
 
+            MoveNarrowCamera(newCameraPositionUnconstrained, cameraMovementConstraint, 1f, LeanTweenType.easeOutQuint);
             
+        }
+
+        private void MoveNarrowCamera(Vector2 newCameraPositionUnconstrained, Bounds cameraMovementConstraint, float time, LeanTweenType easeType)
+        {
             Vector2 newCameraPositionConstrained =
                 VectorUtils.ClampPointToBounds(newCameraPositionUnconstrained, cameraMovementConstraint);
             
@@ -104,7 +109,7 @@ namespace WarOfWords
             {
                 FireNarrowCameraTargetChanged(cameraTo, cameraMovementConstraint);
                 _isAnimatingCamera = true;
-                LeanTween.move(_narrowCamera.gameObject, cameraTo, 1f).setEaseOutQuint().setOnComplete(() =>
+                LeanTween.move(_narrowCamera.gameObject, cameraTo, time).setEase(easeType).setOnComplete(() =>
                 {
                     _isAnimatingCamera = false;
                 });

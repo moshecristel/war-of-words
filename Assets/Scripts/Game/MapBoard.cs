@@ -32,7 +32,7 @@ namespace WarOfWords
         
         public MapLetterTile[,] Board { get; set; }
         public Bounds Bounds { get; set; }
-        public Bounds CameraConstraintBounds => (Bounds == default) ? default : VectorUtils.ContractBounds(Bounds, 10f, 6f);
+        public Bounds CameraConstraintBounds => (Bounds == default) ? default : VectorUtils.ContractBounds(Bounds, 5f, 3f);
 
         public MapBoardSelectionPerimeter Perimeter { get; set; }
 

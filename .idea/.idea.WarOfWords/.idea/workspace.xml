@@ -9,8 +9,6 @@
       <change beforePath="$PROJECT_DIR$/Assets/Scripts/Game/CameraManager.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Scripts/Game/CameraManager.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Assets/Scripts/Game/Game.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Scripts/Game/Game.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Assets/Scripts/Game/MapBoard.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Scripts/Game/MapBoard.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/Scripts/Game/MapBoardSelection.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Scripts/Game/MapBoardSelection.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/Scripts/Game/MapBoardSelectionPerimeter.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Scripts/Game/MapBoardSelectionPerimeter.cs" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -117,7 +115,7 @@
       <workItem from="1660156356544" duration="124000" />
       <workItem from="1660156550691" duration="54288000" />
       <workItem from="1660420987845" duration="59116000" />
-      <workItem from="1661818558617" duration="4560000" />
+      <workItem from="1661818558617" duration="5849000" />
     </task>
     <task id="LOCAL-00001" summary="Reorg of map and tile panel code">
       <created>1660522257240</created>

@@ -100,7 +100,7 @@ namespace WarOfWords
                 _tilePanel.SetWordDisplay(isWordSucceeded ? sequence : null);
                 
                 if(isWordSucceeded)
-                    CameraManager.Instance.AnimateNarrowCameraToPoint(latestTerminalPosition, 1.0f);
+                    CameraManager.Instance.AnimateNarrowCameraToPoint(latestTerminalPosition, _mapBoard.CameraConstraintBounds, 0.5f);
             }
         #endregion
 
