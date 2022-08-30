@@ -53,6 +53,11 @@ namespace WarOfWords
             _narrowCamera.transform.position = new Vector3(position.x, position.y, -10);
         }
 
+        public void AnimateNarrowCameraToPoint(Vector2 to, float time)
+        {
+            LeanTween.move(_narrowCamera.gameObject, to, time).setEaseInOutSine();
+        }
+
         public void PanNarrowCamera(GridDirection panDirection, Bounds cameraMovementConstraint, float panPercentage = 0.5f) 
         {
             if (LeanTween.isTweening())

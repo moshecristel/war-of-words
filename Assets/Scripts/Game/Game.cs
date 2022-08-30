@@ -95,9 +95,12 @@ namespace WarOfWords
                 }
             }
             
-            private void MapBoard_OnWordAttempted(string sequence, bool isSucceeded)
+            private void MapBoard_OnWordAttempted(string sequence, bool isWordSucceeded, bool isPerimeterSucceeded, Vector2 latestTerminalPosition)
             {
-                _tilePanel.SetWordDisplay(isSucceeded ? sequence : null);
+                _tilePanel.SetWordDisplay(isWordSucceeded ? sequence : null);
+                
+                if(isWordSucceeded)
+                    CameraManager.Instance.AnimateNarrowCameraToPoint(latestTerminalPosition, 1.0f);
             }
         #endregion
 

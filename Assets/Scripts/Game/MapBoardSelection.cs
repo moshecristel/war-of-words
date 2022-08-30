@@ -89,7 +89,7 @@ namespace WarOfWords
             if (letterTile.IsSelected) return;
             
             letterTile.Select(TileSelectionType.UnverifiedEdge);
-            if (LetterTileCount >= 3)
+            if (LetterTileCount >= 3 && !LetterTiles[^2].IsVerifiedSelection)
             {
                 // Most recently added tile before this is no longer the edge but the middle
                 LetterTiles[^2].SelectionType = TileSelectionType.UnverifiedMiddle;

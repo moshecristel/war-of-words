@@ -1,9 +1,16 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
+  <component name="AutoImportSettings">
+    <option name="autoReloadType" value="SELECTIVE" />
+  </component>
   <component name="ChangeListManager">
-    <list default="true" id="bc16a576-3d17-4771-a401-98bcaae6af5c" name="Changes" comment="">
+    <list default="true" id="bc16a576-3d17-4771-a401-98bcaae6af5c" name="Changes" comment="Removed debugs">
       <change beforePath="$PROJECT_DIR$/.idea/.idea.WarOfWords/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.WarOfWords/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/Scripts/Game/UI/Panels/TilePanel.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Scripts/Game/UI/Panels/TilePanel.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Scripts/Game/CameraManager.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Scripts/Game/CameraManager.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Scripts/Game/Game.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Scripts/Game/Game.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Scripts/Game/MapBoard.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Scripts/Game/MapBoard.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Scripts/Game/MapBoardSelection.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Scripts/Game/MapBoardSelection.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Scripts/Game/MapBoardSelectionPerimeter.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Scripts/Game/MapBoardSelectionPerimeter.cs" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -19,62 +26,25 @@
     </file-type-list>
   </component>
   <component name="HighlightingSettingsPerFile">
-    <setting file="mock:///Users/moshecristel/Development/WarOfWords/Assets/Scripts/Game/MapBoard.cs" root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock:///Users/moshecristel/Development/WarOfWords/Assets/Scripts/Game/MapBoardSelection.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/c4e726602a0b453fbc96db7a06c54db2157800/99/3233edb4/Transform.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Assets/Scripts/Game/Enums/Party.cs" root0="FORCE_HIGHLIGHTING" />
-    <setting file="mock:///Users/moshecristel/Development/WarOfWords/Assets/Scripts/Game/MapBoard.cs" root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock:///Users/moshecristel/Development/WarOfWords/Assets/Scripts/Game/MapBoardSelection.cs" root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock:///Users/moshecristel/Development/WarOfWords/Assets/Prefabs/Game/MapLetterTile.prefab" root0="SKIP_HIGHLIGHTING" />
-    <setting file="file://$PROJECT_DIR$/Assets/Scripts/Game/Prep/MapGenerator.cs" root0="FORCE_HIGHLIGHTING" />
-    <setting file="file://$USER_HOME$/Downloads/TestMySpline/CubicSpline.cs" root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock:///Dummy.cs" root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock:///Users/moshecristel/Development/WarOfWords/Assets/Scripts/Game/MapBoard.cs" root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock:///Users/moshecristel/Development/WarOfWords/Assets/Scripts/Game/MapBoardSelection.cs" root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock:///Users/moshecristel/Development/WarOfWords/Assets/Scenes/GameScene.unity" root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock:///Users/moshecristel/Development/WarOfWords/Assets/Scripts/Game/MapBoardSelection.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Assets/Scripts/Game/Model/MapLetter.cs" root0="FORCE_HIGHLIGHTING" />
-    <setting file="mock:///Users/moshecristel/Development/WarOfWords/Assets/Scripts/Game/Util/TileColorUtils.cs" root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock:///Users/moshecristel/Development/WarOfWords/Assets/Scripts/Game/MapBoardSelection.cs" root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock:///Users/moshecristel/Development/WarOfWords/Assets/Scripts/Game/MapBoardSelection.cs" root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock:///Users/moshecristel/Development/WarOfWords/Assets/Scripts/Game/MapLetterTile.cs" root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock:///Users/moshecristel/Development/WarOfWords/Assets/Scripts/Game/MapBoardSelection.cs" root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock:///Users/moshecristel/Development/WarOfWords/Assets/Scripts/Game/MapBoard.cs" root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock:///Dummy.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Assets/Scripts/Game/MapLetterTile.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/c4e726602a0b453fbc96db7a06c54db2157800/74/822ee0b8/Camera.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/c4e726602a0b453fbc96db7a06c54db2157800/86/073505e7/Gizmos.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Assets/Scripts/Game/Prep/MapGenerator.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/d44b17e136d09081da1e8fd0e8c83fde60e11818b9f2442d7ed8cb733fae895e/System.Collections.Generic.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="file://$USER_HOME$/Downloads/TestMySpline/CubicSpline.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Library/PackageCache/com.unity.ugui@1.0.0/Runtime/EventSystem/InputModules/BaseInput.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock:///Users/moshecristel/Development/WarOfWords/Assets/Scripts/Game/UI/Panels/TilePanel.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/c4e726602a0b453fbc96db7a06c54db2157800/35/a0ca49de/Bounds.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/34ade41d0e874484a414438247bc73f71f800/af/fb5a91d1/Physics2D.cs" root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock:///Users/moshecristel/Development/WarOfWords/Assets/_ThirdParty/GUI PRO Kit - Simple Casual/Prefabs/Prefabs_Component_Buttons/Btn_MenuButton_Rectangle03_Common_Sky.prefab" root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock:///Users/moshecristel/Development/WarOfWords/Assets/Scripts/Game/Enums/TileSelectionType.cs" root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock:///Users/moshecristel/Development/WarOfWords/Assets/Scripts/Game/Util/TileColorUtils.cs" root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock:///Users/moshecristel/Development/WarOfWords/Assets/Scripts/Game/Enums/TileSelectionType.cs" root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock:///Users/moshecristel/Development/WarOfWords/Assets/Scripts/Game/MapBoardSelection.cs" root0="SKIP_HIGHLIGHTING" />
-    <setting file="file://$PROJECT_DIR$/Assets/Scripts/Game/MapLetterTile.cs" root0="FORCE_HIGHLIGHTING" />
-    <setting file="mock:///Users/moshecristel/Development/WarOfWords/Assets/Scripts/Game/MapLetterTile.cs" root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock:///Users/moshecristel/Development/WarOfWords/Assets/Scripts/Game/MapBoard.cs" root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock:///Users/moshecristel/Development/WarOfWords/Assets/Scripts/Game/MapLetterTile.cs" root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock:///Users/moshecristel/Development/WarOfWords/Assets/Scripts/Game/Enums/TileSelectionType.cs" root0="SKIP_HIGHLIGHTING" />
-    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/c4e726602a0b453fbc96db7a06c54db2157800/74/822ee0b8/Camera.cs" root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock:///Users/moshecristel/Development/WarOfWords/Assets/Scripts/Game/MapBoardSelectionPerimeter.cs" root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock:///Users/moshecristel/Development/WarOfWords/Assets/Scripts/Game/MapLetterTile.cs" root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock:///Users/moshecristel/Development/WarOfWords/Assets/Scripts/Game/Util/TileColorUtils.cs" root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock:///Users/moshecristel/Development/WarOfWords/Assets/Scripts/Game/MapBoard.cs" root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock:///Users/moshecristel/Development/WarOfWords/Assets/Scripts/Game/Enums/TileSelectionType.cs" root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock:///Users/moshecristel/Development/WarOfWords/Assets/Scripts/Game/UI/Panels/TilePanel.cs" root0="SKIP_HIGHLIGHTING" />
-    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/d44b17e136d09081da1e8fd0e8c83fde60e11818b9f2442d7ed8cb733fae895e/System.Collections.Generic.cs" root0="SKIP_HIGHLIGHTING" />
-    <setting file="file://$PROJECT_DIR$/Library/PackageCache/com.unity.ugui@1.0.0/Runtime/EventSystem/InputModules/BaseInput.cs" root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock:///Users/moshecristel/Development/WarOfWords/Assets/Scripts/Game/MapLetterTile.cs" root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock:///Users/moshecristel/Development/WarOfWords/Assets/Scripts/Game/MapBoardSelection.cs" root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock:///Users/moshecristel/Development/WarOfWords/Assets/Scripts/Game/MapBoard.cs" root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock:///Users/moshecristel/Development/WarOfWords/Assets/Scripts/Game/MapBoardSelection.cs" root0="SKIP_HIGHLIGHTING" />
-    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/c4e726602a0b453fbc96db7a06c54db2157800/99/3233edb4/Transform.cs" root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock:///Users/moshecristel/Development/WarOfWords/Assets/Scripts/Game/MapBoardSelection.cs" root0="SKIP_HIGHLIGHTING" />
-    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/c4e726602a0b453fbc96db7a06c54db2157800/86/073505e7/Gizmos.cs" root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock:///Users/moshecristel/Development/WarOfWords/Assets/Scripts/Game/MapBoard.cs" root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock:///Users/moshecristel/Development/WarOfWords/Assets/Scripts/Game/MapBoardSelection.cs" root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock:///Users/moshecristel/Development/WarOfWords/Assets/Scripts/Game/Util/TileColorUtils.cs" root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock:///Users/moshecristel/Development/WarOfWords/Assets/Scripts/Game/MapBoard.cs" root0="SKIP_HIGHLIGHTING" />
   </component>
   <component name="MarkdownSettingsMigration">
     <option name="stateVersion" value="1" />
+  </component>
+  <component name="ProblemsViewState">
+    <option name="selectedTabId" value="SWEA" />
   </component>
   <component name="ProjectId" id="2D8ZfF5vbmQUxnbRenvDYNvNCPt" />
   <component name="ProjectLevelVcsManager">
@@ -97,7 +67,7 @@
     <property name="SHARE_PROJECT_CONFIGURATION_FILES" value="true" />
     <property name="WebServerToolWindowFactoryState" value="false" />
     <property name="rider.run.widget.enabled.cache" value="false" />
-    <property name="settings.editor.selected.configurable" value="RiderCSharpFileTemplatesSettingsId" />
+    <property name="settings.editor.selected.configurable" value="SolutionBuilderGeneralOptionsPageId" />
     <property name="vue.rearranger.settings.migration" value="true" />
   </component>
   <component name="RunManager" selected="Attach to Unity Editor.Attach to Unity Editor">
@@ -147,6 +117,7 @@
       <workItem from="1660156356544" duration="124000" />
       <workItem from="1660156550691" duration="54288000" />
       <workItem from="1660420987845" duration="59116000" />
+      <workItem from="1661818558617" duration="4560000" />
     </task>
     <task id="LOCAL-00001" summary="Reorg of map and tile panel code">
       <created>1660522257240</created>
@@ -155,7 +126,14 @@
       <option name="project" value="LOCAL" />
       <updated>1660522257240</updated>
     </task>
-    <option name="localTasksCounter" value="2" />
+    <task id="LOCAL-00002" summary="Removed debugs">
+      <created>1661818877512</created>
+      <option name="number" value="00002" />
+      <option name="presentableId" value="LOCAL-00002" />
+      <option name="project" value="LOCAL" />
+      <updated>1661818877512</updated>
+    </task>
+    <option name="localTasksCounter" value="3" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -179,6 +157,11 @@
     <option name="ADD_EXTERNAL_FILES_SILENTLY" value="true" />
     <option name="CLEAR_INITIAL_COMMIT_MESSAGE" value="true" />
     <MESSAGE value="Reorg of map and tile panel code" />
-    <option name="LAST_COMMIT_MESSAGE" value="Reorg of map and tile panel code" />
+    <MESSAGE value="Removed debugs" />
+    <option name="LAST_COMMIT_MESSAGE" value="Removed debugs" />
+  </component>
+  <component name="XSLT-Support.FileAssociations.UIState">
+    <expand />
+    <select />
   </component>
 </project>

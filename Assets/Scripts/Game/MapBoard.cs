@@ -10,9 +10,12 @@ namespace WarOfWords
     [RequireComponent(typeof(Game))]
     public class MapBoard : MonoBehaviour
     {
-        // 0 - Character sequence, 1 - Is word successful
-        public static event Action<string, bool> WordAttempted;
-        
+        // 0 - Character sequence,
+        // 1 - Is word successful
+        // 2 - Is perimeter successful
+        // 3 - New terminal tile position
+        public static event Action<string, bool, bool, Vector2> WordAttempted;
+
         [SerializeField] private MapLetterTile _mapLetterTilePrefab;
         [SerializeField] private PolygonCollider2D _tileSelectionCollider;
 
@@ -113,7 +116,6 @@ namespace WarOfWords
                 
                 string sequence = Perimeter.CurrentSelection.ToCharacterSequence();
                 bool isWord = sequence.Length >= 3 && Map.Dictionary.IsWord(sequence);
-                WordAttempted?.Invoke(sequence, isWord);
 
                 bool deselect = !isWord;
                 if (isWord)
@@ -126,7 +128,7 @@ namespace WarOfWords
                 {
                     // TODO Visual fail
                     Perimeter.DeselectCurrent();
-                }
+                } 
                 
                 Perimeter.UpdateVisuals();
                 Perimeter.Print();
@@ -135,6 +137,9 @@ namespace WarOfWords
                 {
                     StartCoroutine(PauseThenSelectPerimeter());
                 }
+                
+                
+                WordAttempted?.Invoke(sequence, isWord && !deselect, Perimeter.IsComplete, Perimeter.MostRecentTerminalVerifiedTile != null ? Perimeter.MostRecentTerminalVerifiedTile.transform.position : default);
             }
 
             private IEnumerator PauseThenSelectPerimeter()
@@ -152,7 +157,6 @@ namespace WarOfWords
                 _tileSelectionCollider.OverlapCollider(contactFilter, results);
         
                 float averageVerifiedWordLength = Perimeter.GetAverageVerifiedWordLength();
-                Debug.Log($"averageVerifiedWordLength={averageVerifiedWordLength}");
 
                 // TODO don't recount at beginning
                 Dictionary<BonusType, int> counts = new();

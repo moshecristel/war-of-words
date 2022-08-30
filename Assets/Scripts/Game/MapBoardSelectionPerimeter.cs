@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
@@ -15,6 +16,8 @@ namespace WarOfWords
     /// </summary>
     public class MapBoardSelectionPerimeter
     {
+        public static event Action<MapLetterTile> PerimeterExtended;
+        
         public List<MapBoardSelection> VerifiedSelections { get; set; } = new();
         private List<bool> _reversedFlags = new(); 
         
@@ -34,6 +37,7 @@ namespace WarOfWords
                 };
             }
         }
+        public MapLetterTile MostRecentTerminalVerifiedTile { get; set; }
 
         public bool IsTerminalTile(MapLetterTile letterTile)
         {
@@ -72,6 +76,11 @@ namespace WarOfWords
                 UpdateConnections();
                 return true;
             }
+            else if (!CanAddToSelection(CurrentSelection))
+            {
+                Debug.Log("Can't add due to selection should be terminated");
+                return false;
+            }
             else if (CurrentSelection.CanBeExtendedBy(letterTile))
             {
                 // ADD TO CURRENT SELECTION 
@@ -83,6 +92,18 @@ namespace WarOfWords
 
             Debug.Log("Can't add for some other reason");
             return false;
+        }
+
+        // If the selection has a verified tile in a non-zero position, it cannot legally be added to
+        private bool CanAddToSelection(MapBoardSelection selection)
+        {
+            for (int i = 1; i < selection.LetterTileCount; i++)
+            {
+                if (selection.LetterTiles[i].IsVerifiedSelection)
+                    return false;
+            }
+
+            return true;
         }
 
         /// <summary>
@@ -100,12 +121,14 @@ namespace WarOfWords
             }
             
             bool isMerged = false;
+            MapLetterTile mostRecentTerminalTile = null;
             if (VerifiedSelections.Count == 0)
             {
                 Debug.Log("Merged with 0 verified selections");
                 // FIRST VERIFIED SELECTION
                 VerifiedSelections.Add(CurrentSelection);
                 _reversedFlags.Add(false);
+                mostRecentTerminalTile = CurrentSelection.LetterTiles[^1];
                 isMerged = true;
             } 
             else if (TerminalVerifiedEndTile == CurrentSelection.LetterTiles[0])
@@ -114,6 +137,7 @@ namespace WarOfWords
                 // Valid END extension
                 VerifiedSelections.Add(CurrentSelection);
                 _reversedFlags.Add(false);
+                mostRecentTerminalTile = CurrentSelection.LetterTiles[^1];
                 isMerged = true;
             } 
             else if (TerminalVerifiedEndTile == CurrentSelection.LetterTiles[^1])
@@ -122,6 +146,7 @@ namespace WarOfWords
                 // Valid END extension (REVERSED)
                 VerifiedSelections.Add(CurrentSelection);
                 _reversedFlags.Add(true);
+                mostRecentTerminalTile = CurrentSelection.LetterTiles[0];
                 isMerged = true;
             }
             else if (TerminalVerifiedStartTile == CurrentSelection.LetterTiles[^1])
@@ -130,6 +155,7 @@ namespace WarOfWords
                 // Valid START extension
                 VerifiedSelections.Insert(0, CurrentSelection);
                 _reversedFlags.Insert(0, false);
+                mostRecentTerminalTile = CurrentSelection.LetterTiles[0];
                 isMerged = true;
             }
             else if (TerminalVerifiedStartTile == CurrentSelection.LetterTiles[0])
@@ -138,6 +164,7 @@ namespace WarOfWords
                 // Valid START extension (REVERSED)
                 VerifiedSelections.Insert(0, CurrentSelection);
                 _reversedFlags.Insert(0, true);
+                mostRecentTerminalTile = CurrentSelection.LetterTiles[^1];
                 isMerged = true;
             }
 
@@ -147,11 +174,13 @@ namespace WarOfWords
                 // Mark verified
                 CurrentSelection.IsVerified = true;
                 IsComplete = UpdateTerminalTiles();
+                MostRecentTerminalVerifiedTile = mostRecentTerminalTile;
                 UpdateSelectionTypes(IsComplete);
 
                 CurrentSelection = null;
                 
                 UpdateConnections();
+                
             }
 
             return isMerged;
