@@ -6,9 +6,12 @@
   <component name="ChangeListManager">
     <list default="true" id="bc16a576-3d17-4771-a401-98bcaae6af5c" name="Changes" comment="Removed debugs">
       <change beforePath="$PROJECT_DIR$/.idea/.idea.WarOfWords/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.WarOfWords/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/Scripts/Game/CameraManager.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Scripts/Game/CameraManager.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Scenes/GameScene.unity" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Scenes/GameScene.unity" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Assets/Scripts/Game/Game.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Scripts/Game/Game.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Assets/Scripts/Game/MapBoard.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Scripts/Game/MapBoard.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Scripts/Game/MapBoardSelection.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Scripts/Game/MapBoardSelection.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Scripts/Game/MapBoardSelectionPerimeter.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Scripts/Game/MapBoardSelectionPerimeter.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Scripts/Game/UI/Panels/TilePanel.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Scripts/Game/UI/Panels/TilePanel.cs" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -25,10 +28,15 @@
   </component>
   <component name="HighlightingSettingsPerFile">
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/c4e726602a0b453fbc96db7a06c54db2157800/99/3233edb4/Transform.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock:///Users/moshecristel/Development/WarOfWords/Assets/Scripts/Game/MapBoard.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Assets/Scripts/Game/Enums/Party.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="mock:///Users/moshecristel/Development/WarOfWords/Assets/Scripts/Game/MapBoardSelection.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock:///Users/moshecristel/Development/WarOfWords/Assets/Scripts/Game/MapBoardSelectionPerimeter.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Assets/Scripts/Game/Model/MapLetter.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/5a41d6b7189842eca409fd0b1c3e3dcf17bf78/7b/ff31f2bb/Action.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Assets/Scripts/Game/MapLetterTile.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/c4e726602a0b453fbc96db7a06c54db2157800/74/822ee0b8/Camera.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock:///Users/moshecristel/Development/WarOfWords/Assets/Scripts/Game/UI/Panels/TilePanel.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/c4e726602a0b453fbc96db7a06c54db2157800/86/073505e7/Gizmos.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Assets/Scripts/Game/Prep/MapGenerator.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/d44b17e136d09081da1e8fd0e8c83fde60e11818b9f2442d7ed8cb733fae895e/System.Collections.Generic.cs" root0="SKIP_HIGHLIGHTING" />
@@ -37,6 +45,7 @@
     <setting file="mock:///Users/moshecristel/Development/WarOfWords/Assets/Scripts/Game/UI/Panels/TilePanel.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/c4e726602a0b453fbc96db7a06c54db2157800/35/a0ca49de/Bounds.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/34ade41d0e874484a414438247bc73f71f800/af/fb5a91d1/Physics2D.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock:///Users/moshecristel/Development/WarOfWords/Assets/Scripts/Game/Game.cs" root0="SKIP_HIGHLIGHTING" />
   </component>
   <component name="MarkdownSettingsMigration">
     <option name="stateVersion" value="1" />
@@ -115,7 +124,7 @@
       <workItem from="1660156356544" duration="124000" />
       <workItem from="1660156550691" duration="54288000" />
       <workItem from="1660420987845" duration="59116000" />
-      <workItem from="1661818558617" duration="5849000" />
+      <workItem from="1661818558617" duration="12322000" />
     </task>
     <task id="LOCAL-00001" summary="Reorg of map and tile panel code">
       <created>1660522257240</created>

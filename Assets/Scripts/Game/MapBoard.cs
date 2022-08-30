@@ -15,6 +15,12 @@ namespace WarOfWords
         // 2 - Is perimeter successful
         // 3 - New terminal tile position
         public static event Action<string, bool, bool, Vector2> WordAttempted;
+        
+        // 0 - New terminal tile position
+        public static event Action<Vector2> WordReverted;
+
+        // 0 - New position to pan to
+        public static event Action<Vector2> ZoomTerminalTile;
 
         [SerializeField] private MapLetterTile _mapLetterTilePrefab;
         [SerializeField] private PolygonCollider2D _tileSelectionCollider;
@@ -35,17 +41,22 @@ namespace WarOfWords
         public Bounds CameraConstraintBounds => (Bounds == default) ? default : VectorUtils.ContractBounds(Bounds, 5f, 3f);
 
         public MapBoardSelectionPerimeter Perimeter { get; set; }
+        public Vector2 _lastTerminalTilePositionReportedInEvent;
 
         #region Lifecycle
 
         private void Awake()
         {
-            TilePanel.ResetPerimeter += TilePanel_OnResetPerimeter;
+            TilePanel.ResetPerimeterPressed += TilePanel_OnResetPerimeterPressed;
+            TilePanel.RevertLastWordPressed += TilePanel_OnRevertLastWordPressed;
+            TilePanel.ToggleZoomTerminalTilePressed += TilePanel_OnToggleZoomTerminalTilePressed;
         }
 
         private void OnDestroy()
         {
-            TilePanel.ResetPerimeter -= TilePanel_OnResetPerimeter;
+            TilePanel.SolveWordPressed -= TilePanel_OnResetPerimeterPressed;
+            TilePanel.RevertLastWordPressed -= TilePanel_OnRevertLastWordPressed;
+            TilePanel.ToggleZoomTerminalTilePressed -= TilePanel_OnToggleZoomTerminalTilePressed;
         }
 
         #endregion
@@ -137,11 +148,32 @@ namespace WarOfWords
                 {
                     StartCoroutine(PauseThenSelectPerimeter());
                 }
-                
-                
-                WordAttempted?.Invoke(sequence, isWord && !deselect, Perimeter.IsComplete, Perimeter.MostRecentTerminalVerifiedTile != null ? Perimeter.MostRecentTerminalVerifiedTile.transform.position : default);
-            }
 
+                _lastTerminalTilePositionReportedInEvent = Perimeter.MostRecentTerminalVerifiedTile != null
+                    ? Perimeter.MostRecentTerminalVerifiedTile.transform.position
+                    : default;
+                WordAttempted?.Invoke(sequence, isWord && !deselect, Perimeter.IsComplete, _lastTerminalTilePositionReportedInEvent);
+            }
+            
+            private void TilePanel_OnResetPerimeterPressed()
+            {
+                ResetPerimeter();
+            }
+            
+            private void TilePanel_OnRevertLastWordPressed()
+            {
+                RevertLastWord();
+            }
+            
+            private void TilePanel_OnToggleZoomTerminalTilePressed()
+            {
+                ToggleZoomTerminalTile();
+            }
+        #endregion
+
+
+        #region Methods
+        
             private IEnumerator PauseThenSelectPerimeter()
             {
                 yield return new WaitForSeconds(2f);
@@ -189,16 +221,6 @@ namespace WarOfWords
 
                 ResetPerimeter();
             } 
-            
-            private void TilePanel_OnResetPerimeter()
-            {
-                ResetPerimeter();
-            }
-            
-        #endregion
-
-
-        #region Methods
 
             private void CheckForLetterTile(Vector2 worldPosition)
             {
@@ -232,6 +254,27 @@ namespace WarOfWords
                 Perimeter.DeselectAll();
                 Perimeter.UpdateVisuals();
                 Perimeter = new MapBoardSelectionPerimeter();
+            }
+
+            private void RevertLastWord()
+            {
+                if (Perimeter.RevertLastVerifiedSelection())
+                {
+                    _lastTerminalTilePositionReportedInEvent = Perimeter.MostRecentTerminalVerifiedTile != null
+                        ? Perimeter.MostRecentTerminalVerifiedTile.transform.position
+                        : default;
+                    WordReverted?.Invoke(_lastTerminalTilePositionReportedInEvent);
+                }
+            }
+
+            private void ToggleZoomTerminalTile()
+            {
+                if (Perimeter == null || Perimeter.TerminalVerifiedStartTile == null) ;
+                _lastTerminalTilePositionReportedInEvent = (Vector2)
+                    Perimeter.TerminalVerifiedStartTile.transform.position == _lastTerminalTilePositionReportedInEvent ? 
+                    Perimeter.TerminalVerifiedEndTile.transform.position : 
+                    Perimeter.TerminalVerifiedStartTile.transform.position;
+                ZoomTerminalTile?.Invoke(_lastTerminalTilePositionReportedInEvent);
             }
 
             private List<MapLetterTile> GetAllLetterTiles()

@@ -19,6 +19,7 @@ namespace WarOfWords
         public static event Action<MapLetterTile> PerimeterExtended;
         
         public List<MapBoardSelection> VerifiedSelections { get; set; } = new();
+        public Stack<MapBoardSelection> VerifiedSelectionHistory { get; } = new();      // Last selections on top for undoing
         private List<bool> _reversedFlags = new(); 
         
         public MapBoardSelection CurrentSelection { get; set; }
@@ -177,6 +178,7 @@ namespace WarOfWords
                 MostRecentTerminalVerifiedTile = mostRecentTerminalTile;
                 UpdateSelectionTypes(IsComplete);
 
+                VerifiedSelectionHistory.Push(CurrentSelection);
                 CurrentSelection = null;
                 
                 UpdateConnections();
@@ -185,12 +187,97 @@ namespace WarOfWords
 
             return isMerged;
         }
+
+        public bool RevertLastVerifiedSelection()
+        {
+            if (IsComplete)
+            {
+                Debug.Log("Did not complete to is complete");
+                return false;
+            }
+
+            if (CurrentSelection is { LetterTileCount: > 0 })
+            {
+                Debug.Log("Did not complete due to ongoing selection");
+                return false;
+            }
+
+            if (VerifiedSelections.Count == 0)
+            {
+                Debug.Log("Did not complete due to no verified selections");
+                return false;
+            }
+            
+            Debug.Log("Popping history");
+            MapBoardSelection latestSelection = VerifiedSelectionHistory.Pop();
+            RevertTerminalVerifiedSelection(latestSelection);
+            return true;
+        }
+
+        public void RevertTerminalVerifiedSelection(MapBoardSelection terminalSelection)
+        {
+            if (VerifiedSelections.Count == 1)
+            {
+                VerifiedSelections.RemoveAt(0);
+                _reversedFlags.RemoveAt(0);
+
+                // Only 1 selection, revert easily
+                terminalSelection.IsVerified = false;
+                terminalSelection.Deselect();
+                terminalSelection.UpdateVisuals();
+
+                TerminalVerifiedStartTile = null;
+                TerminalVerifiedEndTile = null;
+                return;
+            }
+
+            if (VerifiedSelections[0] == terminalSelection)
+            {
+                Debug.Log("Found terminal selection at beginning");
+                // Latest selection is at the beginning
+                VerifiedSelections.RemoveAt(0);
+                _reversedFlags.RemoveAt(0);
+                
+                // Set new terminal tile
+                UpdateTerminalTiles();
+                MostRecentTerminalVerifiedTile = TerminalVerifiedStartTile;
+                // TerminalVerifiedStartTile = MostRecentTerminalVerifiedTile = _reversedFlags[0]
+                //     ? VerifiedSelections[0].LetterTiles[^1]
+                //     : VerifiedSelections[0].LetterTiles[0];
+                
+                terminalSelection.DeselectExcept(TerminalVerifiedStartTile);
+            }
+            else
+            {
+                Debug.Log("Found terminal selection at end");
+                // Latest selection is at the end
+                VerifiedSelections.RemoveAt(VerifiedSelections.Count - 1);
+                _reversedFlags.RemoveAt(_reversedFlags.Count - 1);
+                
+                // Set new terminal tile
+                UpdateTerminalTiles();
+                MostRecentTerminalVerifiedTile = TerminalVerifiedEndTile;
+                // TerminalVerifiedEndTile = MostRecentTerminalVerifiedTile = _reversedFlags[^1]
+                //     ? VerifiedSelections[^1].LetterTiles[0]
+                //     : VerifiedSelections[^1].LetterTiles[^1];
+                terminalSelection.DeselectExcept(TerminalVerifiedEndTile);
+            }
+            
+            terminalSelection.UpdateVisuals();
+            UpdateTerminalTiles();
+            UpdateSelectionTypes(false);
+            UpdateConnections();
+            UpdateVisuals();
+        }
         
         public List<MapLetterTile> GetOrderedVerifiedTiles()
         {
             List<MapLetterTile> orderedTiles = new();
             for (int i = 0; i < VerifiedSelections.Count; i++)
             {
+                Debug.Log($"Getting ordered verified files for selection {i}: " + VerifiedSelections[i].ToCharacterSequence());
+
+                Debug.Log("Get tiles with reverse flag yields: " + VerifiedSelections[i].GetTiles(_reversedFlags[i]).Count);
                 orderedTiles.AddRange(VerifiedSelections[i].GetTiles(_reversedFlags[i]));
             }
 

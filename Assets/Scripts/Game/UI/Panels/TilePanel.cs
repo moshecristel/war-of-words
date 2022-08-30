@@ -10,7 +10,10 @@ namespace WarOfWords
     /// </summary>
     public class TilePanel : MonoBehaviour
     {
-        public static event Action ResetPerimeter; 
+        public static event Action ResetPerimeterPressed; 
+        public static event Action RevertLastWordPressed; 
+        public static event Action SolveWordPressed;
+        public static event Action ToggleZoomTerminalTilePressed;
         
         [SerializeField] private PanButton _panNButton;
         [SerializeField] private PanButton _panEButton;
@@ -98,7 +101,22 @@ namespace WarOfWords
 
             public void OnResetPerimeterClicked()
             {
-                ResetPerimeter?.Invoke();
+                ResetPerimeterPressed?.Invoke();
+            }
+
+            public void OnRevertLastWordClicked()
+            {
+                RevertLastWordPressed?.Invoke();
+            }
+
+            public void OnSolveWordClicked()
+            {
+                SolveWordPressed?.Invoke();
+            }
+
+            public void OnToggleZoomTerminalTileClicked()
+            {
+                ToggleZoomTerminalTilePressed?.Invoke();
             }
         #endregion
     }

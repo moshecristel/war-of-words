@@ -44,6 +44,16 @@ namespace WarOfWords
                 _tilePanel.SetTimeRemaining(60 * 3);
                 _tilePanel.SetWordDisplay(null);
                 
+                MapBoard.WordAttempted += MapBoard_OnWordAttempted;
+                MapBoard.WordReverted += MapBoard_OnWordReverted;
+                MapBoard.ZoomTerminalTile += MapBoard_OnZoomTerminalTile;
+            }
+
+            private void OnDestroy()
+            {
+                MapBoard.WordAttempted -= MapBoard_OnWordAttempted;
+                MapBoard.WordReverted -= MapBoard_OnWordReverted;
+                MapBoard.ZoomTerminalTile -= MapBoard_OnZoomTerminalTile;
             }
 
             private void OnEnable()
@@ -51,8 +61,6 @@ namespace WarOfWords
                 InputManager.TouchStarted += InputManager_OnTouchStarted;
                 InputManager.TouchMoved += InputManager_OnTouchMoved;
                 InputManager.TouchEnded += InputManager_OnTouchEnded;
-                
-                MapBoard.WordAttempted += MapBoard_OnWordAttempted;
             }
 
             private void OnDisable()
@@ -101,6 +109,16 @@ namespace WarOfWords
                 
                 if(isWordSucceeded)
                     CameraManager.Instance.AnimateNarrowCameraToPoint(latestTerminalPosition, _mapBoard.CameraConstraintBounds, 0.5f);
+            }
+            
+            private void MapBoard_OnWordReverted(Vector2 latestTerminalPosition)
+            {
+                CameraManager.Instance.AnimateNarrowCameraToPoint(latestTerminalPosition, _mapBoard.CameraConstraintBounds, 0.5f);
+            }
+            
+            private void MapBoard_OnZoomTerminalTile(Vector2 zoomPosition)
+            {
+                CameraManager.Instance.AnimateNarrowCameraToPoint(zoomPosition, _mapBoard.CameraConstraintBounds, 0.5f);
             }
         #endregion
 

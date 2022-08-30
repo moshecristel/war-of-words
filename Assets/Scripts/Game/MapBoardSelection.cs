@@ -24,7 +24,7 @@ namespace WarOfWords
             set
             {
                 _isVerified = value;
-                MarkTilesVerified();
+                MarkTilesVerified(_isVerified);
             } 
         }
 
@@ -104,19 +104,27 @@ namespace WarOfWords
             return clonedLetterTiles;
         }
         
-        private void MarkTilesVerified()
+        private void MarkTilesVerified(bool isVerified)
         {
             foreach (MapLetterTile letterTile in LetterTiles)
             {
-                letterTile.IsVerifiedSelection = true;
+                letterTile.IsVerifiedSelection = isVerified;
+            }
+        }
+
+        public void DeselectExcept(MapLetterTile tileToIgnore)
+        {
+            foreach (var letterTile in LetterTiles.Where(letterTile => letterTile != tileToIgnore))
+            {
+                letterTile.Deselect();
             }
         }
 
         public void Deselect()
         {
-            foreach (MapLetterTile letterTile in LetterTiles)
+            foreach (var letterTile in LetterTiles.Where(letterTile => !letterTile.IsVerifiedSelection))
             {
-                if(!letterTile.IsVerifiedSelection) letterTile.Deselect();
+                letterTile.Deselect();
             }
         }
 
