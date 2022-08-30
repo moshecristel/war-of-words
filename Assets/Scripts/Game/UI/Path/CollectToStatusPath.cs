@@ -1,11 +1,9 @@
-using System;
 using System.Collections.Generic;
 using UnityEngine;
-using Random = Unity.Mathematics.Random;
+using WarOfWords;
 
 public class CollectToStatusPath : MonoBehaviour
 {
-    [SerializeField] private GameObject _prefab;            // TODO Animation?
     [SerializeField] private LeanTweenPath _ltPath;
 
     [SerializeField] private Transform _pathStart;
@@ -24,37 +22,42 @@ public class CollectToStatusPath : MonoBehaviour
     private Vector2 _start;
     private Vector2 _end;
 
-    private Random _random;
-
-    public static void MultiTween(Transform canvasTransform, CollectToStatusPath pathPrefab, Transform start, Transform end, int n, 
+    public static void MultiTween(LeanTweenType tweenType, Transform canvasTransform, GameObject collectPrefab, CollectToStatusPath pathPrefab, Transform start, Transform end, int n, 
         float tweenSeconds = 1f, float scaleDelay = 0.5f, float startScale = 1f, float endScale = 1.5f,
-        float maxTimeVariation = 0.2f, float maxMidpointVariation = 0.0f)
+        float maxTimeVariation = 0.2f, float maxMidpointPercentVariation = 0.0f)
     {
-        Random random = new Random((uint)DateTime.Now.Millisecond);
-
-        float variationPerPath = (maxTimeVariation * 2f) / n;
-        
-        print($"variationPerPath={variationPerPath}");
+        float timeVariationPerPath = (maxTimeVariation * 2f) / n;
+        List<Vector2> midpointVariations = GetMidpointVariations(n, start.position, end.position, maxMidpointPercentVariation);
         
         for (int i = 0; i < n; i++)
         {
             CollectToStatusPath path = Instantiate(pathPrefab, canvasTransform);
             
-            float midpointVariation = 0f;
-            if (!Mathf.Approximately(0f, maxMidpointVariation))
-            {
-                midpointVariation = random.NextFloat(0f, maxMidpointVariation);
-            }
-
-            float timeVariation = -maxTimeVariation + (i * variationPerPath);
-            print($"{i} = timeVariation={timeVariation}");
-            
+            float timeVariation = -maxTimeVariation + (i * timeVariationPerPath);
             float currTweenSeconds = tweenSeconds - timeVariation;
-            path.Tween(start, end, midpointVariation, currTweenSeconds, scaleDelay, startScale, endScale);
+            path.Tween(collectPrefab, start, end, tweenType, midpointVariations[i], currTweenSeconds, scaleDelay, startScale, endScale);
         }
     }
 
-    public void Tween(Transform start, Transform end, float midpointVariation = 0f, float tweenSeconds = 1f, float scaleDelay = 0.5f, float startScale = 1f, float endScale = 1.5f)
+    private static List<Vector2> GetMidpointVariations(int n, Vector2 start, Vector2 end, float maxMidpointPercentVariation)
+    {
+        float totalX = start.x - end.x;
+        float totalY = end.y - start.y;
+        float midpointPercentVariationPerPath = (maxMidpointPercentVariation * 2f) / n;
+
+        List<Vector2> midpointVariations = new();
+        for (int i = 0; i < n; i++)
+        {
+            float midpointPercentVariation = -maxMidpointPercentVariation + (midpointPercentVariationPerPath * i);
+            Vector2 midpointVariation = new Vector2(midpointPercentVariation * totalX, midpointPercentVariation * totalY);
+            midpointVariations.Add(midpointVariation);
+        }
+        
+        midpointVariations.Shuffle();
+        return midpointVariations;
+    }
+
+    public void Tween(GameObject collectPrefab, Transform start, Transform end, LeanTweenType tweenType = LeanTweenType.easeInCubic, Vector2 midpointVariation = default, float tweenSeconds = 1f, float scaleDelay = 0.5f, float startScale = 1f, float endScale = 1.5f)
     {
         _start = start.position;
         _end = end.position;
@@ -64,30 +67,23 @@ public class CollectToStatusPath : MonoBehaviour
 
         ResetControls();
 
-        // if (!Mathf.Approximately(0f, midpointVariation))
-        // {
-        //     float totalX = _start.x - _end.x;
-        //     float totalY = _end.y - _start.y;
-        //     
-        //     float x = totalX - _random.NextFloat(0f, 2 * midpointVariation);
-        //     float y = totalY - _random.NextFloat(0f, 2 * midpointVariation);
-        //     Vector2 variation = new Vector2(x, y);
-        //     
-        //     foreach (Transform t in _controlsAndMidpointsForVariation)
-        //     {
-        //         t.position += (Vector3)variation;
-        //     }
-        // }
+        if (midpointVariation != default)
+        {
+            foreach (Transform t in _controlsAndMidpointsForVariation)
+            {
+                t.position += (Vector3)midpointVariation;
+            }
+        }
 
         _tweenSeconds = tweenSeconds;
         _scaleDelay = scaleDelay;
         _startScale = startScale;
         _endScale = endScale;
 
-        GameObject obj = Instantiate(_prefab, transform);
+        GameObject obj = Instantiate(collectPrefab, transform);
         obj.transform.localScale = new Vector3(_startScale, _startScale, 1);
         obj.transform.position = start.position;
-        LeanTween.move(obj, _ltPath.vec3, _tweenSeconds).setEase(LeanTweenType.easeInCubic).setOnComplete(Destroy);
+        LeanTween.move(obj, _ltPath.vec3, _tweenSeconds).setEase(tweenType).setOnComplete(Destroy);
         if(_tweenSeconds > _scaleDelay)
             LeanTween.scale(obj, Vector2.one * _endScale, _tweenSeconds - _scaleDelay).setDelay(_scaleDelay);
     }
@@ -117,8 +113,6 @@ public class CollectToStatusPath : MonoBehaviour
     {
         // Record relative positions of controls and points
         RecordOffsets();
-        
-        _random = new Random((uint)DateTime.Now.Millisecond);
     }
 
     private void RecordOffsets()

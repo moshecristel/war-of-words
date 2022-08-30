@@ -29,6 +29,8 @@ namespace WarOfWords
 
             public void Awake()
             {
+                Debug.Log("Awake!");
+                Debug.Log("Null? " + (_panNButton == null));
                 CameraManager.NarrowCameraTargetChanged += CameraManager_OnNarrowCameraTargetChanged;
             }
 
@@ -83,7 +85,7 @@ namespace WarOfWords
 
         #region Event Handlers
 
-            private void CameraManager_OnNarrowCameraTargetChanged(Vector2 cameraTarget, Dictionary<GridDirection, bool> canCameraMoveInDirection)
+            public void CameraManager_OnNarrowCameraTargetChanged(Vector2 cameraTarget, Dictionary<GridDirection, bool> canCameraMoveInDirection)
             {
                 _panNButton.SetEnabled(canCameraMoveInDirection[GridDirection.N]);
                 _panEButton.SetEnabled(canCameraMoveInDirection[GridDirection.E]);
