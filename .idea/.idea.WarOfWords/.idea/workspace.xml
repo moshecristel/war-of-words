@@ -1,63 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="bc16a576-3d17-4771-a401-98bcaae6af5c" name="Changes" comment="Reorg of map and tile panel code">
-      <change afterPath="$PROJECT_DIR$/Assets/Fonts/AlteHaas/AlteHaasGroteskRegular SDF.asset" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Assets/Fonts/AlteHaas/AlteHaasGroteskRegular SDF.asset.meta" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Assets/Fonts/AlteHaas/AlteHaasGroteskRegular.ttf" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Assets/Fonts/AlteHaas/AlteHaasGroteskRegular.ttf.meta" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Assets/Plugins/Sirenix/Odin Inspector/Config/Editor/AOTGenerationConfig.asset" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Assets/Plugins/Sirenix/Odin Inspector/Config/Editor/AOTGenerationConfig.asset.meta" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Assets/Plugins/Sirenix/Odin Inspector/Config/Editor/ImportSettingsConfig.asset" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Assets/Plugins/Sirenix/Odin Inspector/Config/Editor/ImportSettingsConfig.asset.meta" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Assets/Prefabs/Game/UI/CollectCoin.prefab" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Assets/Prefabs/Game/UI/CollectCoin.prefab.meta" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Assets/Prefabs/Game/UI/CollectStar.prefab" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Assets/Prefabs/Game/UI/CollectStar.prefab.meta" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Assets/Prefabs/Mockups.meta" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Assets/Prefabs/Mockups/AreaClaimedPopup.prefab" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Assets/Prefabs/Mockups/AreaClaimedPopup.prefab.meta" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Assets/Prefabs/Mockups/BlueButton.prefab" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Assets/Prefabs/Mockups/BlueButton.prefab.meta" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Assets/Prefabs/Mockups/BlueTag.prefab" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Assets/Prefabs/Mockups/BlueTag.prefab.meta" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Assets/Prefabs/Mockups/Original.meta" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Assets/Prefabs/Mockups/Original/Play_Result_Victory_Common.prefab" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Assets/Prefabs/Mockups/Original/Play_Result_Victory_Common.prefab.meta" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Assets/Prefabs/Mockups/Original/Popup_Stage_Start.prefab" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Assets/Prefabs/Mockups/Original/Popup_Stage_Start.prefab.meta" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Assets/Prefabs/Mockups/PointsPanel.prefab" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Assets/Prefabs/Mockups/PointsPanel.prefab.meta" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Assets/Scripts/Game/Model/PerimeterStats.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Assets/Scripts/Game/Model/PerimeterStats.cs.meta" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Assets/Scripts/Game/UI/Popups.meta" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Assets/Scripts/Game/UI/Popups/AreaClaimedPopup.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Assets/Scripts/Game/UI/Popups/AreaClaimedPopup.cs.meta" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Assets/Scripts/Game/Util/ListExtensions.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Assets/Scripts/Game/Util/ListExtensions.cs.meta" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/ProjectSettings/BurstAotSettings_StandaloneOSX.json" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/ProjectSettings/BurstAotSettings_iOS.json" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/ProjectSettings/CommonBurstAotSettings.json" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/ProjectSettings/ShaderGraphSettings.asset" afterDir="false" />
+    <list default="true" id="bc16a576-3d17-4771-a401-98bcaae6af5c" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/.idea.WarOfWords/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.WarOfWords/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/CoinPathTester.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/CoinPathTester.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/Fonts/AlteHaas/AlteHaasGroteskBold SDF.asset" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Fonts/AlteHaas/AlteHaasGroteskBold SDF.asset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/Plugins/Sirenix/Assemblies/NoEditor/Sirenix.Serialization.dll.meta" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Plugins/Sirenix/Assemblies/NoEditor/Sirenix.Serialization.dll.meta" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/Plugins/Sirenix/Assemblies/NoEditor/Sirenix.Utilities.dll.meta" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Plugins/Sirenix/Assemblies/NoEditor/Sirenix.Utilities.dll.meta" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/Plugins/Sirenix/Assemblies/NoEmitAndNoEditor/Sirenix.Serialization.dll.meta" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Plugins/Sirenix/Assemblies/NoEmitAndNoEditor/Sirenix.Serialization.dll.meta" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/Plugins/Sirenix/Assemblies/NoEmitAndNoEditor/Sirenix.Utilities.dll.meta" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Plugins/Sirenix/Assemblies/NoEmitAndNoEditor/Sirenix.Utilities.dll.meta" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/Prefabs/Game/MapLetterTile.prefab" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Prefabs/Game/MapLetterTile.prefab" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/Prefabs/Game/UI/Coin.prefab" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/Prefabs/Game/UI/Coin.prefab.meta" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/Scenes/GameScene.unity" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Scenes/GameScene.unity" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Assets/Scripts/Game/UI/Panels/TilePanel.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Scripts/Game/UI/Panels/TilePanel.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/Scripts/Game/UI/Path/CollectToStatusPath.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Scripts/Game/UI/Path/CollectToStatusPath.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/TextMesh Pro/Examples &amp; Extras/Resources/Fonts &amp; Materials/Roboto-Bold SDF.asset" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/TextMesh Pro/Examples &amp; Extras/Resources/Fonts &amp; Materials/Roboto-Bold SDF.asset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/TextMesh Pro/Resources/Fonts &amp; Materials/LiberationSans SDF.asset" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/TextMesh Pro/Resources/Fonts &amp; Materials/LiberationSans SDF.asset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/_ThirdParty/GUI PRO Kit - Simple Casual/Prefabs/Prefabs_Component_Buttons/Btn_Rectangle00_n_Common_Blue.prefab" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/_ThirdParty/GUI PRO Kit - Simple Casual/Prefabs/Prefabs_Component_Buttons/Btn_Rectangle00_n_Common_Blue.prefab" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/_ThirdParty/GUI PRO Kit - Simple Casual/Prefabs/Prefabs_Component_Buttons/Btn_Rectangle00_n_Common_Navy.prefab" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/_ThirdParty/GUI PRO Kit - Simple Casual/Prefabs/Prefabs_Component_Buttons/Btn_Rectangle00_n_Common_Navy.prefab" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/_ThirdParty/GUI PRO Kit - Simple Casual/Prefabs/Prefabs_Component_Labels/Label_Tag00_n_Blue.prefab" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/_ThirdParty/GUI PRO Kit - Simple Casual/Prefabs/Prefabs_Component_Labels/Label_Tag00_n_Blue.prefab" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ProjectSettings/ProjectSettings.asset" beforeDir="false" afterPath="$PROJECT_DIR$/ProjectSettings/ProjectSettings.asset" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />

@@ -29,8 +29,6 @@ namespace WarOfWords
 
             public void Awake()
             {
-                Debug.Log("Awake!");
-                Debug.Log("Null? " + (_panNButton == null));
                 CameraManager.NarrowCameraTargetChanged += CameraManager_OnNarrowCameraTargetChanged;
             }
 
