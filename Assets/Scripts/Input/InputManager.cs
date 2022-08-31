@@ -1,8 +1,6 @@
 using System;
-using System.Collections;
+using DigitalRubyShared;
 using UnityEngine;
-using UnityEngine.EventSystems;
-using UnityEngine.InputSystem;
 using WarOfWords;
 
 public class InputManager : Singleton<InputManager>
@@ -11,83 +9,109 @@ public class InputManager : Singleton<InputManager>
     public static event Action<Vector2> TouchStarted;
     public static event Action<Vector2> TouchMoved;
     public static event Action<Vector2> TouchEnded;
-
-    [SerializeField]
-    private Camera _narrowCamera;
     
-    [SerializeField]
-    private Camera _wideCamera;
+    [SerializeField] private FingersJoystickScript _fingersJoystick;
+    [SerializeField] private CircleCollider2D _joystickMask;
 
-    private TouchControls _touchControls;
-    private bool _fingerDown;
+    [SerializeField] private GameObject _panPanel;
+    
+    private PanGestureRecognizer _panGesture;
+    private ScaleGestureRecognizer _scaleGesture;
+
+    private bool _isPanning;
+    private bool _isDoublePan;
+    private bool _isJoysticking;
 
     #region Lifecycle
 
     private void Awake()
     {
-        _touchControls = new TouchControls();
+        // _touchControls = new TouchControls();
+        _fingersJoystick.JoystickExecuted = JoystickExecuted;
     }
 
     private void Start()
     {
-        _touchControls.Touch.TouchPress.started += OnTouchStartedReceived;
-        _touchControls.Touch.TouchPosition.performed += OnTouchMoveReceived;
-        _touchControls.Touch.TouchPress.canceled += OnTouchCanceledReceived;
+        
     }
 
     private void OnEnable()
     {
-        _touchControls.Enable();
+        _panGesture = new PanGestureRecognizer();
+        _panGesture.PlatformSpecificView = _panPanel;
+        _panGesture.MaximumNumberOfTouchesToTrack = 2;
+        _panGesture.StateUpdated += PanGesture_OnStateUpdated;
+        FingersScript.Instance.AddGesture(_panGesture);
+
+        _scaleGesture = new ScaleGestureRecognizer();
+        _scaleGesture.PlatformSpecificView = _panPanel;
+        _scaleGesture.StateUpdated += ScaleGesture_OnStateUpdated;
+        FingersScript.Instance.AddGesture(_scaleGesture);
+        
+        FingersScript.Instance.AddMask(_joystickMask, _fingersJoystick.PanGesture);
     }
-    
+
     private void OnDisable()
     {
-        _touchControls.Disable();
+        if (FingersScript.HasInstance)
+        {
+            FingersScript.Instance.RemoveGesture(_panGesture);
+            FingersScript.Instance.RemoveMask(_joystickMask, _fingersJoystick.PanGesture);
+        }
+    }
+
+    private void PanGesture_OnStateUpdated(GestureRecognizer pan)
+    {
+        if (_isJoysticking) return;
+
+        _isPanning = pan.State == GestureRecognizerState.Began || (_isPanning && pan.State == GestureRecognizerState.Executing);
+        if (!_isPanning)
+        {
+            _isDoublePan = false;
+            return;
+        }
+
+        _isDoublePan = pan.CurrentTrackedTouches.Count > 1;
+        
+        Debug.Log($"PAN: {pan.State}, focus = {pan.FocusX}, {pan.FocusY}, tracked touches=" + pan.CurrentTrackedTouches.Count + " touches: " + pan.TrackedTouchCountIsWithinRange);
+    }
+    
+    private void ScaleGesture_OnStateUpdated(GestureRecognizer scale)
+    {
+        if (scale.State == GestureRecognizerState.Began)
+        {
+            Debug.Log("BEGAN Scaling: " + scale.State + " " + _scaleGesture.ScaleMultiplier);
+
+        } else if (scale.State == GestureRecognizerState.Executing)
+        {
+            Debug.Log("EXECUTING Scaling: " + scale.State + " " + _scaleGesture.ScaleMultiplier);
+        }
+        
+    }
+    
+    
+
+    public void HiButtonClicked()
+    {
+        Debug.Log("Hi!");
     }
     #endregion
 
     #region Event Handlers
     
-        private void OnTouchStartedReceived(InputAction.CallbackContext context)
-        {
-            StartCoroutine(WaitAndPoll());
-        }
-
-        IEnumerator WaitAndPoll()
-        {
-            yield return new WaitForEndOfFrame();
-
-            // Don't register touch if we're over a UI element
-            if (EventSystem.current.currentSelectedGameObject != null) yield break;
-            _fingerDown = true;
-                
-            Vector2 touchScreenPosition = _touchControls.Touch.TouchPosition.ReadValue<Vector2>();
-            TouchStarted?.Invoke(ScreenToWorldPosition(touchScreenPosition));
-        }
+    private void JoystickExecuted(FingersJoystickScript script, Vector2 amount)
+    {
+        if (_isPanning) return; 
         
-        private void OnTouchMoveReceived(InputAction.CallbackContext context)
+        _isJoysticking = script.Executing;
+        if (script.Executing)
         {
-            if (!_fingerDown) return;
-            Vector2 touchScreenPosition = context.ReadValue<Vector2>();
-            TouchMoved?.Invoke(ScreenToWorldPosition(touchScreenPosition));
+            print("Amt=" + amount + " script executing=" + script.Executing);
         }
-        
-        private void OnTouchCanceledReceived(InputAction.CallbackContext context)
+        else
         {
-            _fingerDown = false;
-            
-            Vector2 touchScreenPosition = _touchControls.Touch.TouchPosition.ReadValue<Vector2>();
-            TouchEnded?.Invoke(ScreenToWorldPosition(touchScreenPosition));
+            print("Joystick complete");
         }
-    #endregion
-
-    #region Methods
-
-        private Vector2 ScreenToWorldPosition(Vector2 screenPosition)
-        {
-            return _narrowCamera.isActiveAndEnabled ? 
-                _narrowCamera.ScreenToWorldPoint(screenPosition) : 
-                _wideCamera.ScreenToWorldPoint(screenPosition);
-        }
+    }
     #endregion
 }

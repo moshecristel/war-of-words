@@ -33,6 +33,13 @@ namespace WarOfWords
         {
             _minimapCamera.transform.position = _wideCamera.transform.position;
         }
+        
+        public Vector2 ScreenToWorldPosition(Vector2 screenPosition)
+        {
+            return _narrowCamera.isActiveAndEnabled ? 
+                _narrowCamera.ScreenToWorldPoint(screenPosition) : 
+                _wideCamera.ScreenToWorldPoint(screenPosition);
+        }
 
         public void SwitchToWideCamera(Vector2 position)
         {

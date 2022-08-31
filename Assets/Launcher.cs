@@ -1,15 +1,15 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
+using DigitalRubyShared;
 using Sirenix.OdinInspector;
 using UnityEngine;
 using WarOfWords;
 
-public class CoinPathTester : MonoBehaviour
+public class Launcher : MonoBehaviour
 {
-    
-
     [SerializeField] private AreaClaimedPopup _areaClaimedPopup;
-
+    
     [Button("Go")]
     private void Go()
     {
@@ -29,5 +29,10 @@ public class CoinPathTester : MonoBehaviour
         };
         
         _areaClaimedPopup.DisplayWith(stats);
+    }
+
+    public void OnHiClicked()
+    {
+        Debug.Log("Hi!");
     }
 }

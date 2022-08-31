@@ -269,7 +269,7 @@ namespace WarOfWords
 
             private void ToggleZoomTerminalTile()
             {
-                if (Perimeter == null || Perimeter.TerminalVerifiedStartTile == null) ;
+                if (Perimeter == null || Perimeter.TerminalVerifiedStartTile == null) return;
                 _lastTerminalTilePositionReportedInEvent = (Vector2)
                     Perimeter.TerminalVerifiedStartTile.transform.position == _lastTerminalTilePositionReportedInEvent ? 
                     Perimeter.TerminalVerifiedEndTile.transform.position : 
