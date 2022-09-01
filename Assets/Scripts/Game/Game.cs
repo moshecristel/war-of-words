@@ -47,6 +47,9 @@ namespace WarOfWords
                 MapBoard.WordAttempted += MapBoard_OnWordAttempted;
                 MapBoard.WordReverted += MapBoard_OnWordReverted;
                 MapBoard.ZoomTerminalTile += MapBoard_OnZoomTerminalTile;
+                
+                InputManager.TapStateChanged += InputManager_OnTapStateChanged;
+                InputManager.PanStateChanged += InputManager_OnPanStateChanged;
             }
 
             private void OnDestroy()
@@ -54,55 +57,49 @@ namespace WarOfWords
                 MapBoard.WordAttempted -= MapBoard_OnWordAttempted;
                 MapBoard.WordReverted -= MapBoard_OnWordReverted;
                 MapBoard.ZoomTerminalTile -= MapBoard_OnZoomTerminalTile;
+                
+                InputManager.TapStateChanged -= InputManager_OnTapStateChanged;
+                InputManager.PanStateChanged -= InputManager_OnPanStateChanged;
             }
-
-            private void OnEnable()
-            {
-                InputManager.TouchStarted += InputManager_OnTouchStarted;
-                InputManager.TouchMoved += InputManager_OnTouchMoved;
-                InputManager.TouchEnded += InputManager_OnTouchEnded;
-            }
-
-            private void OnDisable()
-            {
-                InputManager.TouchStarted -= InputManager_OnTouchStarted;
-                InputManager.TouchMoved -= InputManager_OnTouchMoved;
-                InputManager.TouchEnded -= InputManager_OnTouchEnded;
-            }
-
         #endregion
 
         #region Event Handlers
 
-            private void InputManager_OnTouchMoved(Vector2 worldPosition)
+            private void InputManager_OnTapStateChanged(InputState inputState, Vector2 worldPosition)
             {
-                // If selection hasn't been interrupted by game view change
-                if (_isSelecting && _gameView == GameView.Tile)
-                {
-                    _mapBoard.OnTouchMoved(worldPosition);
-                }
-            }
-
-            private void InputManager_OnTouchStarted(Vector2 worldPosition)
-            {
-                _isSelecting = true;
-                if (_gameView == GameView.Map && MapBoard.IsTileNear(worldPosition))
+                if (inputState == InputState.Ended && _gameView == GameView.Map && MapBoard.IsTileNear(worldPosition))
                 {
                     SetGameView(GameView.Tile, worldPosition);
-                } else if (_gameView == GameView.Tile)
-                {
-                    _mapBoard.OnTouchStarted(worldPosition);
                 }
             }
             
-            private void InputManager_OnTouchEnded(Vector2 worldPosition)
+            private void InputManager_OnPanStateChanged(InputState state, Vector2 worldPosition)
             {
-                if (_isSelecting && _gameView == GameView.Tile)
+                if (_gameView != GameView.Tile) return;
+
+                    switch (state)
                 {
-                    _mapBoard.OnTouchEnded(worldPosition);
-                }
+                    case InputState.Started:
+                        _isSelecting = true;  // Resets on view change
+                        _mapBoard.OnTouchStarted(worldPosition);
+                        break;
+                    case InputState.Moved:
+                        
+                        // If selection hasn't been interrupted by game view change
+                        if (_isSelecting)
+                            _mapBoard.OnTouchMoved(worldPosition);
+                        break;
+                    case InputState.Ended:
+                        if (_isSelecting)
+                        {
+                            _mapBoard.OnTouchEnded(worldPosition);
+                        }
+                        break;
+                    default:
+                        throw new ArgumentOutOfRangeException(nameof(state), state, null);
+                }   
             }
-            
+
             private void MapBoard_OnWordAttempted(string sequence, bool isWordSucceeded, bool isPerimeterSucceeded, Vector2 latestTerminalPosition)
             {
                 _tilePanel.SetWordDisplay(isWordSucceeded ? sequence : null);

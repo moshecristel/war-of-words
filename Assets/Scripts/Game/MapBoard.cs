@@ -112,7 +112,7 @@ namespace WarOfWords
 
             public void OnTouchStarted(Vector2 worldPosition)
             {
-                if (Perimeter is not { IsComplete: true }) CheckForLetterTile(worldPosition);
+                if (Perimeter is not { IsComplete: true }) CheckForLetterTile(worldPosition, 0.3f);
             }
         
             public void OnTouchMoved(Vector2 worldPosition)
@@ -217,14 +217,14 @@ namespace WarOfWords
                     selectedTile.UpdateVisuals();
                 }
                 
-                Debug.Log("Total points this round: " + selectedTiles.Count * averageVerifiedWordLength);
+                // Debug.Log("Total points this round: " + selectedTiles.Count * averageVerifiedWordLength);
 
                 ResetPerimeter();
             } 
 
-            private void CheckForLetterTile(Vector2 worldPosition)
+            private void CheckForLetterTile(Vector2 worldPosition, float radius = 0.1f)
             {
-                Collider2D circle = Physics2D.OverlapCircle(worldPosition, 0.1f, LayerMask.GetMask("MapLetterTile"));
+                Collider2D circle = Physics2D.OverlapCircle(worldPosition, radius, LayerMask.GetMask("MapLetterTile"));
                 if (circle == null) return;
                 
                 MapLetterTile letterTile = circle.gameObject.GetComponentInParent<MapLetterTile>();
@@ -244,9 +244,9 @@ namespace WarOfWords
                     ? "<none>"
                     : Perimeter.CurrentSelection.ToCharacterSequence();
                 
-                Debug.Log(letterAdded
-                    ? $"ADDED letter tile {letterTile.MapLetter.Character} to current selection: {sequence}"
-                    : $"COULD NOT ADD letter tile {letterTile.MapLetter.Character} to current selection: {sequence}");
+                // Debug.Log(letterAdded
+                //     ? $"ADDED letter tile {letterTile.MapLetter.Character} to current selection: {sequence}"
+                //     : $"COULD NOT ADD letter tile {letterTile.MapLetter.Character} to current selection: {sequence}");
             }
 
             private void ResetPerimeter()
