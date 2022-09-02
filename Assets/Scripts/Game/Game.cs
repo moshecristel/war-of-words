@@ -1,4 +1,5 @@
 using System;
+using Unity.VisualScripting;
 using UnityEngine;
 
 namespace WarOfWords
@@ -21,6 +22,11 @@ namespace WarOfWords
         // Double-finger pan
         private Vector2 _lastDoublePanScreenPosition;
         private Vector2 _screenToWorldMultiplier;
+        
+        // Joystick
+        private bool _isJoysticking;
+        private Vector2 _joystickMoveAmount;
+        private float _joystickPanSpeed = 2.5f;
 
         #region Lifecycle
 
@@ -53,6 +59,16 @@ namespace WarOfWords
                 InputManager.PanStateChanged += InputManager_OnPanStateChanged;
                 InputManager.DoublePanStateChanged += InputManager_OnDoublePanStateChanged;
                 InputManager.ScaleStateChanged += InputManager_OnScaleStateChanged;
+                InputManager.JoystickStateChanged += InputManager_OnJoystickStateChanged;
+            }
+
+            private void FixedUpdate()
+            {
+                if (_isJoysticking)
+                {
+                    Vector2 joystickMoveWorldOffset = _joystickMoveAmount * _joystickPanSpeed * Time.fixedDeltaTime;
+                    CameraManager.Instance.ManualPanNarrowCameraByWorldOffset(joystickMoveWorldOffset);
+                }
             }
 
             private void OnDestroy()
@@ -65,6 +81,7 @@ namespace WarOfWords
                 InputManager.PanStateChanged -= InputManager_OnPanStateChanged;
                 InputManager.DoublePanStateChanged -= InputManager_OnDoublePanStateChanged;
                 InputManager.ScaleStateChanged -= InputManager_OnScaleStateChanged;
+                InputManager.JoystickStateChanged -= InputManager_OnJoystickStateChanged;
             }
         #endregion
 
@@ -130,6 +147,14 @@ namespace WarOfWords
             {
                 if (_gameView != GameView.Tile) return;
                 CameraManager.Instance.ManualDollyNarrowCameraByMultiplier(scaleMultiplier);
+            }
+            
+            private void InputManager_OnJoystickStateChanged(InputState inputState, Vector2 moveAmount)
+            {
+                if (_gameView != GameView.Tile) return;
+
+                _isJoysticking = inputState != InputState.Ended;
+                _joystickMoveAmount = moveAmount;
             }
 
             private void MapBoard_OnWordAttempted(string sequence, bool isWordSucceeded, bool isPerimeterSucceeded, Vector2 latestTerminalPosition)
