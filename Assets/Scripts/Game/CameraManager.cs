@@ -19,10 +19,15 @@ namespace WarOfWords
         public Camera NarrowCamera => _narrowCamera;
 
         private bool _isAnimatingCamera;
+        private float _minNarrowCameraScalePercent = 0.66f;
+        private float _maxNarrowCameraScalePercent = 1.5f;
+
+        private float _originalNarrowCameraOrthographicSize;
 
         private void Awake()
         {
             UpdateMinimapAreaGraphic();
+            _originalNarrowCameraOrthographicSize = _narrowCamera.orthographicSize;
         }
 
         private void Update()
@@ -99,7 +104,8 @@ namespace WarOfWords
 
         public void ManualDollyNarrowCameraByMultiplier(float scaleMultiplier)
         {
-            _narrowCamera.orthographicSize *= scaleMultiplier;
+            float newNarrowCameraOrthographicSize = _narrowCamera.orthographicSize * scaleMultiplier; 
+            _narrowCamera.orthographicSize = Mathf.Clamp(newNarrowCameraOrthographicSize, _originalNarrowCameraOrthographicSize * _minNarrowCameraScalePercent, _originalNarrowCameraOrthographicSize * _maxNarrowCameraScalePercent);
             UpdateMinimapAreaGraphic();
         } 
 
