@@ -275,9 +275,6 @@ namespace WarOfWords
             List<MapLetterTile> orderedTiles = new();
             for (int i = 0; i < VerifiedSelections.Count; i++)
             {
-                Debug.Log($"Getting ordered verified files for selection {i}: " + VerifiedSelections[i].ToCharacterSequence());
-
-                Debug.Log("Get tiles with reverse flag yields: " + VerifiedSelections[i].GetTiles(_reversedFlags[i]).Count);
                 orderedTiles.AddRange(VerifiedSelections[i].GetTiles(_reversedFlags[i]));
             }
 

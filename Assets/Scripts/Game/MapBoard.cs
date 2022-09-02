@@ -216,8 +216,6 @@ namespace WarOfWords
                     selectedTile.SetColor(TileColor.Highlighted);
                     selectedTile.UpdateVisuals();
                 }
-                
-                // Debug.Log("Total points this round: " + selectedTiles.Count * averageVerifiedWordLength);
 
                 ResetPerimeter();
             } 
@@ -268,7 +266,7 @@ namespace WarOfWords
             }
 
             private void ToggleZoomTerminalTile()
-            {
+            {             
                 if (Perimeter == null || Perimeter.TerminalVerifiedStartTile == null) return;
                 _lastTerminalTilePositionReportedInEvent = (Vector2)
                     Perimeter.TerminalVerifiedStartTile.transform.position == _lastTerminalTilePositionReportedInEvent ? 

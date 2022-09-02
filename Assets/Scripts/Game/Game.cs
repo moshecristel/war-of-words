@@ -1,7 +1,4 @@
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using Unity.VisualScripting;
 using UnityEngine;
 
 namespace WarOfWords
@@ -18,8 +15,12 @@ namespace WarOfWords
         public GameView GameView => _gameView;
         
         private MapBoard _mapBoard;
+        
+        private InputType _inputType;
 
-        private bool _isSelecting;
+        // Double-finger pan
+        private Vector2 _lastDoublePanScreenPosition;
+        private Vector2 _screenToWorldMultiplier;
 
         #region Lifecycle
 
@@ -50,6 +51,8 @@ namespace WarOfWords
                 
                 InputManager.TapStateChanged += InputManager_OnTapStateChanged;
                 InputManager.PanStateChanged += InputManager_OnPanStateChanged;
+                InputManager.DoublePanStateChanged += InputManager_OnDoublePanStateChanged;
+                InputManager.ScaleStateChanged += InputManager_OnScaleStateChanged;
             }
 
             private void OnDestroy()
@@ -60,6 +63,8 @@ namespace WarOfWords
                 
                 InputManager.TapStateChanged -= InputManager_OnTapStateChanged;
                 InputManager.PanStateChanged -= InputManager_OnPanStateChanged;
+                InputManager.DoublePanStateChanged -= InputManager_OnDoublePanStateChanged;
+                InputManager.ScaleStateChanged -= InputManager_OnScaleStateChanged;
             }
         #endregion
 
@@ -73,31 +78,59 @@ namespace WarOfWords
                 }
             }
             
-            private void InputManager_OnPanStateChanged(InputState state, Vector2 worldPosition)
+            private void InputManager_OnPanStateChanged(InputState inputState, Vector2 worldPosition)
             {
                 if (_gameView != GameView.Tile) return;
 
-                    switch (state)
+                switch (inputState)
                 {
                     case InputState.Started:
-                        _isSelecting = true;  // Resets on view change
+                        _inputType = InputType.Pan;     // Resets on view change
                         _mapBoard.OnTouchStarted(worldPosition);
                         break;
                     case InputState.Moved:
                         
                         // If selection hasn't been interrupted by game view change
-                        if (_isSelecting)
+                        if (_inputType == InputType.Pan)
                             _mapBoard.OnTouchMoved(worldPosition);
                         break;
                     case InputState.Ended:
-                        if (_isSelecting)
+                        if (_inputType == InputType.Pan)
                         {
                             _mapBoard.OnTouchEnded(worldPosition);
                         }
                         break;
                     default:
-                        throw new ArgumentOutOfRangeException(nameof(state), state, null);
+                        throw new ArgumentOutOfRangeException(nameof(inputState), inputState, null);
                 }   
+            }
+            
+            private void InputManager_OnDoublePanStateChanged(InputState inputState, Vector2 screenPosition)
+            {
+                if (_gameView != GameView.Tile) return;
+                
+                // Don't do anything on Started, just record the point
+                // We assume that Ended is just going to give the same point as the last Moved
+                if (inputState == InputState.Started)
+                {
+                    _screenToWorldMultiplier = CameraManager.Instance.GetScreenToWorldMultiplier();
+                } 
+                else if (inputState == InputState.Moved)
+                {
+                    Vector2 screenOffset = _lastDoublePanScreenPosition - screenPosition;
+                    Vector2 worldOffset = screenOffset * _screenToWorldMultiplier;
+                    CameraManager.Instance.ManualPanNarrowCameraByWorldOffset(worldOffset);
+                }
+
+                _lastDoublePanScreenPosition = screenPosition;
+                
+            }
+            
+            private void InputManager_OnScaleStateChanged(InputState inputState, float scaleMultiplier)
+            {
+                if (_gameView != GameView.Tile) return;
+                print("Scaling: " + scaleMultiplier);
+                CameraManager.Instance.ManualDollyNarrowCameraByMultiplier(scaleMultiplier);
             }
 
             private void MapBoard_OnWordAttempted(string sequence, bool isWordSucceeded, bool isPerimeterSucceeded, Vector2 latestTerminalPosition)
@@ -126,7 +159,8 @@ namespace WarOfWords
 
         public void SetGameView(GameView gameView, Vector2 cameraPosition)
         {
-            _isSelecting = false;
+            // Reset input type on view change
+            _inputType = InputType.None;
             
             _gameView = gameView;
             switch (_gameView)

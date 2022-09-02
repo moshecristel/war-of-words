@@ -68,8 +68,6 @@ public class InputManager : Singleton<InputManager>
     
         private void TapGesture_OnStateUpdated(GestureRecognizer tap)
         {
-            Debug.Log("Tap gesture: " + tap.State);
-
             // Exit if another input type is currently underway
             // No such thing as a current input type of tap since Ended is the only thing we care about
             if (_currentInputType != InputType.None) return;
@@ -84,21 +82,20 @@ public class InputManager : Singleton<InputManager>
     
         private void PanGesture_OnStateUpdated(GestureRecognizer pan)
         {
+            // print("PAN: " + pan.State);
             bool isCurrentlyPanning = _currentInputType is InputType.Pan or InputType.DoublePan;
             
             // Exit if another input type is currently underway
             if (_currentInputType != InputType.None && !isCurrentlyPanning) return;
 
-            Vector2 panFocusScreen = new Vector2(pan.FocusX, pan.FocusY);
-
-            bool isOnButton = UIRaycastUtils.PointerIsOverUIWithTag(panFocusScreen, "PanIgnore");
-            Vector2 panFocusWorld = ToWorld(panFocusScreen);
-            
+            Vector2 panFocusScreen = new Vector2(pan.FocusX, pan.FocusY);           // Double-finger pan sends SCREEN POSITION
+            Vector2 panFocusWorld = ToWorld(panFocusScreen);                        // Single-finger pan sends WORLD POSITION
             bool isInsideJoystickMask = _joystickMask.OverlapPoint(panFocusWorld);
             
             if( (!isInsideJoystickMask && pan.State == GestureRecognizerState.Began) || 
                (isCurrentlyPanning && pan.State == GestureRecognizerState.Executing))
             {
+                
                 InputState inputState =
                     pan.State == GestureRecognizerState.Began ? InputState.Started : InputState.Moved;
                 
@@ -112,14 +109,14 @@ public class InputManager : Singleton<InputManager>
                     }
                     
                     _currentInputType = InputType.DoublePan;
-                    DoublePanStateChanged?.Invoke(inputState, panFocusWorld);
+                    DoublePanStateChanged?.Invoke(inputState, panFocusScreen);
                 }
                 else
                 {
                     // Single pan, quit double pan if it is underway
                     if (_currentInputType == InputType.DoublePan)
                     {
-                        DoublePanStateChanged?.Invoke(InputState.Ended, panFocusWorld);
+                        DoublePanStateChanged?.Invoke(InputState.Ended, panFocusScreen);
                     }
 
                     _currentInputType = InputType.Pan;
@@ -135,35 +132,25 @@ public class InputManager : Singleton<InputManager>
                 }
                 else if(_currentInputType == InputType.DoublePan)
                 {
-                    DoublePanStateChanged?.Invoke(InputState.Ended, panFocusWorld);
+                    DoublePanStateChanged?.Invoke(InputState.Ended, panFocusScreen);
                 }
 
                 _currentInputType = InputType.None;
             }
-            
-            // Debug.Log($"PAN: {pan.State}, focus = {pan.FocusX}, {pan.FocusY}, tracked touches=" + pan.CurrentTrackedTouches.Count + " touches: " + pan.TrackedTouchCountIsWithinRange);
         }
         
         private void ScaleGesture_OnStateUpdated(GestureRecognizer scale)
         {
-            bool isCurrentlyScaling = _currentInputType == InputType.Scale;
+            // print("SCALING: " + scale.State);
+            bool isCurrentlyScalingOrDoublePanning = _currentInputType == InputType.Scale || _currentInputType == InputType.DoublePan;
             
-            // Exit if another input type is currently underway
-            if (_currentInputType != InputType.None && !isCurrentlyScaling) return;
+            // Exit if another (incompatible) input is currently underway
+            if (_currentInputType != InputType.None && !isCurrentlyScalingOrDoublePanning) return;
 
+            
             if (scale.State is GestureRecognizerState.Began or GestureRecognizerState.Executing)
             {
-                InputState inputState = _currentInputType == InputType.None ? InputState.Started : InputState.Moved;
-                ScaleStateChanged?.Invoke(inputState, _scaleGesture.ScaleMultiplier);
-            }
-            else
-            {
-                if (isCurrentlyScaling)
-                {
-                    ScaleStateChanged?.Invoke(InputState.Ended, _scaleGesture.ScaleMultiplier);
-                }
-
-                _currentInputType = InputType.None;
+                ScaleStateChanged?.Invoke(InputState.Moved, _scaleGesture.ScaleMultiplier);
             }
         }
         
@@ -200,6 +187,11 @@ public class InputManager : Singleton<InputManager>
         private Vector2 ToWorld(Vector2 screenPosition)
         {
             return CameraManager.Instance.ScreenToWorldPosition(screenPosition);
+        }
+        
+        private Vector2 ToViewport(Vector2 screenPosition)
+        {
+            return CameraManager.Instance.ScreenToViewportPosition(screenPosition);
         }
     #endregion
 }

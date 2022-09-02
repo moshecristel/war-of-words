@@ -36,9 +36,31 @@ namespace WarOfWords
         
         public Vector2 ScreenToWorldPosition(Vector2 screenPosition)
         {
-            return _narrowCamera.isActiveAndEnabled ? 
-                _narrowCamera.ScreenToWorldPoint(screenPosition) : 
-                _wideCamera.ScreenToWorldPoint(screenPosition);
+            return GetActiveCamera().ScreenToWorldPoint(screenPosition);
+        }
+        
+        public Vector2 ScreenToViewportPosition(Vector2 screenPosition)
+        {
+            return GetActiveCamera().ScreenToViewportPoint((screenPosition));
+        }
+
+        public Vector2 GetScreenToWorldMultiplier()
+        {
+            Camera activeCamera = GetActiveCamera();
+
+            Vector2 worldPositionOfScreenOrigin = activeCamera.ScreenToWorldPoint(Vector2.zero);
+            Vector2 onePositiveUnitPositionInWorld = worldPositionOfScreenOrigin + new Vector2(1f, 1f);
+            Vector2 screenPositionOfOnePositiveUnitInWorld = activeCamera.WorldToScreenPoint(onePositiveUnitPositionInWorld);
+
+            float screenToWorldX = 1f / screenPositionOfOnePositiveUnitInWorld.x;
+            float screenToWorldY = 1f / screenPositionOfOnePositiveUnitInWorld.y;
+
+            return new Vector2(screenToWorldX, screenToWorldY);
+        }
+
+        public Camera GetActiveCamera()
+        {
+            return _narrowCamera.isActiveAndEnabled ? _narrowCamera : _wideCamera;
         }
 
         public void SwitchToWideCamera(Vector2 position)
@@ -64,6 +86,16 @@ namespace WarOfWords
         {
             MoveNarrowCamera(to, cameraMovementConstraint, time, LeanTweenType.easeInOutSine);
         }
+
+        public void ManualPanNarrowCameraByWorldOffset(Vector2 worldOffset)
+        {
+            _narrowCamera.transform.Translate(new Vector3(worldOffset.x, worldOffset.y, 0), Space.World);
+        }
+
+        public void ManualDollyNarrowCameraByMultiplier(float scaleMultiplier)
+        {
+            _narrowCamera.orthographicSize *= scaleMultiplier;
+        } 
 
         public void PanNarrowCamera(GridDirection panDirection, Bounds cameraMovementConstraint, float panPercentage = 0.5f) 
         {
