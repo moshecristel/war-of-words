@@ -1161,8 +1161,8 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 0}
-  m_RootOrder: 2
+  m_Father: {fileID: 1461643492}
+  m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!60 &201185776
 PolygonCollider2D:
@@ -4856,7 +4856,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _mapLetterTilePrefab: {fileID: 8269308724222804196, guid: fce3c5501f9064f419d773c467573c71, type: 3}
   _tileSelectionCollider: {fileID: 201185776}
-  _lastTerminalTilePositionReportedInEvent: {x: 0, y: 0}
+  _focalTerminalMapLetterTile: {fileID: 0}
 --- !u!4 &1461643492
 Transform:
   m_ObjectHideFlags: 0
@@ -4870,8 +4870,9 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 1861573245}
+  - {fileID: 201185775}
   m_Father: {fileID: 0}
-  m_RootOrder: 3
+  m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1472823512
 GameObject:
@@ -5256,7 +5257,7 @@ RectTransform:
   - {fileID: 95979435}
   - {fileID: 1325130821}
   m_Father: {fileID: 0}
-  m_RootOrder: 5
+  m_RootOrder: 4
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
@@ -5461,7 +5462,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4000012487907716, guid: 7d0bcfe5ecdb4e04a8dfabfc0bd1c32d, type: 3}
       propertyPath: m_RootOrder
-      value: 4
+      value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 4000012487907716, guid: 7d0bcfe5ecdb4e04a8dfabfc0bd1c32d, type: 3}
       propertyPath: m_LocalScale.x

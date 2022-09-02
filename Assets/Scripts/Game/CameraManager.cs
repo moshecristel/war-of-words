@@ -22,16 +22,21 @@ namespace WarOfWords
 
         private void Awake()
         {
-            // Camera Minimap Area (Shape designating the bounds of the narrow camera within the larger map)
-            float xSize = _narrowCamera.aspect * _narrowCamera.orthographicSize * 2f;
-            float ySize = _narrowCamera.orthographicSize * 2f;
-            
-            _narrowCameraMinimapAreaGraphic.size = new Vector2(xSize, ySize);
+            UpdateMinimapAreaGraphic();
         }
 
         private void Update()
         {
             _minimapCamera.transform.position = _wideCamera.transform.position;
+        }
+
+        private void UpdateMinimapAreaGraphic()
+        {
+            // Camera Minimap Area (Shape designating the bounds of the narrow camera within the larger map)
+            float xSize = _narrowCamera.aspect * _narrowCamera.orthographicSize * 2f;
+            float ySize = _narrowCamera.orthographicSize * 2f;
+            
+            _narrowCameraMinimapAreaGraphic.size = new Vector2(xSize, ySize);
         }
         
         public Vector2 ScreenToWorldPosition(Vector2 screenPosition)
@@ -95,6 +100,7 @@ namespace WarOfWords
         public void ManualDollyNarrowCameraByMultiplier(float scaleMultiplier)
         {
             _narrowCamera.orthographicSize *= scaleMultiplier;
+            UpdateMinimapAreaGraphic();
         } 
 
         public void PanNarrowCamera(GridDirection panDirection, Bounds cameraMovementConstraint, float panPercentage = 0.5f) 
