@@ -24,6 +24,9 @@ public class InputManager : Singleton<InputManager>
 
     private InputType _currentInputType;
 
+    private float _lastPanPossibleTime = -1;
+    private Vector2 _lastPanPossibleWorldPosition;
+
     #region Lifecycle
 
         private void Awake()
@@ -68,6 +71,7 @@ public class InputManager : Singleton<InputManager>
     
         private void TapGesture_OnStateUpdated(GestureRecognizer tap)
         {
+            // print("TAP: " + tap.State);
             // Exit if another input type is currently underway
             // No such thing as a current input type of tap since Ended is the only thing we care about
             if (_currentInputType != InputType.None) return;
@@ -82,7 +86,7 @@ public class InputManager : Singleton<InputManager>
     
         private void PanGesture_OnStateUpdated(GestureRecognizer pan)
         {
-            // print("PAN: " + pan.State);
+            print("PAN: " + pan.State);
             bool isCurrentlyPanning = _currentInputType is InputType.Pan or InputType.DoublePan;
             
             // Exit if another input type is currently underway
@@ -90,10 +94,17 @@ public class InputManager : Singleton<InputManager>
 
             Vector2 panFocusScreen = new Vector2(pan.FocusX, pan.FocusY);           // Double-finger pan sends SCREEN POSITION
             Vector2 panFocusWorld = ToWorld(panFocusScreen);                        // Single-finger pan sends WORLD POSITION
-            bool isInsideJoystickMask = _joystickMask.OverlapPoint(panFocusWorld);
             
+            bool isInsideJoystickMask = _joystickMask.OverlapPoint(panFocusScreen);
+
+            if (!isInsideJoystickMask && !isCurrentlyPanning && pan.State == GestureRecognizerState.Possible)
+            {
+                _lastPanPossibleTime = Time.time;
+                _lastPanPossibleWorldPosition = panFocusWorld;
+            } 
+
             if( (!isInsideJoystickMask && pan.State == GestureRecognizerState.Began) || 
-               (isCurrentlyPanning && pan.State == GestureRecognizerState.Executing))
+                (isCurrentlyPanning && pan.State == GestureRecognizerState.Executing))
             {
                 
                 InputState inputState =
@@ -120,7 +131,18 @@ public class InputManager : Singleton<InputManager>
                     }
 
                     _currentInputType = InputType.Pan;
-                    PanStateChanged?.Invoke(inputState, panFocusWorld);
+
+                    if (inputState == InputState.Started && _lastPanPossibleTime > 0 && Time.time - _lastPanPossibleTime < 0.2f)
+                    {
+                        // If we're starting after a recent possible, roll back to that for the start
+                        // And use the current one as an additional move
+                        PanStateChanged?.Invoke(InputState.Started, _lastPanPossibleWorldPosition);
+                        PanStateChanged?.Invoke(InputState.Moved, panFocusWorld);
+                    }
+                    else
+                    {
+                        PanStateChanged?.Invoke(inputState, panFocusWorld);
+                    }
                 }             
             } 
             else
@@ -141,7 +163,7 @@ public class InputManager : Singleton<InputManager>
         
         private void ScaleGesture_OnStateUpdated(GestureRecognizer scale)
         {
-            // print("SCALING: " + scale.State);
+            print("SCALE: " + scale.State);
             bool isCurrentlyScalingOrDoublePanning = _currentInputType == InputType.Scale || _currentInputType == InputType.DoublePan;
             
             // Exit if another (incompatible) input is currently underway

@@ -112,7 +112,8 @@ namespace WarOfWords
 
             public void OnTouchStarted(Vector2 worldPosition)
             {
-                if (Perimeter is not { IsComplete: true }) CheckForLetterTile(worldPosition, 0.3f);
+                Debug.Log("Touch started");
+                if (Perimeter is not { IsComplete: true }) CheckForLetterTile(worldPosition, 0.5f);
             }
         
             public void OnTouchMoved(Vector2 worldPosition)
@@ -228,6 +229,7 @@ namespace WarOfWords
                 {
                     throw new Exception("Letter tile does not exist at world position: " + worldPosition);
                 }
+                print("letter returned: " + letterTile.MapLetter.Character);
                 
                 Perimeter ??= new MapBoardSelectionPerimeter();
                 bool letterAdded = Perimeter.AddLetterTileToCurrentSelection(letterTile);

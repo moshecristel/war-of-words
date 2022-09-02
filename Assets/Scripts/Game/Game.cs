@@ -9,6 +9,7 @@ namespace WarOfWords
     {
         [SerializeField] private MapPanel _mapPanel;
         [SerializeField] private TilePanel _tilePanel;
+        [SerializeField] private GameObject _joystickPanel;
         [SerializeField] private Canvas _canvas;
         [SerializeField] private SpriteRenderer _minimapBG;
         
@@ -172,7 +173,6 @@ namespace WarOfWords
             
             private void MapBoard_OnZoomTerminalTile(Vector2 zoomPosition)
             {
-                print("zoom position: " + zoomPosition);
                 CameraManager.Instance.AnimateNarrowCameraToPoint(zoomPosition, _mapBoard.CameraConstraintBounds, 0.5f);
             }
         #endregion
@@ -187,24 +187,22 @@ namespace WarOfWords
             // Reset input type on view change
             _inputType = InputType.None;
             
+            _mapBoard.gameObject.SetActive(true);
+            
+            _joystickPanel.SetActive(gameView == GameView.Tile);
+            _tilePanel.gameObject.SetActive(gameView == GameView.Tile);
+            _mapPanel.gameObject.SetActive(gameView == GameView.Map);
+            
             _gameView = gameView;
+            
             switch (_gameView)
             {
                 case GameView.Map:
-                    // TODO clear selection was here
-                    _mapBoard.gameObject.SetActive(true);
-                    
-                    _mapPanel.gameObject.SetActive(true);
                     _mapPanel.SetTitle(_mapBoard.Map.State.ToString());
-                    _tilePanel.gameObject.SetActive(false);
                     CameraManager.Instance.SwitchToWideCamera(cameraPosition);
                     break;
                 
                 case GameView.Tile:
-                    _mapBoard.gameObject.SetActive(true);
-                    
-                    _tilePanel.gameObject.SetActive(true);
-                    _mapPanel.gameObject.SetActive(false);
                     CameraManager.Instance.SwitchToNarrowCamera(cameraPosition, _mapBoard.CameraConstraintBounds);
                     break;
                 

@@ -59,7 +59,7 @@ namespace WarOfWords
             // If this is a DUPLICATE IN CURRENT SELECTION, don't add
             if (CurrentSelection != null && CurrentSelection.Contains(letterTile))
             {
-                Debug.Log("Can't add due to contained in selection");
+                // Debug.Log("Can't add due to contained in selection");
                 return false;
             }
             else if (!IsTerminalTile(letterTile) && Contains(letterTile, true)) // Go ahead and add if DUPLICATE TERMINAL VERIFIED

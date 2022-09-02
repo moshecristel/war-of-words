@@ -3732,7 +3732,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1211391511227573447, guid: bbe2238701a1145cd9fde7222c7c225e, type: 3}
       propertyPath: m_RootOrder
-      value: 7
+      value: 6
       objectReference: {fileID: 0}
     - target: {fileID: 1211391511227573447, guid: bbe2238701a1145cd9fde7222c7c225e, type: 3}
       propertyPath: m_AnchorMax.x
@@ -4840,6 +4840,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _mapPanel: {fileID: 529834326}
   _tilePanel: {fileID: 492565463}
+  _joystickPanel: {fileID: 2121445966}
   _canvas: {fileID: 1595426479}
   _minimapBG: {fileID: 1861573246}
 --- !u!114 &1461643491
