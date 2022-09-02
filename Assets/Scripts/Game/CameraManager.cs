@@ -23,6 +23,8 @@ namespace WarOfWords
         private float _maxNarrowCameraScalePercent = 1.5f;
 
         private float _originalNarrowCameraOrthographicSize;
+        private float _latestScalePercent = 1f;
+        public float LatestScalePercent => _latestScalePercent;
 
         private void Awake()
         {
@@ -102,12 +104,26 @@ namespace WarOfWords
             _narrowCamera.transform.Translate(new Vector3(worldOffset.x, worldOffset.y, 0), Space.World);
         }
 
-        public void ManualDollyNarrowCameraByMultiplier(float scaleMultiplier)
+        public void ManualDollyNarrowCameraByMultipleOfCurrentSize(float scaleMultiplier)
         {
-            float newNarrowCameraOrthographicSize = _narrowCamera.orthographicSize * scaleMultiplier; 
-            _narrowCamera.orthographicSize = Mathf.Clamp(newNarrowCameraOrthographicSize, _originalNarrowCameraOrthographicSize * _minNarrowCameraScalePercent, _originalNarrowCameraOrthographicSize * _maxNarrowCameraScalePercent);
+            float newNarrowCameraOrthographicSize = _narrowCamera.orthographicSize * scaleMultiplier;
+            ManuallyDollyNarrowCamera(newNarrowCameraOrthographicSize);
+        }
+        
+        public void ManualDollyNarrowCameraByMultipleOfOriginalSize(float scaleMultiplier)
+        {
+            float newNarrowCameraOrthographicSize = _originalNarrowCameraOrthographicSize * scaleMultiplier;
+            ManuallyDollyNarrowCamera(newNarrowCameraOrthographicSize);
+        }
+
+        public void ManuallyDollyNarrowCamera(float newNarrowCameraOrthographicSize)
+        {
+            float orthoSizeMin = _originalNarrowCameraOrthographicSize * _minNarrowCameraScalePercent;
+            float orthoSizeMax = _originalNarrowCameraOrthographicSize * _maxNarrowCameraScalePercent;
+            _narrowCamera.orthographicSize = Mathf.Clamp(newNarrowCameraOrthographicSize, orthoSizeMin, orthoSizeMax);
+            _latestScalePercent = _narrowCamera.orthographicSize / _originalNarrowCameraOrthographicSize;
             UpdateMinimapAreaGraphic();
-        } 
+        }
 
         public void PanNarrowCamera(GridDirection panDirection, Bounds cameraMovementConstraint, float panPercentage = 0.5f) 
         {

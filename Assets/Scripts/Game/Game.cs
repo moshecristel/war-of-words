@@ -61,6 +61,9 @@ namespace WarOfWords
                 InputManager.DoublePanStateChanged += InputManager_OnDoublePanStateChanged;
                 InputManager.ScaleStateChanged += InputManager_OnScaleStateChanged;
                 InputManager.JoystickStateChanged += InputManager_OnJoystickStateChanged;
+                
+                TilePanel.ZoomInPressed += TilePanel_OnZoomInPressed;
+                TilePanel.ZoomOutPressed += TilePanel_OnZoomOutPressed;
             }
 
             private void FixedUpdate()
@@ -83,7 +86,11 @@ namespace WarOfWords
                 InputManager.DoublePanStateChanged -= InputManager_OnDoublePanStateChanged;
                 InputManager.ScaleStateChanged -= InputManager_OnScaleStateChanged;
                 InputManager.JoystickStateChanged -= InputManager_OnJoystickStateChanged;
+                
+                TilePanel.ZoomInPressed -= TilePanel_OnZoomInPressed;
+                TilePanel.ZoomOutPressed -= TilePanel_OnZoomOutPressed;
             }
+
         #endregion
 
         #region Event Handlers
@@ -147,7 +154,7 @@ namespace WarOfWords
             private void InputManager_OnScaleStateChanged(InputState inputState, float scaleMultiplier)
             {
                 if (_gameView != GameView.Tile) return;
-                CameraManager.Instance.ManualDollyNarrowCameraByMultiplier(scaleMultiplier);
+                CameraManager.Instance.ManualDollyNarrowCameraByMultipleOfCurrentSize(scaleMultiplier);
             }
             
             private void InputManager_OnJoystickStateChanged(InputState inputState, Vector2 moveAmount)
@@ -174,6 +181,24 @@ namespace WarOfWords
             private void MapBoard_OnZoomTerminalTile(Vector2 zoomPosition)
             {
                 CameraManager.Instance.AnimateNarrowCameraToPoint(zoomPosition, _mapBoard.CameraConstraintBounds, 0.5f);
+            }
+            
+            private void TilePanel_OnZoomOutPressed()
+            {
+                if (_gameView != GameView.Tile) return;
+
+                float multiplier = (CameraManager.Instance.LatestScalePercent + 0.25f);
+                print("zoom out: " + multiplier);
+                CameraManager.Instance.ManualDollyNarrowCameraByMultipleOfOriginalSize(multiplier);
+            }
+
+            private void TilePanel_OnZoomInPressed()
+            {
+                if (_gameView != GameView.Tile) return;
+                
+                float multiplier = (CameraManager.Instance.LatestScalePercent - 0.25f);
+                print("zoom in: " + multiplier);
+                CameraManager.Instance.ManualDollyNarrowCameraByMultipleOfOriginalSize(multiplier);
             }
         #endregion
 

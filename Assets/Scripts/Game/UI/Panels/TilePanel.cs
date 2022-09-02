@@ -14,6 +14,8 @@ namespace WarOfWords
         public static event Action RevertLastWordPressed; 
         public static event Action SolveWordPressed;
         public static event Action ToggleZoomTerminalTilePressed;
+        public static event Action ZoomInPressed;
+        public static event Action ZoomOutPressed;
         
         [SerializeField] private PanButton _panNButton;
         [SerializeField] private PanButton _panEButton;
@@ -117,6 +119,16 @@ namespace WarOfWords
             public void OnToggleZoomTerminalTileClicked()
             {
                 ToggleZoomTerminalTilePressed?.Invoke();
+            }
+
+            public void OnZoomInClicked()
+            {
+                ZoomInPressed?.Invoke();
+            }
+
+            public void OnZoomOutClicked()
+            {
+                ZoomOutPressed?.Invoke();
             }
         #endregion
     }

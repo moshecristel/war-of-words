@@ -172,7 +172,7 @@ public class InputManager : Singleton<InputManager>
             
             if (scale.State is GestureRecognizerState.Began or GestureRecognizerState.Executing)
             {
-                ScaleStateChanged?.Invoke(InputState.Moved, _scaleGesture.ScaleMultiplier);
+                ScaleStateChanged?.Invoke(InputState.Moved, 1f / _scaleGesture.ScaleMultiplier);
             }
         }
         
