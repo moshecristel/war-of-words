@@ -129,7 +129,6 @@ namespace WarOfWords
             private void InputManager_OnScaleStateChanged(InputState inputState, float scaleMultiplier)
             {
                 if (_gameView != GameView.Tile) return;
-                print("Scaling: " + scaleMultiplier);
                 CameraManager.Instance.ManualDollyNarrowCameraByMultiplier(scaleMultiplier);
             }
 
@@ -148,6 +147,7 @@ namespace WarOfWords
             
             private void MapBoard_OnZoomTerminalTile(Vector2 zoomPosition)
             {
+                print("zoom position: " + zoomPosition);
                 CameraManager.Instance.AnimateNarrowCameraToPoint(zoomPosition, _mapBoard.CameraConstraintBounds, 0.5f);
             }
         #endregion

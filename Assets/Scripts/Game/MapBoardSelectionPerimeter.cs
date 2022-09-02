@@ -241,10 +241,6 @@ namespace WarOfWords
                 // Set new terminal tile
                 UpdateTerminalTiles();
                 MostRecentTerminalVerifiedTile = TerminalVerifiedStartTile;
-                // TerminalVerifiedStartTile = MostRecentTerminalVerifiedTile = _reversedFlags[0]
-                //     ? VerifiedSelections[0].LetterTiles[^1]
-                //     : VerifiedSelections[0].LetterTiles[0];
-                
                 terminalSelection.DeselectExcept(TerminalVerifiedStartTile);
             }
             else
@@ -257,9 +253,6 @@ namespace WarOfWords
                 // Set new terminal tile
                 UpdateTerminalTiles();
                 MostRecentTerminalVerifiedTile = TerminalVerifiedEndTile;
-                // TerminalVerifiedEndTile = MostRecentTerminalVerifiedTile = _reversedFlags[^1]
-                //     ? VerifiedSelections[^1].LetterTiles[0]
-                //     : VerifiedSelections[^1].LetterTiles[^1];
                 terminalSelection.DeselectExcept(TerminalVerifiedEndTile);
             }
             
