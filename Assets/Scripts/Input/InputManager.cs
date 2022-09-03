@@ -86,7 +86,7 @@ public class InputManager : Singleton<InputManager>
     
         private void PanGesture_OnStateUpdated(GestureRecognizer pan)
         {
-            print("PAN: " + pan.State);
+            // print("PAN: " + pan.State);
             bool isCurrentlyPanning = _currentInputType is InputType.Pan or InputType.DoublePan;
             
             // Exit if another input type is currently underway
@@ -163,7 +163,7 @@ public class InputManager : Singleton<InputManager>
         
         private void ScaleGesture_OnStateUpdated(GestureRecognizer scale)
         {
-            print("SCALE: " + scale.State);
+            // print("SCALE: " + scale.State);
             bool isCurrentlyScalingOrDoublePanning = _currentInputType == InputType.Scale || _currentInputType == InputType.DoublePan;
             
             // Exit if another (incompatible) input is currently underway

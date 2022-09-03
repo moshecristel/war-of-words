@@ -50,13 +50,15 @@ namespace WarOfWords
             TilePanel.ResetPerimeterPressed += TilePanel_OnResetPerimeterPressed;
             TilePanel.RevertLastWordPressed += TilePanel_OnRevertLastWordPressed;
             TilePanel.ToggleZoomTerminalTilePressed += TilePanel_OnToggleZoomTerminalTilePressed;
+            TilePanel.HintBoostPressed += TilePanel_OnHintBoostPressed;
         }
 
         private void OnDestroy()
         {
-            TilePanel.SolveWordPressed -= TilePanel_OnResetPerimeterPressed;
+            TilePanel.HintBoostPressed -= TilePanel_OnResetPerimeterPressed;
             TilePanel.RevertLastWordPressed -= TilePanel_OnRevertLastWordPressed;
             TilePanel.ToggleZoomTerminalTilePressed -= TilePanel_OnToggleZoomTerminalTilePressed;
+            TilePanel.HintBoostPressed -= TilePanel_OnHintBoostPressed;
         }
 
         #endregion
@@ -168,6 +170,18 @@ namespace WarOfWords
             {
                 ToggleZoomTerminalTile();
             }
+
+            private void TilePanel_OnHintBoostPressed()
+            {
+                if (TryHintFromFocalTile())
+                {
+                    Debug.Log("Hint Succeeded");
+                }
+                else
+                {
+                    Debug.Log("Hint Failed");
+                }
+            }
         #endregion
 
 
@@ -229,8 +243,7 @@ namespace WarOfWords
                 {
                     throw new Exception("Letter tile does not exist at world position: " + worldPosition);
                 }
-                print("letter returned: " + letterTile.MapLetter.Character);
-                
+
                 Perimeter ??= new MapBoardSelectionPerimeter();
                 bool letterAdded = Perimeter.AddLetterTileToCurrentSelection(letterTile);
                 if (letterAdded)
@@ -238,9 +251,9 @@ namespace WarOfWords
                     Perimeter.UpdateVisuals();
                 }
 
-                string sequence = Perimeter.CurrentSelection == null
-                    ? "<none>"
-                    : Perimeter.CurrentSelection.ToCharacterSequence();
+                // string sequence = Perimeter.CurrentSelection == null
+                //     ? "<none>"
+                //     : Perimeter.CurrentSelection.ToCharacterSequence();
                 
                 // Debug.Log(letterAdded
                 //     ? $"ADDED letter tile {letterTile.MapLetter.Character} to current selection: {sequence}"
@@ -271,9 +284,59 @@ namespace WarOfWords
                 ZoomTerminalTile?.Invoke(_focalTerminalMapLetterTile != null ? _focalTerminalMapLetterTile.transform.position : default);
             }
 
+            private bool TryHintFromFocalTile()
+            {
+                if (_focalTerminalMapLetterTile == null) return false;
+                MapLetterTile otherTerminalTile = _focalTerminalMapLetterTile == Perimeter.TerminalVerifiedStartTile
+                    ? Perimeter.TerminalVerifiedEndTile
+                    : Perimeter.TerminalVerifiedStartTile;
+
+                MapLetter startLetter = _focalTerminalMapLetterTile.MapLetter;
+                MapLetter endLetter = otherTerminalTile.MapLetter;
+                
+                print("TRYING HINT BETWEEN: " + startLetter.Character + " and " + endLetter.Character);
+                
+                List<MapLetter> intraversibleLetters = GetLettersForAllVerifiedTiles().ToList();
+
+                List<MapOrderedLetterSequence> letterSequences =
+                    Map.GetConnectedWordLetterSequenceBetween(startLetter, endLetter, intraversibleLetters);
+
+                if (letterSequences == default)
+                {
+                    print("Hint FAILED");
+                    return false;
+                }
+                
+                print($"Hint SUCCEEDED: {letterSequences.Count} letter sequences.");
+                for (int i = 0; i < letterSequences.Count(); i++)
+                {
+                    MapOrderedLetterSequence sequence = letterSequences[i];
+                    print($"{i}: {sequence.Sequence}");
+                }
+
+                return true;
+            }
+
+            private bool ContainsVerifiedSelection(MapLetterSequence sequence, params MapLetter[] excluding)
+            {
+                bool contains = sequence.Where(letter => !excluding.Contains(letter)).Any(letter => ContainsVerifiedSelection(letter.Coords));
+                return contains;
+            }
+
+            private bool ContainsVerifiedSelection(Vector2Int mapCoords)
+            {
+                MapLetterTile targetTile = Board[mapCoords.x, mapCoords.y];
+                return targetTile != null && targetTile.IsVerifiedSelection;
+            }
+            
             private List<MapLetterTile> GetAllLetterTiles()
             {
                 return Board.Cast<MapLetterTile>().Where(tile => tile != null).ToList();
+            }
+
+            private List<MapLetter> GetLettersForAllVerifiedTiles()
+            {
+                return GetAllLetterTiles().Where(tile => tile.IsVerifiedSelection).Select(tile => tile.MapLetter).ToList();
             }
 
             private void AssignTileBonuses()

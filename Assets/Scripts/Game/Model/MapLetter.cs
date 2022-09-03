@@ -9,8 +9,8 @@ namespace WarOfWords
         public string Character { get; set; }
         public Vector2Int Coords { get; set; }
         
-        public int WordStarts { get; set; }
-        public int WordStartsTotalLetterCount { get; set; } 
+        public int WordsStartingCount { get; set; }
+        public int WordsEndingCount { get; set; }
         
         public Dictionary<GridDirection, MapLetter> Directions { get; set; }
 

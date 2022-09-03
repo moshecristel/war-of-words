@@ -1329,7 +1329,7 @@ GameObject:
   - component: {fileID: 301427246}
   - component: {fileID: 301427245}
   m_Layer: 5
-  m_Name: SolveWordButton
+  m_Name: HintBoostButton
   m_TagString: PanIgnore
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1401,7 +1401,7 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 492565463}
         m_TargetAssemblyTypeName: WarOfWords.TilePanel, Assembly-CSharp
-        m_MethodName: OnSolveWordClicked
+        m_MethodName: OnHintBoostClicked
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}

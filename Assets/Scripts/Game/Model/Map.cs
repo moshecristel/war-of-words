@@ -21,6 +21,8 @@ namespace WarOfWords
         public MapLetter[,] Letters { get; set; }
 
         public DictionaryTrie Dictionary { get; }
+        private Dictionary<Vector2Int, List<MapLetterSequence>> _coordToForwardWords = new();
+        private Dictionary<Vector2Int, List<MapLetterSequence>> _coordToBackwardWords = new();
 
         // Create map from shape
         public Map(State state, bool[,] shape, bool initWeighted = true)
@@ -29,7 +31,7 @@ namespace WarOfWords
             Dictionary = new DictionaryTrie();
             GenerateLetters(shape, initWeighted);
             MarkLetterAdjacency();
-            RefreshLetterStats();
+            RefreshMappingsAndStats();
         }
 
         public Map(State state, List<string> mapData)
@@ -38,7 +40,7 @@ namespace WarOfWords
             Dictionary = new DictionaryTrie();
             GenerateLettersFromData(mapData);
             MarkLetterAdjacency();
-            RefreshLetterStats();
+            RefreshMappingsAndStats();
         }
 
         public void GenerateLettersFromData(List<string> mapData)
@@ -112,94 +114,63 @@ namespace WarOfWords
             }
         }
 
-        public void RefreshLetterStats()
+        public void RefreshMappingsAndStats()
         {
-            TotalWords = 0;
-            TotalWordLetters = 0;
+            _coordToForwardWords.Clear();
+            _coordToBackwardWords.Clear();
+            
             
             // Fill in stats
             int maxY = Letters.GetLength(1) - 1;
             int maxX = Letters.GetLength(0) - 1;
+
+            // Zero-out letter fields
             
+            TotalWords = 0;
+            TotalWordLetters = 0;
+            
+            for (int y = 0; y <= maxY; y++)
+            {
+                for (int x = 0; x <= maxX; x++)
+                {
+                    MapLetter letter = Letters[x, y];
+                    if (letter == null) continue;
+                    letter.WordsStartingCount = 0;
+                    letter.WordsEndingCount = 0;
+                }
+            }
+
             for (int y = 0; y <= maxY ; y++)
             {
                 for (int x = 0; x <= maxX; x++)
                 {
                     MapLetter letter = Letters[x, y];
-                    if (letter != null)
-                    {
-                        List<string> words = GetWordsStartingWithLetter(letter);
-                        letter.WordStarts = words.Count;
-                        letter.WordStartsTotalLetterCount = words.Select(word => word.Length).Sum();
+                    if (letter == null) continue;
+                    
+                    List<MapLetterSequence> sequences = GetWordLetterSequencesStartingWithLetter(letter).Where(sequence => sequence.Length >= 3).ToList();
 
-                        TotalWords += letter.WordStarts;
-                        TotalWordLetters += letter.WordStartsTotalLetterCount;
+                    // Forward
+                    _coordToForwardWords[letter.Coords] = sequences;
+                    letter.WordsStartingCount += sequences.Count;
+
+                    TotalWords += sequences.Count;
+                    TotalWordLetters += sequences.Sum(sequence => sequence.Length);
+                        
+                    // Backwards
+                    foreach (MapLetterSequence sequence in sequences)
+                    {
+                        Vector2Int endLetterCoords = sequence.EndLetter.Coords;
+                        if (!_coordToBackwardWords.ContainsKey(endLetterCoords))
+                        {
+                            _coordToBackwardWords[endLetterCoords] = new List<MapLetterSequence>();
+                        }
+                        _coordToBackwardWords[endLetterCoords].Add(sequence);
+                        Letters[endLetterCoords.x, endLetterCoords.y].WordsEndingCount++;
                     }
                 }
             }
-        }
-
-        public List<string> GetWordsStartingWithLetter(MapLetter mapLetter)
-        {
-            string sequenceSoFar = mapLetter.Character;
-            DictionaryNode dictionaryNode = Dictionary.Roots[mapLetter.Character];
-            List<Vector2Int> visited = new List<Vector2Int> { mapLetter.Coords };
-            List<Vector2Int> allAdjacentCoords = GetAllAdjacentCoords(mapLetter.Coords);
-
-            HashSet<string> allWords = new HashSet<string>();
-            
-            foreach (Vector2Int coords in allAdjacentCoords)
-            {
-                List<string> words = GetWordsFrom(coords, visited, dictionaryNode, sequenceSoFar);
-                allWords.UnionWith(words);
-            }
-
-            return allWords.ToList();
         }
         
-        public List<string> GetWordsFrom(Vector2Int adjacentCoords, List<Vector2Int> visited, DictionaryNode parentDictionaryNode, string sequenceSoFar)
-        {
-            if (sequenceSoFar.Length >= 15 || Letters[adjacentCoords.x, adjacentCoords.y] == null) return new List<string>();
-            
-            HashSet<string> allWords = new HashSet<string>();
-            
-            string currCharacter = Letters[adjacentCoords.x, adjacentCoords.y].Character;
-            sequenceSoFar += currCharacter;
-            
-            foreach (KeyValuePair<string,DictionaryNode> keyValuePair in parentDictionaryNode.Children)
-            {
-                // Only one of the children of the parent dictionary node will match the letter of the adjacent coordinate
-                DictionaryNode childDictionaryNode = keyValuePair.Value;
-                if (childDictionaryNode.Character == currCharacter)
-                {
-                    // Sequence so far could be a word
-                    if (childDictionaryNode.IsWordEnd)
-                    {
-                        allWords.Add(sequenceSoFar);
-                    }
-                    
-                    // Either way, recurse to make sure that we're not in the middle of finding a word
-                    List<Vector2Int> visitedWithCurrent = new List<Vector2Int>(visited);
-                    visitedWithCurrent.Add(adjacentCoords);
-
-                    List<Vector2Int> allAdjacentCoords = GetAllAdjacentCoords(adjacentCoords);
-                    foreach (Vector2Int visitedCoords in visitedWithCurrent)
-                    {
-                        allAdjacentCoords.Remove(visitedCoords);
-                    }
-
-                    foreach (Vector2Int coords in allAdjacentCoords)
-                    {
-                        List<string> words = GetWordsFrom(coords, visitedWithCurrent, childDictionaryNode,
-                            sequenceSoFar);
-                        allWords.UnionWith(words);
-                    }
-                }
-            }
-
-            return allWords.ToList();
-        }
-
         public List<Vector2Int> GetAllAdjacentCoords(Vector2Int coords)
         {
             List<Vector2Int> adjacentCoords = new List<Vector2Int>();
@@ -224,26 +195,216 @@ namespace WarOfWords
 
             return adjacentCoords;
         }
+        
+        #region Get Words
 
-        public void Print()
-        {
-            string mapString = "";
-            for (int y = Letters.GetLength(1) - 1; y >= 0; y--)
+            public List<string> GetWordsStartingWithLetter(MapLetter mapLetter)
             {
-                for (int x = 0; x < Letters.GetLength(0); x++)
+                string sequenceSoFar = mapLetter.Character;
+                DictionaryNode dictionaryNode = Dictionary.Roots[mapLetter.Character];
+                List<Vector2Int> visited = new List<Vector2Int> { mapLetter.Coords };
+                List<Vector2Int> allAdjacentCoords = GetAllAdjacentCoords(mapLetter.Coords);
+
+                HashSet<string> allWords = new HashSet<string>();
+                
+                foreach (Vector2Int coords in allAdjacentCoords)
                 {
-                    mapString += Letters[x, y] == null ? "+" : Letters[x, y].Character;
+                    List<string> words = GetWordsFrom(coords, visited, dictionaryNode, sequenceSoFar);
+                    allWords.UnionWith(words);
                 }
 
-                mapString += "\n";
+                return allWords.ToList();
             }
             
-            Debug.Log(mapString);
-        }
+            public List<string> GetWordsFrom(Vector2Int adjacentCoords, List<Vector2Int> visited, DictionaryNode parentDictionaryNode, string sequenceSoFar)
+            {
+                if (sequenceSoFar.Length >= 15 || Letters[adjacentCoords.x, adjacentCoords.y] == null) return new List<string>();
+                
+                HashSet<string> allWords = new HashSet<string>();
+                
+                string currCharacter = Letters[adjacentCoords.x, adjacentCoords.y].Character;
+                sequenceSoFar += currCharacter;
+                
+                foreach (KeyValuePair<string,DictionaryNode> keyValuePair in parentDictionaryNode.Children)
+                {
+                    // Only one of the children of the parent dictionary node will match the letter of the adjacent coordinate
+                    DictionaryNode childDictionaryNode = keyValuePair.Value;
+                    if (childDictionaryNode.Character == currCharacter)
+                    {
+                        // Sequence so far could be a word
+                        if (childDictionaryNode.IsWordEnd)
+                        {
+                            allWords.Add(sequenceSoFar);
+                        }
+                        
+                        // Either way, recurse to make sure that we're not in the middle of finding a word
+                        List<Vector2Int> visitedWithCurrent = new List<Vector2Int>(visited);
+                        visitedWithCurrent.Add(adjacentCoords);
 
-        public void PrintStats()
-        {
-            Debug.Log($"TileCount: {TileCount:n0}, TotalWords: {TotalWords:n0}, TotalWordLetters: {TotalWordLetters:n0}, AvgWordsPerTile: {AvgWordsPerTile:n2}, AvgWordLettersPerTile: {AvgWordLettersPerTile:n2}");
-        }
+                        List<Vector2Int> allAdjacentCoords = GetAllAdjacentCoords(adjacentCoords);
+                        foreach (Vector2Int visitedCoords in visitedWithCurrent)
+                        {
+                            allAdjacentCoords.Remove(visitedCoords);
+                        }
+
+                        foreach (Vector2Int coords in allAdjacentCoords)
+                        {
+                            List<string> words = GetWordsFrom(coords, visitedWithCurrent, childDictionaryNode,
+                                sequenceSoFar);
+                            allWords.UnionWith(words);
+                        }
+                    }
+                }
+
+                return allWords.ToList();
+            }
+        #endregion
+
+        #region Get Word Letter Sequence
+
+            public List<MapOrderedLetterSequence> GetConnectedWordLetterSequenceBetween(MapLetter startLetter, MapLetter endLetter, List<MapLetter> allIntraversableLetters, int maxDepth = 3)
+            {
+                List<MapLetter> middleIntraversableLetters = allIntraversableLetters
+                    .Where(letter => letter != startLetter && letter != endLetter).ToList();
+
+                float distanceBetweenStartAndEnd = Vector2Int.Distance(startLetter.Coords, endLetter.Coords);
+                
+                List<MapLetterSequence> forwardSequencesAtStart = _coordToForwardWords.ContainsKey(startLetter.Coords) ? _coordToForwardWords[startLetter.Coords].Where(sequence => !sequence.ContainsAny(middleIntraversableLetters) && sequence.Length <= 7).ToList() : new();
+                forwardSequencesAtStart = forwardSequencesAtStart.Where(sequence =>
+                    Vector2Int.Distance(sequence.StartLetter.Coords, endLetter.Coords) <
+                    distanceBetweenStartAndEnd + 2f).ToList();
+
+                // Check to see if any joins to the end as is
+                MapLetterSequence finishingForwardSequence = forwardSequencesAtStart
+                    .OrderByDescending(sequence => sequence.Length)
+                    .FirstOrDefault(sequence => sequence.EndLetter.Coords == endLetter.Coords);
+                
+                if (finishingForwardSequence != default(MapLetterSequence))
+                {
+                    // Able to complete connection (with 1 forward word)
+                    return new List<MapOrderedLetterSequence>
+                        { new(finishingForwardSequence, false) };
+                }
+
+                if (maxDepth <= 0) return default;
+
+                List<MapOrderedLetterSequence> best = default;
+                int fewestWords = -1;
+                int mostLetters = -1;
+                
+                foreach (MapLetterSequence sequence in forwardSequencesAtStart)
+                {
+                    MapOrderedLetterSequence orderedSequence = new MapOrderedLetterSequence(sequence, false);
+                    List<MapLetter> allIntraversableLettersForSequence = new List<MapLetter>(allIntraversableLetters);
+                    allIntraversableLettersForSequence.AddRange(sequence.Letters.Where(letter => letter != sequence.StartLetter));     // Start letter is already in all intraversable letters
+                    
+                    List<MapOrderedLetterSequence> downstreamSequences =
+                        GetConnectedWordLetterSequenceBetween(sequence.EndLetter, endLetter,
+                            allIntraversableLettersForSequence, maxDepth - 1);
+
+                    if (downstreamSequences == default)
+                        continue;
+                    
+                    downstreamSequences.Insert(0, orderedSequence);
+
+                    if (best == default )//||
+                        // downstreamSequences.Count < fewestWords || 
+                        // (downstreamSequences.Count == fewestWords && downstreamSequences.Sum(sequence => sequence.Sequence.Length) > mostLetters))
+                    {
+                        best = downstreamSequences;
+                        break;
+                        // fewestWords = downstreamSequences.Count;
+                        // mostLetters = downstreamSequences.Sum(sequence => sequence.Sequence.Length);
+                    }
+                }
+
+                return best;
+            }
+
+            public List<MapLetterSequence> GetWordLetterSequencesStartingWithLetter(MapLetter mapLetter)
+            {
+                MapLetterSequence sequenceSoFar = new MapLetterSequence(mapLetter);
+                DictionaryNode dictionaryNode = Dictionary.Roots[mapLetter.Character];
+                List<Vector2Int> visited = new List<Vector2Int> { mapLetter.Coords };
+                List<Vector2Int> allAdjacentCoords = GetAllAdjacentCoords(mapLetter.Coords);
+
+                HashSet<MapLetterSequence> allWords = new HashSet<MapLetterSequence>();
+                
+                foreach (Vector2Int coords in allAdjacentCoords)
+                {
+                    List<MapLetterSequence> words = GetWordLetterSequencesFrom(coords, visited, dictionaryNode, sequenceSoFar);
+                    allWords.UnionWith(words);
+                }
+
+                return allWords.ToList();
+            }
+            
+            private List<MapLetterSequence> GetWordLetterSequencesFrom(Vector2Int adjacentCoords, List<Vector2Int> visited, DictionaryNode parentDictionaryNode, MapLetterSequence sequenceSoFar)
+            {
+                if (sequenceSoFar.Length >= 15 || Letters[adjacentCoords.x, adjacentCoords.y] == null) return new List<MapLetterSequence>();
+                
+                HashSet<MapLetterSequence> allWords = new HashSet<MapLetterSequence>();
+                
+                MapLetter currCharacter = Letters[adjacentCoords.x, adjacentCoords.y];
+                sequenceSoFar += currCharacter;
+                
+                foreach (KeyValuePair<string,DictionaryNode> keyValuePair in parentDictionaryNode.Children)
+                {
+                    // Only one of the children of the parent dictionary node will match the letter of the adjacent coordinate
+                    DictionaryNode childDictionaryNode = keyValuePair.Value;
+                    if (childDictionaryNode.Character == currCharacter.Character)
+                    {
+                        // Sequence so far could be a word
+                        if (childDictionaryNode.IsWordEnd)
+                        {
+                            allWords.Add(sequenceSoFar);
+                        }
+                        
+                        // Either way, recurse to make sure that we're not in the middle of finding a word
+                        List<Vector2Int> visitedWithCurrent = new List<Vector2Int>(visited);
+                        visitedWithCurrent.Add(adjacentCoords);
+
+                        List<Vector2Int> allAdjacentCoords = GetAllAdjacentCoords(adjacentCoords);
+                        foreach (Vector2Int visitedCoords in visitedWithCurrent)
+                        {
+                            allAdjacentCoords.Remove(visitedCoords);
+                        }
+
+                        foreach (Vector2Int coords in allAdjacentCoords)
+                        {
+                            List<MapLetterSequence> words = GetWordLetterSequencesFrom(coords, visitedWithCurrent, childDictionaryNode, sequenceSoFar);
+                            allWords.UnionWith(words);
+                        }
+                    }
+                }
+
+                return allWords.ToList();
+            }
+
+        #endregion
+
+        #region Print
+
+            public void Print()
+            {
+                string mapString = "";
+                for (int y = Letters.GetLength(1) - 1; y >= 0; y--)
+                {
+                    for (int x = 0; x < Letters.GetLength(0); x++)
+                    {
+                        mapString += Letters[x, y] == null ? "+" : Letters[x, y].Character;
+                    }
+
+                    mapString += "\n";
+                }
+                
+                Debug.Log(mapString);
+            }
+
+            public void PrintStats()
+            {
+                Debug.Log($"TileCount: {TileCount:n0}, TotalWords: {TotalWords:n0}, TotalWordLetters: {TotalWordLetters:n0}, AvgWordsPerTile: {AvgWordsPerTile:n2}, AvgWordLettersPerTile: {AvgWordLettersPerTile:n2}");
+            }
+        #endregion
     }
 }

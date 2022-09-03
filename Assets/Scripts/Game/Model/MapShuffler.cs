@@ -45,7 +45,7 @@ namespace WarOfWords
             int previousTotalWords = _map.TotalWords;
             List<PreviousLetterState> previousLetterStates = Shuffle(25);
             
-            _map.RefreshLetterStats();
+            _map.RefreshMappingsAndStats();
             if ((_isEasier && previousTotalWords > _map.TotalWords) ||
                 (!_isEasier && previousTotalWords < _map.TotalWords))
             {
@@ -55,7 +55,7 @@ namespace WarOfWords
                     _map.Letters[previousLetterState.Coords.x, previousLetterState.Coords.y].Character =
                         previousLetterState.Character;
                 }
-                _map.RefreshLetterStats();
+                _map.RefreshMappingsAndStats();
             }
             
             _shuffleCount++;

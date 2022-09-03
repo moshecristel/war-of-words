@@ -12,7 +12,7 @@ namespace WarOfWords
     {
         public static event Action ResetPerimeterPressed; 
         public static event Action RevertLastWordPressed; 
-        public static event Action SolveWordPressed;
+        public static event Action HintBoostPressed;
         public static event Action ToggleZoomTerminalTilePressed;
         public static event Action ZoomInPressed;
         public static event Action ZoomOutPressed;
@@ -111,9 +111,9 @@ namespace WarOfWords
                 RevertLastWordPressed?.Invoke();
             }
 
-            public void OnSolveWordClicked()
+            public void OnHintBoostClicked()
             {
-                SolveWordPressed?.Invoke();
+                HintBoostPressed?.Invoke();
             }
 
             public void OnToggleZoomTerminalTileClicked()
