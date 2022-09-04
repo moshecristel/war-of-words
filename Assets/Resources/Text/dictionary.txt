@@ -146646,6 +146646,7 @@ softwares
 softwood
 softwoods
 softy
+sog
 sogged
 soggier
 soggiest

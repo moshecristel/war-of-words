@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Linq;
+using UnityEditor.ShaderGraph.Internal;
 using UnityEngine;
 
 namespace WarOfWords
@@ -260,34 +261,136 @@ namespace WarOfWords
             }
         #endregion
 
-        #region Get Word Letter Sequence
+        public List<MapOrderedLetterSequence> GetConnectedWordLetterSequenceBetween(MapLetter startLetter, MapLetter endLetter, List<MapLetter> allIntraversableLetters, bool allowPartial = false, int maxDepth = 2, float directionDeviationDifferencePerSequence = 0f)
+        {
+            // Limit letters (?)
+            int maxLetters = 7;
+                
+            List<MapLetter> middleIntraversableLetters = allIntraversableLetters
+                .Where(letter => letter != startLetter && letter != endLetter).ToList();
 
-            public List<MapOrderedLetterSequence> GetConnectedWordLetterSequenceBetween(MapLetter startLetter, MapLetter endLetter, List<MapLetter> allIntraversableLetters, int maxDepth = 3)
+            float distanceBetweenStartAndEnd = Vector2Int.Distance(startLetter.Coords, endLetter.Coords);
+               
+            // FORWARD Finish Attempt
+            List<MapLetterSequence> forwardSequencesAtStart = _coordToForwardWords.ContainsKey(startLetter.Coords) ? _coordToForwardWords[startLetter.Coords].Where(sequence => !sequence.ContainsAny(middleIntraversableLetters) && sequence.Length <= maxLetters).ToList() : new();
+            forwardSequencesAtStart = forwardSequencesAtStart.Where(sequence =>
+                Vector2Int.Distance(sequence.EndLetter.Coords, endLetter.Coords) <
+                distanceBetweenStartAndEnd + directionDeviationDifferencePerSequence).ToList();
+
+            // Check to see if any joins to the end as is
+            MapLetterSequence finishingForwardSequence = forwardSequencesAtStart
+                .OrderByDescending(sequence => sequence.Length)
+                .FirstOrDefault(sequence => sequence.EndLetter.Coords == endLetter.Coords);
+                
+            if (finishingForwardSequence != default(MapLetterSequence))
             {
-                List<MapLetter> middleIntraversableLetters = allIntraversableLetters
-                    .Where(letter => letter != startLetter && letter != endLetter).ToList();
-
-                float distanceBetweenStartAndEnd = Vector2Int.Distance(startLetter.Coords, endLetter.Coords);
+                // Able to complete connection (with 1 forward word)
+                return new List<MapOrderedLetterSequence>
+                    { new(finishingForwardSequence, false) };
+            }
                 
-                List<MapLetterSequence> forwardSequencesAtStart = _coordToForwardWords.ContainsKey(startLetter.Coords) ? _coordToForwardWords[startLetter.Coords].Where(sequence => !sequence.ContainsAny(middleIntraversableLetters) && sequence.Length <= 7).ToList() : new();
-                forwardSequencesAtStart = forwardSequencesAtStart.Where(sequence =>
-                    Vector2Int.Distance(sequence.StartLetter.Coords, endLetter.Coords) <
-                    distanceBetweenStartAndEnd + 2f).ToList();
+            // BACKWARD Finish Attempt
+            List<MapLetterSequence> backwardSequencesAtStart = _coordToBackwardWords.ContainsKey(startLetter.Coords) ? _coordToBackwardWords[startLetter.Coords].Where(sequence => !sequence.ContainsAny(middleIntraversableLetters) && sequence.Length <= maxLetters).ToList() : new();
+            backwardSequencesAtStart = backwardSequencesAtStart.Where(sequence =>
+                Vector2Int.Distance(sequence.StartLetter.Coords, endLetter.Coords) <
+                distanceBetweenStartAndEnd + directionDeviationDifferencePerSequence).ToList();
 
-                // Check to see if any joins to the end as is
-                MapLetterSequence finishingForwardSequence = forwardSequencesAtStart
-                    .OrderByDescending(sequence => sequence.Length)
-                    .FirstOrDefault(sequence => sequence.EndLetter.Coords == endLetter.Coords);
+            // Check to see if any joins to the end as is
+            MapLetterSequence finishingBackwardSequence = backwardSequencesAtStart
+                .OrderByDescending(sequence => sequence.Length)
+                .FirstOrDefault(sequence => sequence.StartLetter.Coords == endLetter.Coords);
                 
-                if (finishingForwardSequence != default(MapLetterSequence))
+            if (finishingBackwardSequence != default(MapLetterSequence))
+            {
+                // Able to complete connection (with 1 forward word)
+                return new List<MapOrderedLetterSequence>
+                    { new(finishingBackwardSequence, true) };
+            }
+
+            // If max depth is reached, return default OR the closest sequence if allowPartial == true
+            if (maxDepth <= 0)
+            {
+                if (!allowPartial) return default;
+                    
+                // returnPartial is true so return the best that we have 
+                MapLetterSequence nonFinishingForwardSequence = forwardSequencesAtStart
+                    .OrderByDescending(sequence => sequence.Length).FirstOrDefault();
+                    
+                MapLetterSequence nonFinishingBackwardSequence = backwardSequencesAtStart
+                    .OrderByDescending(sequence => sequence.Length).FirstOrDefault();
+
+                // Don't want to return a list with a default sequence encapsulated (ie. list needs to be the default reference)
+                if (nonFinishingForwardSequence == default && nonFinishingBackwardSequence == default)
+                    return default;
+
+                List<MapOrderedLetterSequence> bestSequenceAsList = new();
+                if (nonFinishingForwardSequence != default && nonFinishingBackwardSequence == default)
                 {
-                    // Able to complete connection (with 1 forward word)
-                    return new List<MapOrderedLetterSequence>
-                        { new(finishingForwardSequence, false) };
+                    bestSequenceAsList.Add(new MapOrderedLetterSequence(nonFinishingForwardSequence, false));
+                }
+                else if (nonFinishingForwardSequence == default && nonFinishingBackwardSequence != default)
+                {
+                    bestSequenceAsList.Add(new MapOrderedLetterSequence(nonFinishingBackwardSequence, true));
+                }
+                else
+                {
+                    float forwardSequenceDistanceToEnd = Vector2Int.Distance(nonFinishingForwardSequence.EndLetter.Coords, endLetter.Coords);
+                    float backwardSequenceDistanceToEnd = Vector2Int.Distance(nonFinishingBackwardSequence.StartLetter.Coords, endLetter.Coords);
+
+                    MapLetterSequence sequence = forwardSequenceDistanceToEnd <= backwardSequenceDistanceToEnd
+                        ? nonFinishingForwardSequence
+                        : nonFinishingBackwardSequence;
+                    bool isReversed = forwardSequenceDistanceToEnd > backwardSequenceDistanceToEnd;
+                    bestSequenceAsList.Add(new MapOrderedLetterSequence(sequence, isReversed));
                 }
 
-                if (maxDepth <= 0) return default;
+                return bestSequenceAsList;
+            }
 
+            List<MapOrderedLetterSequence> bestForward = FindBestDownstreamSequence(forwardSequencesAtStart, false,
+                allIntraversableLetters, endLetter, allowPartial, maxDepth);
+
+            List<MapOrderedLetterSequence> bestBackward = FindBestDownstreamSequence(backwardSequencesAtStart, true,
+                allIntraversableLetters, endLetter, allowPartial, maxDepth);
+
+            if (bestForward != default && bestBackward != default)
+            {
+                bool forwardFinishesSequence = bestForward[^1].IsReversed
+                    ? bestForward[^1].Sequence.StartLetter == endLetter
+                    : bestForward[^1].Sequence.EndLetter == endLetter;
+                
+                bool backwardFinishesSequence = bestBackward[^1].IsReversed
+                    ? bestBackward[^1].Sequence.StartLetter == endLetter
+                    : bestBackward[^1].Sequence.EndLetter == endLetter;
+
+                if (forwardFinishesSequence && !backwardFinishesSequence) return bestForward;
+                if (!forwardFinishesSequence && backwardFinishesSequence) return bestBackward;
+
+                if (bestForward.Count < bestBackward.Count) return bestForward;
+                if (bestForward.Count > bestBackward.Count) return bestBackward;
+                
+                // Prefer more tiles from same number of words
+                if (bestBackward.Sum(sequence => sequence.Sequence.Length) >
+                    bestForward.Sum(sequence => sequence.Sequence.Length))
+                    return bestBackward;
+
+                return bestForward;
+            }
+
+            return bestForward ?? bestBackward;
+        }
+
+        #region Get Word Letter Sequence
+
+        public List<MapOrderedLetterSequence> FindBestDownstreamSequence(
+                List<MapLetterSequence> forwardSequencesAtStart, 
+                bool isReversed, 
+                List<MapLetter> allIntraversableLetters, 
+                MapLetter endLetter, 
+                bool allowPartial,
+                int maxDepth,
+                int pathAttemptsAfterValidSequence = 10)
+            {
                 List<MapOrderedLetterSequence> best = default;
                 int fewestWords = -1;
                 int mostLetters = -1;
@@ -296,26 +399,28 @@ namespace WarOfWords
                 {
                     MapOrderedLetterSequence orderedSequence = new MapOrderedLetterSequence(sequence, false);
                     List<MapLetter> allIntraversableLettersForSequence = new List<MapLetter>(allIntraversableLetters);
-                    allIntraversableLettersForSequence.AddRange(sequence.Letters.Where(letter => letter != sequence.StartLetter));     // Start letter is already in all intraversable letters
+                    allIntraversableLettersForSequence.AddRange(sequence.Letters);     // Start or end letter is already in all intraversable letters, depending on direction
                     
                     List<MapOrderedLetterSequence> downstreamSequences =
-                        GetConnectedWordLetterSequenceBetween(sequence.EndLetter, endLetter,
-                            allIntraversableLettersForSequence, maxDepth - 1);
+                        GetConnectedWordLetterSequenceBetween(isReversed ? sequence.StartLetter : sequence.EndLetter, endLetter,
+                            allIntraversableLettersForSequence, allowPartial, maxDepth - 1);
 
                     if (downstreamSequences == default)
                         continue;
                     
                     downstreamSequences.Insert(0, orderedSequence);
 
-                    if (best == default )//||
-                        // downstreamSequences.Count < fewestWords || 
-                        // (downstreamSequences.Count == fewestWords && downstreamSequences.Sum(sequence => sequence.Sequence.Length) > mostLetters))
+                    if (best == default ||
+                        (downstreamSequences.Count < fewestWords || 
+                        (downstreamSequences.Count == fewestWords && downstreamSequences.Sum(sequence => sequence.Sequence.Length) > mostLetters)))
                     {
                         best = downstreamSequences;
-                        break;
-                        // fewestWords = downstreamSequences.Count;
-                        // mostLetters = downstreamSequences.Sum(sequence => sequence.Sequence.Length);
+                        fewestWords = downstreamSequences.Count;
+                        mostLetters = downstreamSequences.Sum(sequence => sequence.Sequence.Length);
                     }
+
+                    if (best != default) pathAttemptsAfterValidSequence--;
+                    if (pathAttemptsAfterValidSequence == 0) break;
                 }
 
                 return best;

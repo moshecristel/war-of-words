@@ -173,7 +173,9 @@ namespace WarOfWords
 
             private void TilePanel_OnHintBoostPressed()
             {
-                if (TryHintFromFocalTile())
+                List<MapOrderedLetterSequence> sequences = GetHintFromFocalTile();
+                
+                if (sequences != default)
                 {
                     Debug.Log("Hint Succeeded");
                 }
@@ -284,9 +286,9 @@ namespace WarOfWords
                 ZoomTerminalTile?.Invoke(_focalTerminalMapLetterTile != null ? _focalTerminalMapLetterTile.transform.position : default);
             }
 
-            private bool TryHintFromFocalTile()
+            private List<MapOrderedLetterSequence> GetHintFromFocalTile()
             {
-                if (_focalTerminalMapLetterTile == null) return false;
+                if (_focalTerminalMapLetterTile == null) return default;
                 MapLetterTile otherTerminalTile = _focalTerminalMapLetterTile == Perimeter.TerminalVerifiedStartTile
                     ? Perimeter.TerminalVerifiedEndTile
                     : Perimeter.TerminalVerifiedStartTile;
@@ -298,23 +300,53 @@ namespace WarOfWords
                 
                 List<MapLetter> intraversibleLetters = GetLettersForAllVerifiedTiles().ToList();
 
+                // If we can't find full sequences, get a set of sequences that doesn't make it to end letter
                 List<MapOrderedLetterSequence> letterSequences =
-                    Map.GetConnectedWordLetterSequenceBetween(startLetter, endLetter, intraversibleLetters);
+                    GetHintFromFocalTile(startLetter, endLetter, intraversibleLetters) ?? 
+                    GetHintFromFocalTile(startLetter, endLetter, intraversibleLetters, true);
+
+                // TODO TEMP
+                if (letterSequences != default)
+                {
+                    print($"Hint SUCCEEDED: {letterSequences.Count} letter sequences.");
+                    for (int i = 0; i < letterSequences.Count(); i++)
+                    {
+                        MapOrderedLetterSequence sequence = letterSequences[i];
+                        print($"{i}: {sequence.Sequence}");
+                    }
+                }
+
+                return letterSequences;
+            }
+
+            private List<MapOrderedLetterSequence> GetHintFromFocalTile(MapLetter startLetter, MapLetter endLetter, List<MapLetter> intraversibleLetters, bool allowPartial = false)
+            {
+                List<MapOrderedLetterSequence> letterSequences =
+                    Map.GetConnectedWordLetterSequenceBetween(startLetter, endLetter, intraversibleLetters, allowPartial);
 
                 if (letterSequences == default)
                 {
-                    print("Hint FAILED");
-                    return false;
-                }
-                
-                print($"Hint SUCCEEDED: {letterSequences.Count} letter sequences.");
-                for (int i = 0; i < letterSequences.Count(); i++)
-                {
-                    MapOrderedLetterSequence sequence = letterSequences[i];
-                    print($"{i}: {sequence.Sequence}");
+                    print($"Hint FAILED with allowPartial={allowPartial}, trying again with direction deviation of 2...");
+                    letterSequences =
+                        Map.GetConnectedWordLetterSequenceBetween(startLetter, endLetter, intraversibleLetters, allowPartial, 2, 2f);
+
+                    if (letterSequences == default)
+                    {
+                        print($"Hint FAILED twice with allowPartial={allowPartial}!");
+                    }
                 }
 
-                return true;
+                if (letterSequences != default)
+                {
+                    float distance = 0f;
+                    if (allowPartial)
+                    {
+                        distance = Vector2Int.Distance(endLetter.Coords, letterSequences[^1].EndLetter.Coords);
+                    }
+                    print($"Hint SUCCEEDED with allowPartial={allowPartial} and distance={distance:f1}");
+                }
+
+                return letterSequences;
             }
 
             private bool ContainsVerifiedSelection(MapLetterSequence sequence, params MapLetter[] excluding)

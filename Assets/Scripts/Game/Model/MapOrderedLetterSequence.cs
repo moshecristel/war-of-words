@@ -12,5 +12,8 @@ namespace WarOfWords
             Sequence = sequence;
             IsReversed = isReversed;
         }
+
+        public MapLetter StartLetter => IsReversed ? Sequence.EndLetter : Sequence.StartLetter;
+        public MapLetter EndLetter => IsReversed ? Sequence.StartLetter : Sequence.EndLetter;
     }
 }

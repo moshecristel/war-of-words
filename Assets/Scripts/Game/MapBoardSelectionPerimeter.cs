@@ -26,18 +26,6 @@ namespace WarOfWords
 
         public MapLetterTile TerminalVerifiedStartTile { get; set; }
         public MapLetterTile TerminalVerifiedEndTile { get; set; }
-        public List<MapLetterTile> TerminalVerifiedTiles
-        {
-            get
-            {
-                if (TerminalVerifiedStartTile == null || TerminalVerifiedEndTile == null) return null;
-                return new List<MapLetterTile>
-                {
-                    TerminalVerifiedStartTile,
-                    TerminalVerifiedEndTile
-                };
-            }
-        }
         public MapLetterTile MostRecentTerminalVerifiedTile { get; set; }
 
         public bool IsTerminalTile(MapLetterTile letterTile)
@@ -52,7 +40,7 @@ namespace WarOfWords
             // If the PERIMETER IS COMPLETE, don't add
             if (IsComplete)
             {
-                Debug.Log("Can't add due to complete");
+                // Debug.Log("Can't add due to complete");
                 return false;
             }
             
@@ -66,32 +54,32 @@ namespace WarOfWords
             {
                 // If this is a DUPLICATE INTERMEDIATE VERIFIED (non-terminal), don't add
                 // (We've already dealt with it above if it's terminal)
-                Debug.Log("Can't add due to duplicate intermediate");
+                // Debug.Log("Can't add due to duplicate intermediate");
                 return false;
             }
             else if (CurrentSelection == null)
             {
-                Debug.Log("Creating new CurrentSelection with " + letterTile.MapLetter.Character);
                 // NEW CURRENT SELECTION 
+                // Debug.Log("Creating new CurrentSelection with " + letterTile.MapLetter.Character);
                 CurrentSelection = new MapBoardSelection(letterTile);
                 UpdateConnections();
                 return true;
             }
             else if (!CanAddToSelection(CurrentSelection))
             {
-                Debug.Log("Can't add due to selection should be terminated");
+                // Debug.Log("Can't add due to selection should be terminated");
                 return false;
             }
             else if (CurrentSelection.CanBeExtendedBy(letterTile))
             {
                 // ADD TO CURRENT SELECTION 
-                Debug.Log("Adding " + letterTile.MapLetter.Character + " to " + CurrentSelection.ToCharacterSequence());
+                // Debug.Log("Adding " + letterTile.MapLetter.Character + " to " + CurrentSelection.ToCharacterSequence());
                 CurrentSelection.AddTile(letterTile);
                 UpdateConnections();
                 return true;
             }
 
-            Debug.Log("Can't add for some other reason");
+            // Debug.Log("Can't add for some other reason");
             return false;
         }
 
@@ -117,7 +105,7 @@ namespace WarOfWords
         {
             if (CurrentSelection == null || CurrentSelection.LetterTileCount == 0)
             {
-                Debug.Log("Not merging due to no current selection");
+                // Debug.Log("Not merging due to no current selection");
                 return false;
             }
             
@@ -125,8 +113,8 @@ namespace WarOfWords
             MapLetterTile mostRecentTerminalTile = null;
             if (VerifiedSelections.Count == 0)
             {
-                Debug.Log("Merged with 0 verified selections");
                 // FIRST VERIFIED SELECTION
+                // Debug.Log("Merged with 0 verified selections");
                 VerifiedSelections.Add(CurrentSelection);
                 _reversedFlags.Add(false);
                 mostRecentTerminalTile = CurrentSelection.LetterTiles[^1];
@@ -134,8 +122,8 @@ namespace WarOfWords
             } 
             else if (TerminalVerifiedEndTile == CurrentSelection.LetterTiles[0])
             {
-                Debug.Log("Merged: Valid END extension");
                 // Valid END extension
+                // Debug.Log("Merged: Valid END extension");
                 VerifiedSelections.Add(CurrentSelection);
                 _reversedFlags.Add(false);
                 mostRecentTerminalTile = CurrentSelection.LetterTiles[^1];
@@ -143,8 +131,8 @@ namespace WarOfWords
             } 
             else if (TerminalVerifiedEndTile == CurrentSelection.LetterTiles[^1])
             {
-                Debug.Log("Merged: Valid END extension (REVERSED)");
                 // Valid END extension (REVERSED)
+                // Debug.Log("Merged: Valid END extension (REVERSED)");
                 VerifiedSelections.Add(CurrentSelection);
                 _reversedFlags.Add(true);
                 mostRecentTerminalTile = CurrentSelection.LetterTiles[0];
@@ -152,8 +140,8 @@ namespace WarOfWords
             }
             else if (TerminalVerifiedStartTile == CurrentSelection.LetterTiles[^1])
             {
-                Debug.Log("Merged: Valid START extension");
                 // Valid START extension
+                // Debug.Log("Merged: Valid START extension");
                 VerifiedSelections.Insert(0, CurrentSelection);
                 _reversedFlags.Insert(0, false);
                 mostRecentTerminalTile = CurrentSelection.LetterTiles[0];
@@ -161,8 +149,8 @@ namespace WarOfWords
             }
             else if (TerminalVerifiedStartTile == CurrentSelection.LetterTiles[0])
             {
-                Debug.Log("Merged: Valid START extension (REVERSED)");
                 // Valid START extension (REVERSED)
+                // Debug.Log("Merged: Valid START extension (REVERSED)");
                 VerifiedSelections.Insert(0, CurrentSelection);
                 _reversedFlags.Insert(0, true);
                 mostRecentTerminalTile = CurrentSelection.LetterTiles[^1];
@@ -171,8 +159,8 @@ namespace WarOfWords
 
             if (isMerged)
             {
-                Debug.Log("MERGED!");
                 // Mark verified
+                // Debug.Log("MERGED!");
                 CurrentSelection.IsVerified = true;
                 IsComplete = UpdateTerminalTiles();
                 MostRecentTerminalVerifiedTile = mostRecentTerminalTile;
