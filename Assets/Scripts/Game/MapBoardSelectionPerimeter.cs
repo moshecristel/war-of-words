@@ -105,7 +105,7 @@ namespace WarOfWords
         {
             if (CurrentSelection == null || CurrentSelection.LetterTileCount == 0)
             {
-                // Debug.Log("Not merging due to no current selection");
+                Debug.Log("Not merging due to no current selection");
                 return false;
             }
             
@@ -114,7 +114,7 @@ namespace WarOfWords
             if (VerifiedSelections.Count == 0)
             {
                 // FIRST VERIFIED SELECTION
-                // Debug.Log("Merged with 0 verified selections");
+                Debug.Log("Merged with 0 verified selections");
                 VerifiedSelections.Add(CurrentSelection);
                 _reversedFlags.Add(false);
                 mostRecentTerminalTile = CurrentSelection.LetterTiles[^1];
@@ -123,7 +123,7 @@ namespace WarOfWords
             else if (TerminalVerifiedEndTile == CurrentSelection.LetterTiles[0])
             {
                 // Valid END extension
-                // Debug.Log("Merged: Valid END extension");
+                Debug.Log("Merged: Valid END extension");
                 VerifiedSelections.Add(CurrentSelection);
                 _reversedFlags.Add(false);
                 mostRecentTerminalTile = CurrentSelection.LetterTiles[^1];
@@ -132,7 +132,7 @@ namespace WarOfWords
             else if (TerminalVerifiedEndTile == CurrentSelection.LetterTiles[^1])
             {
                 // Valid END extension (REVERSED)
-                // Debug.Log("Merged: Valid END extension (REVERSED)");
+                Debug.Log("Merged: Valid END extension (REVERSED)");
                 VerifiedSelections.Add(CurrentSelection);
                 _reversedFlags.Add(true);
                 mostRecentTerminalTile = CurrentSelection.LetterTiles[0];
@@ -141,7 +141,7 @@ namespace WarOfWords
             else if (TerminalVerifiedStartTile == CurrentSelection.LetterTiles[^1])
             {
                 // Valid START extension
-                // Debug.Log("Merged: Valid START extension");
+                Debug.Log("Merged: Valid START extension");
                 VerifiedSelections.Insert(0, CurrentSelection);
                 _reversedFlags.Insert(0, false);
                 mostRecentTerminalTile = CurrentSelection.LetterTiles[0];
@@ -150,7 +150,7 @@ namespace WarOfWords
             else if (TerminalVerifiedStartTile == CurrentSelection.LetterTiles[0])
             {
                 // Valid START extension (REVERSED)
-                // Debug.Log("Merged: Valid START extension (REVERSED)");
+                Debug.Log("Merged: Valid START extension (REVERSED)");
                 VerifiedSelections.Insert(0, CurrentSelection);
                 _reversedFlags.Insert(0, true);
                 mostRecentTerminalTile = CurrentSelection.LetterTiles[^1];
@@ -160,7 +160,7 @@ namespace WarOfWords
             if (isMerged)
             {
                 // Mark verified
-                // Debug.Log("MERGED!");
+                Debug.Log("MERGED!");
                 CurrentSelection.IsVerified = true;
                 IsComplete = UpdateTerminalTiles();
                 MostRecentTerminalVerifiedTile = mostRecentTerminalTile;
@@ -284,7 +284,10 @@ namespace WarOfWords
                 GridDirection outgoingDirection = CoordUtils.GetRelativeAdjacentGridDirection(current.MapLetter.Coords, next.MapLetter.Coords);
                 
                 // This should override any multiple connections added when the tile was in the CurrentSelection
-                current.OutgoingConnections = new List<GridDirection> { outgoingDirection };
+                current.ClearConnections();
+                
+                if(outgoingDirection != GridDirection.None)
+                    current.SetConnectionInDirection(outgoingDirection, next, true);
             }
 
             if (orderedVerifiedTiles.Count > 0)
@@ -292,11 +295,15 @@ namespace WarOfWords
                 if (orderedVerifiedTiles.Count > 1 && orderedVerifiedTiles[0] != orderedVerifiedTiles[^1])
                 {
                     // Be sure to reset the very last tile to no connection in case the current selection was recently deselected
-                    orderedVerifiedTiles[^1].OutgoingConnections = new List<GridDirection>();
+                    orderedVerifiedTiles[^1].ClearConnections();
                 }
             }
 
             List<MapLetterTile> currentTiles = CurrentSelection != null ? CurrentSelection.GetTiles() : new List<MapLetterTile>();
+            foreach (MapLetterTile tile in currentTiles)
+            {
+                tile.ClearConnections();
+            }
             
             for (int i = 0; i < currentTiles.Count - 1; i++)
             {
@@ -305,8 +312,7 @@ namespace WarOfWords
                 
                 // Only a CurrentSelection will add an outgoing connection to a tile to avoid the complications of 
                 // ordering a current selection to align with the perimeter while it is in flux
-                if(!currentTiles[i].OutgoingConnections.Contains(direction))
-                    currentTiles[i].OutgoingConnections.Add(direction);     
+                currentTiles[i].SetConnectionInDirection(direction, currentTiles[i + 1]);
             }
         }
 
@@ -452,7 +458,9 @@ namespace WarOfWords
             {
                 string selectionString = VerifiedSelections[i].ToCharacterSequence();
                 if (_reversedFlags[i])
-                    selectionString = new string(selectionString.Reverse().ToArray());
+                {
+                    selectionString = new string(selectionString.Reverse().ToArray()) + " (R)";
+                }
                 log += selectionString + " --> ";
             }
             Debug.Log(log);

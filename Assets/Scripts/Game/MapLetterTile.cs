@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Linq;
 using TMPro;
 using UnityEngine;
 
@@ -23,11 +24,7 @@ namespace WarOfWords
 
         [SerializeField] private TMP_Text pointsText;
         [SerializeField] private GameObject[] _bonusLabels;
-        
-        // Correspond to enum values (CW from N): N = 0, NE = 1...
-        [SerializeField] private GameObject[] _selectionLines;
 
-        
         public MapLetter MapLetter { get; set; }
         public TileOwnership TileOwnership { get; set; }
         
@@ -44,8 +41,12 @@ namespace WarOfWords
         }
         public bool IsVerifiedSelection { get; set; }
         public TileSelectionType SelectionType { get; set; } = TileSelectionType.None;
-
-        public List<GridDirection> OutgoingConnections { get; set; } = new();
+        
+        // Correspond to enum values (CW from N): N = 0, NE = 1...
+        [SerializeField] private MapLetterTileConnection[] _connections;
+        
+        public List<MapLetterTileConnection> SelectionConnections =>
+            _connections.Where(connection => connection.IsSelected).ToList();
 
         public BonusType BonusType { get; set; } = BonusType.None;
         public float Points { get; set; }
@@ -70,8 +71,6 @@ namespace WarOfWords
             {
                 _isSelected = true;
                 SelectionType = selectionType;
-                
-                
             }
 
             public void Deselect()
@@ -79,7 +78,19 @@ namespace WarOfWords
                 _isSelected = false;
                 IsVerifiedSelection = false;
                 SelectionType = TileSelectionType.None;
-                OutgoingConnections = new List<GridDirection>();
+            }
+
+            public void ClearConnections()
+            {
+                foreach (MapLetterTileConnection connection in _connections)
+                {
+                    connection.Deselect();
+                }
+            }
+
+            public void SetConnectionInDirection(GridDirection direction, MapLetterTile destinationTile, bool isVerified = false)
+            {
+                _connections[(int)direction].SetSelected(destinationTile, isVerified);
             }
         #endregion
 
@@ -126,27 +137,12 @@ namespace WarOfWords
             private void UpdateSelectionVisuals()
             {
                 // Unhighlight all
-                foreach (GameObject highlightLine in _selectionLines)
+                foreach (MapLetterTileConnection connection in _connections)
                 {
-                    highlightLine.SetActive(false);
+                    connection.UpdateVisuals();
                 }
 
                 UpdateSelectionTypeVisuals();
-                if (!_isSelected)
-                {
-                    return;
-                }
-
-                // Each tile is responsible only for its outgoing connection
-                foreach (GameObject line in _selectionLines)
-                {
-                    line.SetActive(false);
-                }
-
-                foreach (GridDirection outgoingDirection in OutgoingConnections)
-                {
-                    _selectionLines[(int)outgoingDirection].SetActive(true);
-                }
             }
             
             private void UpdateMainVisuals()

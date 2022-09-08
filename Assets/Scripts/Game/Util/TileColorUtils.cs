@@ -42,6 +42,15 @@ namespace WarOfWords
                     throw new ArgumentOutOfRangeException(nameof(tileSelectionType), tileSelectionType, null);
             }
         }
+
+        // 0 - Base, 1 - Drop Shadow, 2 - Outline
+        public static List<Color> GetSelectionConnectionColors(bool isVerified)
+        {
+            return (isVerified) ?
+                GetColors("#FFFF4D", "#E0D548", "#AD9D04") :
+                GetColors("#F2F2F2", "#CCCCCC", "#999999");
+                    
+        }
         
         private static List<Color> GetColors(params string[] hexes)
         {
