@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 namespace WarOfWords
@@ -26,8 +27,9 @@ namespace WarOfWords
             }
             
             // Index words from dictionary files into trie
-            TextAsset textAsset = Resources.Load<TextAsset>("Text/dictionary");
-            List<string> words = new List<string>(textAsset.text.Split('\n'));
+            TextAsset textAsset = Resources.Load<TextAsset>("Text/WordList");
+            List<string> records = new List<string>(textAsset.text.Split('\n'));
+            List<string> words = records.Select(record => record.Split(",")[0]).ToList();
 
             foreach (string word in words)
             {

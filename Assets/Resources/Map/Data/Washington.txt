@@ -1,0 +1,16 @@
+1|Seattle
+2|Spokane
+3|Tacoma
+4|Vancouver
+5|Bellevue
+6|Kent
+7|Everett
+8|Spokane Valley
+9|Renton
+10|Federal Way
+11|Yakima
+12|Bellingham
+13|Kirkland
+14|Auburn
+15|Kennewick
+16|Olympia

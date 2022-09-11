@@ -1,6 +1,5 @@
 using System.Collections.Generic;
 using System.Linq;
-using UnityEditor.ShaderGraph.Internal;
 using UnityEngine;
 
 namespace WarOfWords
@@ -20,16 +19,19 @@ namespace WarOfWords
 
         // Coordinates begin in LOWER LEFT of map
         public MapLetter[,] Letters { get; set; }
+        public Dictionary<Vector2Int, string> CoordToCityName;
 
         public DictionaryTrie Dictionary { get; }
         private Dictionary<Vector2Int, List<MapLetterSequence>> _coordToForwardWords = new();
         private Dictionary<Vector2Int, List<MapLetterSequence>> _coordToBackwardWords = new();
 
+
         // Create map from shape
-        public Map(State state, bool[,] shape, bool initWeighted = true)
+        public Map(State state, short[,] shape, Dictionary<Vector2Int, string> coordToCityName, bool initWeighted = true)
         {
             State = state;
             Dictionary = new DictionaryTrie();
+            CoordToCityName = coordToCityName;
             GenerateLetters(shape, initWeighted);
             MarkLetterAdjacency();
             RefreshMappingsAndStats();
@@ -63,7 +65,7 @@ namespace WarOfWords
             }
         }
 
-        private void GenerateLetters(bool[,] shape, bool initWeighted)
+        private void GenerateLetters(short[,] shape, bool initWeighted)
         {
             int cols = shape.GetLength(0);
             int rows = shape.GetLength(1);
@@ -73,7 +75,7 @@ namespace WarOfWords
             {
                 for (int x = 0; x < shape.GetLength(0); x++)
                 {
-                    if (shape[x, y])
+                    if (shape[x, y] == 0)
                     {
                         Letters[x, rows - 1 - y] = new MapLetter(CharacterUtils.GetRandomUppercaseAlphaCharacter(initWeighted));
                     }   

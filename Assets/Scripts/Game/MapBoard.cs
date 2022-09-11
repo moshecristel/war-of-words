@@ -7,7 +7,6 @@ using Random = UnityEngine.Random;
 
 namespace WarOfWords
 {
-    [RequireComponent(typeof(Game))]
     public class MapBoard : MonoBehaviour
     {
         // 0 - Character sequence,

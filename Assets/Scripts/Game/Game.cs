@@ -204,7 +204,7 @@ namespace WarOfWords
 
         private void LoadMap(State state)
         {
-            _mapBoard.Map = MapReader.LoadNewMapFromData(state);
+            _mapBoard.Map = MapBakedReader.LoadNewMapFromData(state);
         }
 
         public void SetGameView(GameView gameView, Vector2 cameraPosition)
