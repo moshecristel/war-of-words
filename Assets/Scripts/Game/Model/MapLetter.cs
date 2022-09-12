@@ -11,6 +11,7 @@ namespace WarOfWords
         
         public int WordsStartingCount { get; set; }
         public int WordsEndingCount { get; set; }
+        public int WordCount => WordsStartingCount + WordsEndingCount;
         
         public Dictionary<GridDirection, MapLetter> Directions { get; set; }
 

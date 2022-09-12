@@ -122,7 +122,6 @@ namespace WarOfWords
             _coordToForwardWords.Clear();
             _coordToBackwardWords.Clear();
             
-            
             // Fill in stats
             int maxY = Letters.GetLength(1) - 1;
             int maxX = Letters.GetLength(0) - 1;

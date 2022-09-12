@@ -6,7 +6,6 @@ namespace WarOfWords
     {
         [SerializeField] private MapLabLetterTile _mapLabLetterTilePrefab;
         [SerializeField] private Camera _camera;
-        [SerializeField] private Gradient _wordDensityGradient;
         
         private Map _map;
         public Map Map

@@ -5,10 +5,15 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="bc16a576-3d17-4771-a401-98bcaae6af5c" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/Assets/Resources/Map/Shapes/Washington.png.meta" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Resources/Map/Shapes/Washington.png.meta" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/.idea.WarOfWords/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.WarOfWords/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Prefabs/Game/MapLab/MapLabLetterTile.prefab" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Prefabs/Game/MapLab/MapLabLetterTile.prefab" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Prefabs/Game/MapLetterTile.prefab" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Prefabs/Game/MapLetterTile.prefab" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Assets/Scenes/MapLabScene.unity" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Scenes/MapLabScene.unity" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/Scripts/Game/Prep/LibraryConsolidation.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Scripts/Game/Prep/Old/LibraryConsolidation.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/Scripts/Game/Prep/LibraryConsolidation.cs.meta" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Scripts/Game/Prep/Old/LibraryConsolidation.cs.meta" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Scripts/Game/Model/Map.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Scripts/Game/Model/Map.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Scripts/Game/Model/MapLetter.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Scripts/Game/Model/MapLetter.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Scripts/Game/Prep/MapLabBoard.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Scripts/Game/Prep/MapLabBoard.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Scripts/Game/Prep/MapLabLetterTile.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Scripts/Game/Prep/MapLabLetterTile.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ProjectSettings/ProjectSettings.asset" beforeDir="false" afterPath="$PROJECT_DIR$/ProjectSettings/ProjectSettings.asset" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -131,7 +136,7 @@
       <workItem from="1662614512009" duration="7824000" />
       <workItem from="1662703241843" duration="20919000" />
       <workItem from="1662788220136" duration="21000" />
-      <workItem from="1662788279915" duration="22936000" />
+      <workItem from="1662788279915" duration="25179000" />
     </task>
     <task id="LOCAL-00001" summary="Reorg of map and tile panel code">
       <created>1660522257240</created>
